@@ -530,7 +530,7 @@ window.addEventListener("fb-ready",initCloud);
 window.addEventListener("fb-fail",function(){setSync("off")});
 
 /* одноразовий імпорт зі старої версії (зашифрований файл migration.enc) */
-var IMPORT_ON=true;
+var IMPORT_ON=false;
 function impRun(){
   var p=((document.getElementById("imp-pass")||{}).value||"").trim(),msg=document.getElementById("imp-msg");
   function say(t){if(msg)msg.textContent=t}
