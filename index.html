@@ -128,6 +128,16 @@ tr.done .q{color:var(--mute)}
 .lgi{max-width:420px;margin:6vh auto 0;display:grid;gap:12px}
 .lgi label{display:grid;gap:4px;font:400 12px var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--mute)}
 .lgm{min-height:20px;font:400 13px var(--mono);color:var(--bad)}
+.cl2{display:grid;grid-template-columns:1fr 1fr;gap:0 8px}
+.cl2 .fld{margin-bottom:12px}
+.links:empty{display:none}
+.links{display:flex;gap:8px;flex-wrap:wrap;margin:-2px 0 14px}
+a.lk{display:inline-flex;align-items:center;min-height:40px;padding:0 14px;border-radius:2px;box-shadow:inset 0 0 0 1px var(--accent);color:var(--accent);font:600 13px var(--display);letter-spacing:.1em;text-transform:uppercase;text-decoration:none}
+.bal{display:flex;align-items:baseline;justify-content:space-between;gap:10px;flex-wrap:wrap;margin:-2px 0 12px;font:400 13px var(--mono);color:var(--mute)}
+.bal b{font:600 22px var(--display);letter-spacing:.04em;color:var(--ink)}
+.bal b.due{color:var(--warn)}
+.prev{display:flex;justify-content:space-between;align-items:center;gap:10px;width:100%;min-height:44px;padding:8px 0;border:0;border-top:1px solid var(--line);background:none;color:var(--ink);font:inherit;text-align:left;cursor:pointer}
+.ccl{font:400 12px var(--mono);letter-spacing:.04em;color:var(--mute);margin:2px 0 0}
 .sync.ok{color:var(--ok)} .sync.err{color:var(--warn)}
 .phg{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:8px}
 .ph{padding:0;border:1px solid var(--line);border-radius:2px;background:var(--surface);aspect-ratio:1;overflow:hidden;cursor:pointer}
@@ -306,9 +316,14 @@ function thumb(o){var ph=o.photos||[];return ph.length?'<span class="thumb"><img
 function lbOwner(){return (tab==="i"&&ideaOpen)?findIn(S.ideas,ideaOpen):ord()}
 function lbCoverBtn(){var o=lbOwner(),ph=o&&o.photos;return (ph&&ph.indexOf(lbId)>0)?'<button class="btn ghost" data-act="lb-cover">Зробити обкладинкою</button>':""}
 /* список замовлень */
+function clientLine(o){
+  if(o.plan)return"";var n=String(o.cname||"").trim();if(!n)return"";
+  var t=esc(n)+(o.ccity?", "+esc(o.ccity):""),pr=num(o.price),bal=pr>0?r2(pr-(num(o.adv)||0)):0;
+  if(bal>0)t+=" · залишок "+bal+" "+esc(o.cur||"₴");
+  return '<div class="ccl">'+t+'</div>'}
 function card(o){
   var t=o.items.length,d=o.items.filter(function(i){return i.done}).length,p=t?Math.round(d/t*100):0,w=o.items.filter(function(i){return i.kind==="mat"&&!i.done}).length;
-  return '<button class="ocard'+ocCls(o)+'" data-act="open" data-id="'+o.id+'"><div class="oc-top">'+thumb(o)+'<span class="oc-name">'+esc(o.name||"Без назви")+'</span><span class="pg">'+ocPills(o)+'</span></div><div class="wire" style="--p:'+p+'"><i></i><b></b></div><div class="mu sm">'+(t?d+" з "+t+" позицій виконано":"Позицій ще немає")+(w?" · замовити: "+w:"")+'</div></button>'}
+  return '<button class="ocard'+ocCls(o)+'" data-act="open" data-id="'+o.id+'"><div class="oc-top">'+thumb(o)+'<span class="oc-name">'+esc(o.name||"Без назви")+'</span><span class="pg">'+ocPills(o)+'</span></div>'+clientLine(o)+'<div class="wire" style="--p:'+p+'"><i></i><b></b></div><div class="mu sm">'+(t?d+" з "+t+" позицій виконано":"Позицій ще немає")+(w?" · замовити: "+w:"")+'</div></button>'}
 function backupHtml(){
   var h='<div class="bk"><button class="lnk" data-act="bk-toggle">'+(bkOpen?"Закрити копію даних":"Копія даних")+'</button>';
   if(bkOpen)h+='<textarea id="bk" rows="6" spellcheck="false">'+esc(JSON.stringify(S))+'</textarea><div class="row"><button class="btn" data-act="bk-copy">Скопіювати</button><button class="btn ghost" id="bk-restore" data-act="bk-restore">Відновити з поля</button></div><div id="bk-msg" class="mu sm">Скопіюйте текст і збережіть у Нотатки. Щоб відновити, вставте його в поле й натисніть «Відновити».</div>';
@@ -337,12 +352,52 @@ function matHint(o){var m=o.items.filter(function(i){return i.kind==="mat"}),d=m
 function delBlock(){
   if(confirmDel)return '<div class="danger"><span>Видалити замовлення з усіма позиціями?</span><div class="row"><button class="btn bad" data-act="del-order-yes">Так, видалити</button><button class="btn ghost" data-act="del-order-no">Скасувати</button></div></div>';
   return '<button class="lnk bad" data-act="del-order">Видалити замовлення</button>'}
+/* замовник: контакти, гроші, попередні замовлення */
+var CURS=["₴","€","$","lei"];
+function cKey(o){return String(o.cname||"").trim().toLowerCase()}
+function clientNames(){var seen={},out=[];S.orders.forEach(function(o){var n=String(o.cname||"").trim();if(!o.plan&&n&&!seen[n.toLowerCase()]){seen[n.toLowerCase()]=1;out.push(n)}});return out}
+function sameClient(o){var k=cKey(o);if(!k)return[];return S.orders.filter(function(x){return x!==o&&!x.plan&&cKey(x)===k})}
+function telHref(v){var d=String(v||"").replace(/[^\d+]/g,"");return d?"tel:"+d:""}
+function instaUrl(v){v=String(v||"").trim();if(!v)return"";if(/^https?:\/\//i.test(v))return v;v=v.replace(/^@/,"").replace(/^(www\.)?instagram\.com\//i,"").replace(/[\/?#].*$/,"");return v?"https://instagram.com/"+encodeURIComponent(v):""}
+function moneyLine(o){
+  var pr=num(o.price),ad=num(o.adv)||0,c=esc(o.cur||"₴");
+  if(pr===null||pr<=0)return ad>0?'<span>Аванс '+r2(ad)+' '+c+'</span>':'<span>Ціну ще не вказано</span>';
+  var bal=r2(pr-ad);
+  var st=bal<=0?"Оплачено повністю":(ad>0?"Аванс отримано":"Без авансу");
+  return '<span>'+st+'</span><b class="'+(bal>0?"due":"")+'">'+(bal>0?"Залишок "+bal:"Залишок 0")+' '+c+'</b>'}
+function linksHtml(o){
+  var tel=telHref(o.cphone),ig=instaUrl(o.cinsta);
+  return (tel?'<a class="lk" href="'+esc(tel)+'">Подзвонити</a>':"")+(ig?'<a class="lk" href="'+esc(ig)+'" target="_blank" rel="noopener">Instagram</a>':"")}
+function clientSection(o){
+  if(o.plan)return"";
+  var prev=sameClient(o);
+  var h='<section class="sec"><div class="sh"><h2>Замовник</h2><span class="hint">контакти й гроші</span></div>'
+   +'<label class="fld"><span>Ім’я</span><input id="c-name" data-f="cname" list="clients" value="'+esc(o.cname)+'" placeholder="Наприклад: отець Андрій" autocomplete="off"></label>'
+   +'<datalist id="clients">'+clientNames().map(function(n){return '<option value="'+esc(n)+'">'}).join("")+'</datalist>'
+   +'<div class="cl2"><label class="fld"><span>Місто</span><input data-f="ccity" value="'+esc(o.ccity)+'" placeholder="Харків"></label>'
+   +'<label class="fld"><span>Телефон</span><input data-f="cphone" type="tel" inputmode="tel" value="'+esc(o.cphone)+'" placeholder="+380…"></label></div>'
+   +'<label class="fld"><span>Instagram</span><input data-f="cinsta" value="'+esc(o.cinsta)+'" placeholder="@нік або посилання" autocapitalize="off" autocorrect="off"></label>'
+   +'<div class="links" id="clinks">'+linksHtml(o)+'</div>'
+   +'<div class="cl2"><label class="fld"><span>Ціна</span><input data-f="price" inputmode="decimal" value="'+esc(o.price)+'" placeholder="0"></label>'
+   +'<label class="fld"><span>Аванс</span><input data-f="adv" inputmode="decimal" value="'+esc(o.adv)+'" placeholder="0"></label></div>'
+   +'<label class="fld"><span>Валюта</span><select data-f="cur">'+CURS.map(function(c){return '<option'+((o.cur||"₴")===c?" selected":"")+'>'+c+'</option>'}).join("")+'</select></label>'
+   +'<div class="bal" id="bal">'+moneyLine(o)+'</div>'
+   +'<label class="fld"><span>Побажання клієнта</span><textarea data-f="wish" rows="2" placeholder="Довжина ланцюжка, розмір, гравіювання…">'+esc(o.wish)+'</textarea></label>';
+  if(prev.length)h+='<div class="sh" style="margin-top:6px"><h2>Його замовлення</h2><span class="hint">'+prev.length+'</span></div>'+prev.map(function(x){var s=stInfo(x);return '<button class="prev" data-act="open" data-id="'+x.id+'"><span class="nm">'+esc(x.name||"Без назви")+'</span><span class="pill '+s.c+'">'+s.n+'</span></button>'}).join("");
+  return h+'</section>'}
+function clientFill(o){
+  var src=sameClient(o)[0];if(!src)return;
+  var got=false;["ccity","cphone","cinsta"].forEach(function(f){if(!String(o[f]||"").trim()&&String(src[f]||"").trim()){o[f]=src[f];got=true}});
+  if(!o.price&&!o.adv&&src.cur&&!o.cur){o.cur=src.cur}
+  if(got){save();render();toast("Контакти підставлено з попереднього замовлення",false)}else render()}
+
 function detailHtml(){
   var o=ord();if(!o){cur=null;return listHtml()}
   return '<button class="back" data-act="home">← '+(o.plan?"Проєкти":"Замовлення")+'</button>'
   +'<input id="o-name" class="o-name" data-f="name" value="'+esc(o.name)+'" placeholder="'+(o.plan?"Назва проєкту":"Назва замовлення")+'">'
   +statusHtml(o)+'<label class="fld"><span>Термін здачі</span><input id="o-due" type="date" data-f="due" value="'+esc(o.due)+'"></label>'
-  +'<label class="fld"><span>Нотатки</span><textarea id="o-notes" data-f="notes" rows="2">'+esc(o.notes)+'</textarea></label>'
+  +clientSection(o)
+  +'<label class="fld" style="margin-top:18px"><span>Нотатки</span><textarea id="o-notes" data-f="notes" rows="2">'+esc(o.notes)+'</textarea></label>'
   +section(o,"mat","Що замовити",matHint(o))
   +photoSection(o)
   +section(o,"part","Деталі виробу","галочка: зроблено")
@@ -821,9 +876,9 @@ document.addEventListener("click",function(e){
   var el=e.target.closest("[data-act]");if(!el||el.type==="checkbox")return;
   act(el.dataset.act,el.dataset)});
 document.addEventListener("change",function(e){
-  var el=e.target;if(el.type==="checkbox"&&el.dataset.act==="tog")tog(el.dataset.id);else if(el.id==="ph-in"||el.id==="ip-in")photoPick(el);else if(el.tagName==="SELECT"&&el.dataset.fi)setIdeaF(el);else if(el.id==="mv-metal")mvMetal=el.value;else if(el.id==="mv-type")mvType=el.value});
+  var el=e.target;if(el.type==="checkbox"&&el.dataset.act==="tog")tog(el.dataset.id);else if(el.id==="c-name"){var co=ord();if(co)clientFill(co)}else if(el.id==="ph-in"||el.id==="ip-in")photoPick(el);else if(el.tagName==="SELECT"&&el.dataset.fi)setIdeaF(el);else if(el.id==="mv-metal")mvMetal=el.value;else if(el.id==="mv-type")mvType=el.value});
 document.addEventListener("input",function(e){
-  var el=e.target,o;if(el.dataset&&el.dataset.f&&(o=ord())){o[el.dataset.f]=el.value;save()}else if(el.dataset&&el.dataset.fi&&ideaOpen)setIdeaF(el);else if(el.dataset&&el.dataset.fm&&mOpen){var mm=findIn(S.masters,mOpen);if(mm){mm[el.dataset.fm]=el.value;save()}}});
+  var el=e.target,o;if(el.dataset&&el.dataset.f&&(o=ord())){o[el.dataset.f]=el.value;save();if(/^(price|adv|cur)$/.test(el.dataset.f)){var bl=document.getElementById("bal");if(bl)bl.innerHTML=moneyLine(o)}if(/^(cphone|cinsta)$/.test(el.dataset.f)){var lk=document.getElementById("clinks");if(lk)lk.innerHTML=linksHtml(o)}}else if(el.dataset&&el.dataset.fi&&ideaOpen)setIdeaF(el);else if(el.dataset&&el.dataset.fm&&mOpen){var mm=findIn(S.masters,mOpen);if(mm){mm[el.dataset.fm]=el.value;save()}}});
 document.addEventListener("keydown",function(e){
   if(e.key!=="Enter")return;var id=e.target.id||"";
   if(id.indexOf("e-")===0){e.preventDefault();saveEdit()}
