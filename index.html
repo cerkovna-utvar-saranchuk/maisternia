@@ -233,7 +233,7 @@ var S, cur=null, tab="o", edit=null, resEdit=null, ideaOpen=null, ideaRub="", id
 function uid(){return Math.random().toString(36).slice(2,9)}
 function esc(s){return String(s==null?"":s).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
 function load(){try{var r=localStorage.getItem(KEY);if(r){var o=JSON.parse(r);if(o&&Array.isArray(o.orders))return o}}catch(e){}return null}
-var cloud={uid:null,busy:false,again:false,st:"pending",timer:null,late:null,code:null}, assetsCap=null, lbId=null, lbArmed=false;
+var cloud={ready:false,uid:null,busy:false,again:false,st:"pending",timer:null,late:null,code:null}, assetsCap=null, lbId=null, lbArmed=false;
 var PH={},PHQ={},BLANK="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
 function saveQuiet(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
 function save(){S.updated=Date.now();saveQuiet();queueSync()}
@@ -328,6 +328,7 @@ function backupHtml(){
   var h='<div class="bk"><button class="lnk" data-act="bk-toggle">'+(bkOpen?"Закрити копію даних":"Копія даних")+'</button>';
   if(bkOpen)h+='<textarea id="bk" rows="6" spellcheck="false">'+esc(JSON.stringify(S))+'</textarea><div class="row"><button class="btn" data-act="bk-copy">Скопіювати</button><button class="btn ghost" id="bk-restore" data-act="bk-restore">Відновити з поля</button></div><div id="bk-msg" class="mu sm">Скопіюйте текст і збережіть у Нотатки. Щоб відновити, вставте його в поле й натисніть «Відновити».</div>';
   if(bkOpen&&IMPORT_ON)h+='<div class="mu sm">Імпорт зі старої версії: замінить дані в застосунку.</div><input id="imp-pass" placeholder="Пароль імпорту" autocapitalize="off" autocomplete="off" spellcheck="false"><div class="row"><button class="btn ghost" data-act="imp-run">Імпортувати</button></div><div id="imp-msg" class="mu sm"></div>';
+  if(bkOpen)h+='<div class="mu sm">Ключ для дописування від Claude: '+(ikGet()?"збережено":"не введено")+'</div><input id="ik" placeholder="Ключ від Claude" autocapitalize="off" autocomplete="off" spellcheck="false"><div class="row"><button class="btn ghost" data-act="ik-save">Зберегти ключ</button></div>';
   if(bkOpen)h+='<button class="lnk bad" data-act="logout">Вийти з акаунта</button>';
   return h+'</div>'}
 function listHtml(){
@@ -543,7 +544,8 @@ function normS(){
 function applyRemote(s,u){
   S=s;normS();S.updated=u;saveQuiet();
   if(cur&&!ord())cur=null;edit=null;adding=null;resEdit=null;confirmDel=false;render()}
-function onRemote(r){
+function onRemote(r){onRemote0(r);if(!r.pending&&!(r.fromCache&&!r.exists)){cloud.ready=true;checkInbox()}}
+function onRemote0(r){
   if(r.pending)return;
   if(!r.exists){if(r.fromCache){setSync("net");return}if(!S.updated){S.updated=Date.now();saveQuiet()}pushNow();return}
   var d=r.data||{},u=+d.u||0;
@@ -562,7 +564,7 @@ function showLogin(on,msg){
   l.hidden=!on;var m=document.getElementById("lg-msg");if(m)m.textContent=msg||""}
 function onUser(u){
   if(!u){
-    cloud.uid=null;assetsCap=null;if(cloud.unsub){cloud.unsub();cloud.unsub=null}
+    cloud.uid=null;cloud.ready=false;assetsCap=null;if(cloud.unsub){cloud.unsub();cloud.unsub=null}
     setSync("off");showLogin(true);return}
   if(cloud.uid===u.uid)return;
   cloud.uid=u.uid;assetsCap=makeAssets();showLogin(false);setSync("pending");
@@ -583,6 +585,47 @@ function initCloud(){
   FB.onUser(onUser)}
 window.addEventListener("fb-ready",initCloud);
 window.addEventListener("fb-fail",function(){setSync("off")});
+
+/* дописування від Claude: зашифрований inbox.enc у репозиторії; ключ вводиться один раз і лишається на телефоні */
+var IK_KEY="maisternia-ik",inboxBusy=false;
+function ikGet(){try{return localStorage.getItem(IK_KEY)||""}catch(e){return ""}}
+function decryptBlob(buf,pass){
+  var b=new Uint8Array(buf),salt=b.slice(0,16),iv=b.slice(16,28),ct=b.slice(28);
+  return crypto.subtle.importKey("raw",new TextEncoder().encode(pass),"PBKDF2",false,["deriveKey"])
+    .then(function(k){return crypto.subtle.deriveKey({name:"PBKDF2",salt:salt,iterations:200000,hash:"SHA-256"},k,{name:"AES-GCM",length:256},false,["decrypt"])})
+    .then(function(key){return crypto.subtle.decrypt({name:"AES-GCM",iv:iv},key,ct)})
+    .then(function(pt){return JSON.parse(new TextDecoder().decode(pt))},function(){throw new Error("badkey")})}
+function inboxFind(name){
+  var n=String(name||"").toLowerCase();
+  for(var j=0;j<S.orders.length;j++){var o=S.orders[j];if(o.id===name||(n&&String(o.name||"").toLowerCase().indexOf(n)>=0))return o}
+  return null}
+function applyInbox(b){
+  var ops=b.ops||[],i=0,done=[],miss=[];
+  S.applied=S.applied||[];
+  return (function next(){
+    if(i>=ops.length){
+      S.applied.push(b.id);if(S.applied.length>40)S.applied=S.applied.slice(-40);
+      save();render();
+      toast(done.length?"Claude оновив: "+done.join(", "):"Нічого застосувати"+(miss.length?" (не знайшов: "+miss.join(", ")+")":""),false);return}
+    var op=ops[i++],o;
+    if(op.t==="photo"){
+      o=inboxFind(op.order);if(!o){miss.push(op.order);return next()}
+      var id=uid()+uid()+uid()+uid();
+      return FB.putPhoto(cloud.uid,id,op.data).then(function(){PH[id]=op.data;o.photos=o.photos||[];if(op.cover)o.photos.unshift(id);else o.photos.push(id);done.push("фото до «"+(o.name||"замовлення")+"»");return next()})}
+    if(op.t==="patch"){
+      o=inboxFind(op.order);if(!o){miss.push(op.order);return next()}
+      Object.keys(op.set||{}).forEach(function(k){o[k]=op.set[k]});done.push("зміни в «"+(o.name||"замовленні")+"»");return next()}
+    if(op.t==="add"){
+      var n=op.order||{};n.id=n.id||uid();if(!Array.isArray(n.items))n.items=[];S.orders.unshift(n);done.push("нове замовлення «"+(n.name||"")+"»");return next()}
+    return next()})()}
+function checkInbox(){
+  var k=ikGet();if(!k||!cloud.uid||!cloud.ready||inboxBusy)return;
+  inboxBusy=true;
+  fetch("inbox.enc?t="+Date.now(),{cache:"no-store"}).then(function(r){if(!r.ok)throw new Error("none");return r.arrayBuffer()})
+    .then(function(buf){return decryptBlob(buf,k)})
+    .then(function(b){if(!b||!b.id||(S.applied||[]).indexOf(b.id)>=0)return;return applyInbox(b)})
+    .catch(function(e){if(e&&e.message==="badkey")toast("Ключ від Claude не підходить. Введіть новий у «Копія даних».",false)})
+    .then(function(){inboxBusy=false})}
 
 /* одноразовий імпорт зі старої версії (зашифрований файл migration.enc) */
 var IMPORT_ON=false;
@@ -870,6 +913,7 @@ function act(a,d){
     case "login":doLogin();break;
     case "logout":if(window.FB)FB.logout();break;
     case "imp-run":impRun();break;
+    case "ik-save":var ikv=val("ik").trim();if(ikv){try{localStorage.setItem(IK_KEY,ikv)}catch(e){}toast("Ключ збережено",false);render();checkInbox()}break;
     case "undo":doUndo();break}}
 
 document.addEventListener("click",function(e){
@@ -894,6 +938,7 @@ document.addEventListener("keydown",function(e){
 
 render();
 if(window.FB)initCloud();
+document.addEventListener("visibilitychange",function(){if(!document.hidden)checkInbox()});
 if("serviceWorker" in navigator)window.addEventListener("load",function(){navigator.serviceWorker.register("sw.js").catch(function(){})});
 </script>
 <script type="module">
