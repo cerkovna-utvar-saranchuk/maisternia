@@ -679,7 +679,9 @@ function pushNow(){
   var snap=JSON.parse(JSON.stringify(S));
   FB.saveState(cloud.uid,{u:S.updated||0,s:snap}).then(function(){cloud.busy=false;setSync("ok");if(cloud.again){cloud.again=false;pushNow()}},function(e){cloud.busy=false;cloud.again=false;cloud.code=e&&e.code;setSync("err")})}
 function normS(){
-  if(!Array.isArray(S.orders))S.orders=[];if(!Array.isArray(S.stock))S.stock=[];if(!Array.isArray(S.res))S.res=defRes();if(!Array.isArray(S.ideas))S.ideas=[];if(!Array.isArray(S.rubrics))S.rubrics=[];S.orders.forEach(function(o){if(!o.t0)o.t0=Date.now()});normMasters()}
+  if(!Array.isArray(S.orders))S.orders=[];if(!Array.isArray(S.stock))S.stock=[];if(!Array.isArray(S.res))S.res=defRes();if(!Array.isArray(S.ideas))S.ideas=[];if(!Array.isArray(S.rubrics))S.rubrics=[];S.orders.forEach(function(o){if(!o.t0)o.t0=Date.now()});
+  if(!S.mig2){S.mig2=1;[["res-us","Рідина для ультразвуку","мл"],["res-bl","Чорніння","мл"]].forEach(function(x){var has=S.res.some(function(r){return r.id===x[0]||String(r.name).trim().toLowerCase()===x[1].toLowerCase()});if(!has)S.res.push({id:x[0],name:x[1],unit:x[2],val:"",min:""})});saveQuiet()}
+  normMasters()}
 function applyRemote(s,u){
   S=s;normS();S.updated=u;saveQuiet();
   if(cur&&!ord())cur=null;edit=null;adding=null;resEdit=null;confirmDel=false;render()}
