@@ -134,6 +134,16 @@ textarea{resize:vertical;min-height:64px}
 .opane>.sec:first-child{margin-top:6px}
 @media (prefers-reduced-motion:no-preference){.opane{animation:opin .18s ease-out}@keyframes opin{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}}
 
+/* індикатор радіації */
+.rad{--rc:#7fa36a;flex:none;display:inline-grid;place-items:center;width:26px;height:26px;color:var(--rc);filter:drop-shadow(0 0 4px var(--rc))}
+.rad.y{--rc:#e0c040}.rad.r{--rc:#d0523a}
+.rad svg{display:block}
+.oc-ind{align-items:center}.oc-ind .rad{margin-left:auto}.oc-ind .rad+.oc-pc{margin-left:6px}
+.of-ind .rad{margin-right:8px}
+@media (prefers-reduced-motion:no-preference){
+.rad{animation:radp 3s ease-in-out infinite}.rad.y{animation-duration:1.8s}.rad.r{animation-duration:1s}
+@keyframes radp{0%,100%{opacity:.55;transform:scale(.92)}50%{opacity:1;transform:scale(1.08)}}}
+
 /* таблиці */
 .sec{margin-top:22px}
 .sh{display:flex;align-items:baseline;justify-content:space-between;gap:4px 12px;flex-wrap:wrap;margin-bottom:8px}
@@ -377,7 +387,7 @@ function card(o){
   for(var k=0;k<10;k++)sg+='<i'+(k<on?' class="on"':'')+'></i>';
   return '<button class="ocard'+ocCls(o)+'" data-act="open" data-id="'+o.id+'"><div class="oc-top">'+thumb(o)+'<span class="oc-name">'+esc(o.name||"Без назви")+'</span><span class="pg">'+ocPills(o)+'</span></div>'+clientLine(o)
    +'<div class="oc-seg" role="img" aria-label="Виконано '+p+'%">'+sg+'</div>'
-   +'<div class="oc-ind"><span>'+(t?'Позиції <b>'+d+'/'+t+'</b>':'Позицій ще немає')+'</span>'+(w?'<span>До замовлення <b>'+w+'</b></span>':'')+(t?'<span class="oc-pc">'+p+'%</span>':'')+'</div></button>'}
+   +'<div class="oc-ind"><span>'+(t?'Позиції <b>'+d+'/'+t+'</b>':'Позицій ще немає')+'</span>'+(w?'<span>До замовлення <b>'+w+'</b></span>':'')+radHtml(o)+(t?'<span class="oc-pc">'+p+'%</span>':'')+'</div></button>'}
 function backupHtml(){
   var h='<div class="bk"><button class="lnk" data-act="bk-toggle">'+(bkOpen?"Закрити копію даних":"Копія даних")+'</button>';
   if(bkOpen)h+='<textarea id="bk" rows="6" spellcheck="false">'+esc(JSON.stringify(S))+'</textarea><div class="row"><button class="btn" data-act="bk-copy">Скопіювати</button><button class="btn ghost" id="bk-restore" data-act="bk-restore">Відновити з поля</button></div><div id="bk-msg" class="mu sm">Скопіюйте текст і збережіть у Нотатки. Щоб відновити, вставте його в поле й натисніть «Відновити».</div>';
@@ -385,6 +395,19 @@ function backupHtml(){
   if(bkOpen)h+='<div class="mu sm">Ключ для дописування від Claude: '+(ikGet()?"збережено":"не введено")+'</div><input id="ik" placeholder="Ключ від Claude" autocapitalize="off" autocomplete="off" spellcheck="false"><div class="row"><button class="btn ghost" data-act="ik-save">Зберегти ключ</button></div>';
   if(bkOpen)h+='<button class="lnk bad" data-act="logout">Вийти з акаунта</button>';
   return h+'</div>'}
+/* радіація: скільки часу до видачі ще лишилось (від створення замовлення до терміну) */
+var RAD_SVG='<svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path fill="currentColor" d="M6.75 2.91A10.5 10.5 0 0 1 17.25 2.91L14.00 8.54A4 4 0 0 0 10.00 8.54ZM22.50 12.00A10.5 10.5 0 0 1 17.25 21.09L14.00 15.46A4 4 0 0 0 16.00 12.00ZM6.75 21.09A10.5 10.5 0 0 1 1.50 12.00L8.00 12.00A4 4 0 0 0 10.00 15.46Z"/><circle cx="12" cy="12" r="2.1" fill="currentColor"/></svg>';
+function radState(o){
+  if(!o||o.plan||!stActive(o)||!o.due)return null;
+  var p=o.due.split("-");if(p.length<3)return null;
+  var end=new Date(+p[0],+p[1]-1,+p[2]+1).getTime(),now=Date.now(),t0=o.t0||now,tot=end-t0;
+  var f=(tot<=0||end<=now)?0:Math.max(0,Math.min(1,(end-now)/tot));
+  return {f:f,c:f>0.2?"g":f>0.1?"y":"r",pct:Math.round(f*100)}}
+function radHtml(o){
+  var r=radState(o);if(!r)return"";
+  var t="Часу до видачі лишилось "+r.pct+"%";
+  return '<span class="rad '+r.c+'" role="img" aria-label="'+t+'" title="'+t+'">'+RAD_SVG+'</span>'}
+function dueInd(o){return radHtml(o)+duePill(o.due)}
 /* системна панель */
 function sysState(){return navigator.onLine===false?{t:"OFFLINE",c:"off"}:{t:"ONLINE",c:"on"}}
 function sysbarHtml(){var st=sysState();return '<div class="sysbar" aria-label="Статус системи"><span class="sb-l"><i class="sb-dot '+st.c+'" id="sb-dot"></i>SARANCHUK OS / TERMINAL 01</span><span class="sb-r" id="sb-st">STATUS: '+st.t+'</span></div>'}
@@ -479,7 +502,7 @@ function detailHtml(){
   +'<div class="ofile"><div class="of-sys"><span class="of-id"><i class="sb-dot on"></i>SARANCHUK OS / '+(o.plan?"PROJECT":"ORDER")+' FILE</span>'+st+'</div>'
   +'<input id="o-name" class="o-name" data-f="name" value="'+esc(o.name)+'" placeholder="'+(o.plan?"Назва проєкту":"Назва замовлення")+'">'
   +statusHtml(o)
-  +'<div class="of-due"><label class="fld"><span>Термін здачі</span><input id="o-due" type="date" data-f="due" value="'+esc(o.due)+'"></label><span id="due-ind" class="of-ind">'+duePill(o.due)+'</span></div></div>'
+  +'<div class="of-due"><label class="fld"><span>Термін здачі</span><input id="o-due" type="date" data-f="due" value="'+esc(o.due)+'"></label><span id="due-ind" class="of-ind">'+dueInd(o)+'</span></div></div>'
   +oTabsHtml(o)
   +pane("d",clientSection(o)
     +'<label class="fld" style="margin-top:18px"><span>Нотатки</span><textarea id="o-notes" data-f="notes" rows="2">'+esc(o.notes)+'</textarea></label>'
@@ -623,7 +646,7 @@ function pushNow(){
   var snap=JSON.parse(JSON.stringify(S));
   FB.saveState(cloud.uid,{u:S.updated||0,s:snap}).then(function(){cloud.busy=false;setSync("ok");if(cloud.again){cloud.again=false;pushNow()}},function(e){cloud.busy=false;cloud.again=false;cloud.code=e&&e.code;setSync("err")})}
 function normS(){
-  if(!Array.isArray(S.orders))S.orders=[];if(!Array.isArray(S.stock))S.stock=[];if(!Array.isArray(S.res))S.res=defRes();if(!Array.isArray(S.ideas))S.ideas=[];if(!Array.isArray(S.rubrics))S.rubrics=[];normMasters()}
+  if(!Array.isArray(S.orders))S.orders=[];if(!Array.isArray(S.stock))S.stock=[];if(!Array.isArray(S.res))S.res=defRes();if(!Array.isArray(S.ideas))S.ideas=[];if(!Array.isArray(S.rubrics))S.rubrics=[];S.orders.forEach(function(o){if(!o.t0)o.t0=Date.now()});normMasters()}
 function applyRemote(s,u){
   S=s;normS();S.updated=u;saveQuiet();
   if(cur&&!ord())cur=null;edit=null;adding=null;resEdit=null;confirmDel=false;render()}
@@ -925,7 +948,7 @@ function addSave(kind){
   else{b.need=(kind==="need");S.stock.push(b)}
   save();render();foc("a-name")}
 function newO(){
-  var o={id:uid(),name:"",due:"",notes:"",items:[],plan:tab==="p"};if(!o.plan)o.status="sketch";S.orders.unshift(o);save();
+  var o={id:uid(),name:"",due:"",notes:"",items:[],plan:tab==="p",t0:Date.now()};if(!o.plan)o.status="sketch";S.orders.unshift(o);save();
   cur=o.id;edit=null;adding=null;confirmDel=false;render();scrollTo(0,0);foc("o-name")}
 function bkCopy(){
   var ta=document.getElementById("bk"),msg=document.getElementById("bk-msg");
@@ -1007,7 +1030,7 @@ document.addEventListener("click",function(e){
 document.addEventListener("change",function(e){
   var el=e.target;if(el.type==="checkbox"&&el.dataset.act==="tog")tog(el.dataset.id);else if(el.id==="c-name"){var co=ord();if(co)clientFill(co)}else if(el.id==="ph-in"||el.id==="ip-in")photoPick(el);else if(el.tagName==="SELECT"&&el.dataset.fi)setIdeaF(el);else if(el.id==="mv-metal")mvMetal=el.value;else if(el.id==="mv-type")mvType=el.value});
 document.addEventListener("input",function(e){
-  var el=e.target,o;if(el.dataset&&el.dataset.f&&(o=ord())){o[el.dataset.f]=el.value;save();if(el.dataset.f==="due"){var di=document.getElementById("due-ind");if(di)di.innerHTML=duePill(o.due)}if(/^(price|adv|cur)$/.test(el.dataset.f)){var bl=document.getElementById("bal");if(bl)bl.innerHTML=moneyLine(o)}if(/^(cphone|cinsta)$/.test(el.dataset.f)){var lk=document.getElementById("clinks");if(lk)lk.innerHTML=linksHtml(o)}}else if(el.dataset&&el.dataset.fi&&ideaOpen)setIdeaF(el);else if(el.dataset&&el.dataset.fm&&mOpen){var mm=findIn(S.masters,mOpen);if(mm){mm[el.dataset.fm]=el.value;save()}}});
+  var el=e.target,o;if(el.dataset&&el.dataset.f&&(o=ord())){o[el.dataset.f]=el.value;save();if(el.dataset.f==="due"){var di=document.getElementById("due-ind");if(di)di.innerHTML=dueInd(o)}if(/^(price|adv|cur)$/.test(el.dataset.f)){var bl=document.getElementById("bal");if(bl)bl.innerHTML=moneyLine(o)}if(/^(cphone|cinsta)$/.test(el.dataset.f)){var lk=document.getElementById("clinks");if(lk)lk.innerHTML=linksHtml(o)}}else if(el.dataset&&el.dataset.fi&&ideaOpen)setIdeaF(el);else if(el.dataset&&el.dataset.fm&&mOpen){var mm=findIn(S.masters,mOpen);if(mm){mm[el.dataset.fm]=el.value;save()}}});
 document.addEventListener("keydown",function(e){
   if(e.key!=="Enter")return;var id=e.target.id||"";
   if(id.indexOf("e-")===0){e.preventDefault();saveEdit()}
