@@ -581,7 +581,7 @@ function num(x){var n=parseFloat(String(x).replace(",","."));return isNaN(n)?nul
 function defRes(){return [
   {id:uid(),name:"Срібло",unit:"г",val:"",min:""},
   {id:uid(),name:"Золото",unit:"г",val:"",min:""},
-  {id:uid(),name:"Флюс",unit:"мл",val:"",min:""},
+  {id:uid(),name:"Флюс для пайки",unit:"мл",val:"",min:""},
   {id:uid(),name:"Припій",unit:"г",val:"",min:""},
   {id:uid(),name:"Газ у балоні",unit:"%",val:"",min:"20"}]}
 function isLow(r){var v=num(r.val),m=num(r.min);return v!==null&&m!==null&&v<=m}
@@ -716,6 +716,7 @@ function pushNow(){
 function normS(){
   if(!Array.isArray(S.orders))S.orders=[];if(!Array.isArray(S.stock))S.stock=[];if(!Array.isArray(S.res))S.res=defRes();if(!Array.isArray(S.ideas))S.ideas=[];if(!Array.isArray(S.rubrics))S.rubrics=[];S.orders.forEach(function(o){if(!o.t0)o.t0=Date.now()});
   if(!S.mig2){S.mig2=1;[["res-us","Рідина для ультразвуку","мл"],["res-bl","Чорніння","мл"]].forEach(function(x){var has=S.res.some(function(r){return r.id===x[0]||String(r.name).trim().toLowerCase()===x[1].toLowerCase()});if(!has)S.res.push({id:x[0],name:x[1],unit:x[2],val:"",min:""})});saveQuiet()}
+  if(!S.mig3){S.mig3=1;S.res.forEach(function(r){if(String(r.name).trim().toLowerCase()==='флюс')r.name='Флюс для пайки'});saveQuiet()}
   normMasters()}
 function applyRemote(s,u){
   S=s;normS();S.updated=u;saveQuiet();
