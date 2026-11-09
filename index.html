@@ -353,6 +353,9 @@ label.addb{text-align:center}
 .earn .eg div{min-width:0}.earn .eg span{display:block;font-size:12px;color:#929785}
 .earn .eg b{display:block;color:#D18B27;font-size:15px;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
 .earn .en{margin-top:8px;font-size:12px;color:#929785}
+.earn .addb{margin-top:10px;width:100%}
+.qa{margin-top:10px}
+.pf{display:flex;flex-direction:column;gap:4px;align-items:flex-start}.pf b{color:#D18B27}.pf .due b{color:#A84E3D}
 </style>
 </head>
 <body>
@@ -500,11 +503,20 @@ function earnCalc(){
   S.orders.forEach(function(o){
     if(o.plan)return;var k=stOf(o);if(k!=="ready"&&k!=="given")return;
     if(!o.doneAt){nodate++;return}
-    var d=String(o.doneAt),oy=+d.slice(0,4),om=+d.slice(5,7)-1,pr=num(o.price);if(pr===null||!(oy>0))return;
-    var c=num(o.cost);if(c===null)nocost++;var g=r2(pr-(c||0)),cur=o.cur||"₴";
+    var d=String(o.doneAt),oy=+d.slice(0,4),om=+d.slice(5,7)-1,pr=effPrice(o);if(pr===null||!(oy>0))return;
+    if(factCost(o)===null&&num(o.cost)===null)nocost++;var g=r2(pr-effCost(o)),cur=o.cur||"₴";
     function add(b){b[cur]=r2((b[cur]||0)+g)}
     if(oy===y){add(res.y);if(Math.floor(om/3)===q)add(res.q);if(om===m)add(res.m)}});
   return {r:res,nocost:nocost,nodate:nodate}}
+var qaOpen=false;
+function qaHtml(){
+  if(!qaOpen)return '<button class="addb" data-act="qa-open">+ Завершене замовлення</button>';
+  return '<div class="qa"><div class="ef"><input class="full" id="qa-name" placeholder="Назва виробу"><input id="qa-price" placeholder="Ціна" inputmode="decimal"><input id="qa-cost" placeholder="Витрати" inputmode="decimal"><input id="qa-date" type="date" value="'+today()+'"><select id="qa-cur">'+CURS.map(function(c){return '<option>'+c+'</option>'}).join("")+'</select><button class="btn" data-act="qa-save">Додати</button><button class="btn ghost" data-act="qa-cancel">Скасувати</button></div></div>'}
+function qaSave(){
+  var nm=val("qa-name").trim(),pr=val("qa-price").trim().replace(",","."),d=val("qa-date");
+  if(!nm){foc("qa-name");return}if(num(pr)===null){foc("qa-price");return}if(!d){foc("qa-date");return}
+  S.orders.unshift({id:uid(),name:nm,due:"",notes:"",items:[],plan:false,t0:Date.now(),status:"given",price:pr,cost:val("qa-cost").trim().replace(",","."),cur:val("qa-cur")||"₴",doneAt:d});
+  qaOpen=false;save();render();toast("Додано: "+nm,false)}
 function earnVal(b){var ks=Object.keys(b);if(!ks.length)return"0 ₴";return ks.map(function(c){return b[c].toLocaleString("uk-UA")+" "+c}).join(" · ")}
 function earnHtml(){
   var e=earnCalc(),M=["січень","лютий","березень","квітень","травень","червень","липень","серпень","вересень","жовтень","листопад","грудень"],t=new Date(),q=Math.floor(t.getMonth()/3)+1;
@@ -512,7 +524,7 @@ function earnHtml(){
   return '<section class="earn" aria-label="Заробіток"><div class="en-h">ЗАРОБІТОК · ціна мінус витрати</div><div class="eg">'
    +'<div><span>'+M[t.getMonth()]+'</span><b>'+earnVal(e.r.m)+'</b></div>'
    +'<div><span>'+q+' квартал</span><b>'+earnVal(e.r.q)+'</b></div>'
-   +'<div><span>'+t.getFullYear()+' рік</span><b>'+earnVal(e.r.y)+'</b></div></div>'+note+'</section>'}
+   +'<div><span>'+t.getFullYear()+' рік</span><b>'+earnVal(e.r.y)+'</b></div></div>'+note+qaHtml()+'</section>'}
 function listHtml(){
   var plan=tab==="p",arr0=S.orders.filter(function(o){return !!o.plan===plan}),arr=plan?arr0:sortOrders(arr0),n=arr.length,near=null;
   arr.forEach(function(o){if(!plan&&!stActive(o))return;var d=daysLeft(o.due);if(d!==null&&d>=0&&(near===null||d<near))near=d});
@@ -542,6 +554,22 @@ function clientNames(){var seen={},out=[];S.orders.forEach(function(o){var n=Str
 function sameClient(o){var k=cKey(o);if(!k)return[];return S.orders.filter(function(x){return x!==o&&!x.plan&&cKey(x)===k})}
 function telHref(v){var d=String(v||"").replace(/[^\d+]/g,"");return d?"tel:"+d:""}
 function instaUrl(v){v=String(v||"").trim();if(!v)return"";if(/^https?:\/\//i.test(v))return v;v=v.replace(/^@/,"").replace(/^(www\.)?instagram\.com\//i,"").replace(/[\/?#].*$/,"");return v?"https://instagram.com/"+encodeURIComponent(v):""}
+function effPrice(o){var f=num(o.fprice);return f!==null?f:num(o.price)}
+function matCost(o){var t=0,miss=0;(o.log||[]).forEach(function(e){var r=findIn(S.res,e.rid),p=num(e.p!==undefined&&e.p!==""?e.p:(r?r.price:""));if(p!==null&&p>0)t+=e.amt*p;else miss++});return {t:r2(t),miss:miss,n:(o.log||[]).length}}
+function factCost(o){var m=matCost(o),f=num(o.fcost);if(f===null&&!m.n)return null;return r2(m.t+(f||0))}
+function effCost(o){var f=factCost(o);return f!==null?f:(num(o.cost)||0)}
+function pfLine(o){
+  var c=esc(o.cur||"₴"),pl=num(o.price),pc=num(o.cost)||0,m=matCost(o),fc=factCost(o),h="";
+  if(pl!==null)h+='<span>План: '+r2(pl)+' − '+r2(pc)+' = <b>'+r2(pl-pc)+' '+c+'</b></span>';
+  if(num(o.fprice)!==null||fc!==null){var ep=effPrice(o),ec=effCost(o);if(ep!==null){var fe=r2(ep-ec);h+='<span>Факт: '+r2(ep)+' − '+r2(ec)+' = <b>'+fe+' '+c+'</b></span>';if(pl!==null){var df=r2(fe-(pl-pc));h+='<span class="'+(df<0?"due":"")+'">Різниця: <b>'+(df>0?"+":"")+df+' '+c+'</b></span>'}}}
+  if(m.n)h+='<span class="mu">Метали зі списань: '+m.t+' '+c+(m.miss?' · без ціни: '+m.miss:'')+'</span>';
+  return h}
+function calcPick(){var h=(S.calc&&Array.isArray(S.calc.hlist))?S.calc.hlist:[];if(!h.length)return"";
+  return '<div class="cl2"><select id="calc-pick">'+h.map(function(it){var n=(it.order&&it.order.name)||"Без назви";return '<option value="'+esc(it.id)+'">'+esc(n)+' · '+it.price+' ₴</option>'}).join("")+'</select><button class="btn ghost" data-act="calc-pull">Підставити з розрахунку</button></div>'}
+function calcPull(){
+  var o=ord(),id=val("calc-pick");if(!o)return;var h=(S.calc&&S.calc.hlist)||[],it=null;h.forEach(function(x){if(x.id===id)it=x});if(!it)return;
+  var cost=it.floor;try{var st=Object.assign({},CALC.DEFAULTS,S.calc.settings||{}),r=CALC.compute(st,it.order||{});if(it.order&&it.order.who!=="master"&&isFinite(r.labor))cost=it.floor-r.labor}catch(e){}
+  o.price=String(it.price);o.cost=String(Math.round(cost));o.cur="₴";save();render();toast("Підставлено з розрахунку: ціна й витрати (без твоєї праці)",false)}
 function moneyLine(o){
   var pr=num(o.price),ad=num(o.adv)||0,c=esc(o.cur||"₴");
   if(pr===null||pr<=0)return ad>0?'<span>Аванс '+r2(ad)+' '+c+'</span>':'<span>Ціну ще не вказано</span>';
@@ -561,12 +589,15 @@ function clientSection(o){
    +'<label class="fld"><span>Телефон</span><input data-f="cphone" type="tel" inputmode="tel" value="'+esc(o.cphone)+'" placeholder="+380…"></label></div>'
    +'<label class="fld"><span>Instagram</span><input data-f="cinsta" value="'+esc(o.cinsta)+'" placeholder="@нік або посилання" autocapitalize="off" autocorrect="off"></label>'
    +'<div class="links" id="clinks">'+linksHtml(o)+'</div>'
-   +'<div class="cl2"><label class="fld"><span>Ціна</span><input data-f="price" inputmode="decimal" value="'+esc(o.price)+'" placeholder="0"></label>'
+   +calcPick()
+   +'<div class="cl2"><label class="fld"><span>Ціна (план)</span><input data-f="price" inputmode="decimal" value="'+esc(o.price)+'" placeholder="0"></label>'
    +'<label class="fld"><span>Аванс</span><input data-f="adv" inputmode="decimal" value="'+esc(o.adv)+'" placeholder="0"></label></div>'
    +'<label class="fld"><span>Валюта</span><select data-f="cur">'+CURS.map(function(c){return '<option'+((o.cur||"₴")===c?" selected":"")+'>'+c+'</option>'}).join("")+'</select></label>'
-   +'<div class="cl2"><label class="fld"><span>Витрати на виріб</span><input data-f="cost" inputmode="decimal" value="'+esc(o.cost)+'" placeholder="0"></label>'
+   +'<div class="cl2"><label class="fld"><span>Витрати (план)</span><input data-f="cost" inputmode="decimal" value="'+esc(o.cost)+'" placeholder="0"></label>'
    +'<label class="fld"><span>Дата завершення</span><input data-f="doneAt" type="date" value="'+esc(o.doneAt)+'"></label></div>'
-   +'<div class="bal" id="bal">'+moneyLine(o)+'</div>'
+   +'<div class="cl2"><label class="fld"><span>Ціна (факт)</span><input data-f="fprice" inputmode="decimal" value="'+esc(o.fprice)+'" placeholder="якщо змінилась"></label>'
+   +'<label class="fld"><span>Інші витрати (факт)</span><input data-f="fcost" inputmode="decimal" value="'+esc(o.fcost)+'" placeholder="камені, інше"></label></div>'
+   +'<div class="bal" id="bal">'+moneyLine(o)+'</div><div class="bal pf" id="pf">'+pfLine(o)+'</div>'
    +'<label class="fld"><span>Побажання клієнта</span><textarea data-f="wish" rows="2" placeholder="Довжина ланцюжка, розмір, гравіювання…">'+esc(o.wish)+'</textarea></label>';
   if(prev.length)h+='<div class="sh" style="margin-top:6px"><h2>Його замовлення</h2><span class="hint">'+prev.length+'</span></div>'+prev.map(function(x){var s=stInfo(x);return '<button class="prev" data-act="open" data-id="'+x.id+'"><span class="nm">'+esc(x.name||"Без назви")+'</span><span class="pill '+s.c+'">'+s.n+'</span></button>'}).join("");
   return h+'</section>'}
@@ -701,7 +732,7 @@ function logAdd(){
   var r=findIn(S.res,val("l-res")),amt=num(val("l-amt"));
   if(!r||amt===null||amt<=0){foc("l-amt");return}
   o.log=o.log||[];
-  o.log.push({id:uid(),d:today(),rid:r.id,name:r.name,unit:r.unit,amt:amt,note:val("l-note").trim()});
+  o.log.push({id:uid(),d:today(),rid:r.id,name:r.name,unit:r.unit,amt:amt,note:val("l-note").trim(),p:r.price||""});
   var v=num(r.val);if(v!==null)r.val=String(Math.max(0,Math.round((v-amt)*100)/100));
   save();render();toast("Списано: "+r.name+" "+amt+(r.unit?" "+r.unit:"")+(v!==null?". Залишок: "+r.val+(r.unit?" "+r.unit:""):""),false)}
 function logDel(id){
@@ -1131,7 +1162,7 @@ function act(a,d){
     case "rub-del":var rid0=ideaRub;S.rubrics=S.rubrics.filter(function(r){return r.id!==rid0});S.ideas.forEach(function(x){if(x.rid===rid0)x.rid=""});ideaRub="";rubEdit=false;save();render();toast("Рубрику видалено, ідеї лишилися в загальній папці",false);break;
     case "idea-plan":ideaPlan(d.id);break;
     case "to-order":var tp=ord();if(tp){tp.plan=false;tp.status="sketch";tab="o";save();render();toast("Проєкт перенесено в замовлення",false)}break;
-    case "log-add":logAdd();break;
+    case "log-add":logAdd();break;case "calc-pull":calcPull();break;case "qa-open":qaOpen=true;render();foc("qa-name");break;case "qa-cancel":qaOpen=false;render();break;case "qa-save":qaSave();break;
     case "log-del":logDel(d.id);break;
     case "lb-open":lbId=d.id;lbArmed=false;lbShow();break;
     case "lb-close":lbId=null;lbArmed=false;lbShow();break;
@@ -1164,7 +1195,7 @@ document.addEventListener("click",function(e){
 document.addEventListener("change",function(e){
   var el=e.target;if(el.type==="checkbox"&&el.dataset.act==="tog")tog(el.dataset.id);else if(el.id==="c-name"){var co=ord();if(co)clientFill(co)}else if(el.id==="ph-in"||el.id==="ip-in")photoPick(el);else if(el.tagName==="SELECT"&&el.dataset.fi)setIdeaF(el);else if(el.id==="mv-metal")mvMetal=el.value;else if(el.id==="mv-type")mvType=el.value});
 document.addEventListener("input",function(e){
-  var el=e.target,o;if(el.dataset&&el.dataset.f&&(o=ord())){o[el.dataset.f]=el.value;save();if(el.dataset.f==="due"){var di=document.getElementById("due-ind");if(di)di.innerHTML=dueInd(o)}if(/^(price|adv|cur)$/.test(el.dataset.f)){var bl=document.getElementById("bal");if(bl)bl.innerHTML=moneyLine(o)}if(/^(cphone|cinsta)$/.test(el.dataset.f)){var lk=document.getElementById("clinks");if(lk)lk.innerHTML=linksHtml(o)}}else if(el.dataset&&el.dataset.fi&&ideaOpen)setIdeaF(el);else if(el.dataset&&el.dataset.fm&&mOpen){var mm=findIn(S.masters,mOpen);if(mm){mm[el.dataset.fm]=el.value;save()}}});
+  var el=e.target,o;if(el.dataset&&el.dataset.f&&(o=ord())){o[el.dataset.f]=el.value;save();if(el.dataset.f==="due"){var di=document.getElementById("due-ind");if(di)di.innerHTML=dueInd(o)}if(/^(price|cost|fprice|fcost)$/.test(el.dataset.f)){var pfe=document.getElementById("pf");if(pfe)pfe.innerHTML=pfLine(o)}if(/^(price|adv|cur)$/.test(el.dataset.f)){var bl=document.getElementById("bal");if(bl)bl.innerHTML=moneyLine(o)}if(/^(cphone|cinsta)$/.test(el.dataset.f)){var lk=document.getElementById("clinks");if(lk)lk.innerHTML=linksHtml(o)}}else if(el.dataset&&el.dataset.fi&&ideaOpen)setIdeaF(el);else if(el.dataset&&el.dataset.fm&&mOpen){var mm=findIn(S.masters,mOpen);if(mm){mm[el.dataset.fm]=el.value;save()}}});
 document.addEventListener("keydown",function(e){
   if(e.key!=="Enter")return;var id=e.target.id||"";
   if(id.indexOf("e-")===0){e.preventDefault();saveEdit()}
