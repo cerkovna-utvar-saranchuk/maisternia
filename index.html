@@ -352,7 +352,7 @@ label.addb{text-align:center}
 .earn .eg{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
 .earn .eg div{min-width:0}.earn .eg span{display:block;font-size:12px;color:#929785}
 .earn .eg b{display:block;color:#D18B27;font-size:15px;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
-.earn .en{margin-top:8px;font-size:12px;color:#929785}
+.earn .en{margin-top:8px;font-size:12px;color:#929785}.earn .eg small{display:block;font-size:11px;color:#929785;margin-top:2px}
 .earn .addb{margin-top:10px;width:100%}
 .qa{margin-top:10px}.qa-earn{margin:10px 0 6px;font-size:15px;color:#D8D4BD}.qa-earn b{color:#D18B27;font-size:18px}
 details.det{margin:10px 0;padding:10px 12px;border:1px solid #3a3c2c;border-radius:8px;background:#161912}details.det summary{cursor:pointer;color:#929785;font-size:13px;margin-bottom:0}details.det[open] summary{margin-bottom:10px}details.det .hint{font-size:11px;margin-left:6px}
@@ -539,14 +539,20 @@ function qaSave(withPhoto){
   S.orders.unshift(o);qaOpen=false;save();
   if(withPhoto){cur=o.id;otab="f";otabFor=o.id;edit=null;adding=null;confirmDel=false;render();scrollTo(0,0);toast("Додано. Додайте фото виробу",false)}
   else{render();toast("Додано: "+nm,false)}}
-function earnVal(b){var ks=Object.keys(b);if(!ks.length)return"0 ₴";return ks.map(function(c){return b[c].toLocaleString("uk-UA")+" "+c}).join(" · ")}
+function fxUah(){var e=num(S.calc&&S.calc.settings&&S.calc.settings.eur);return e!==null&&e>0?e:CALC.DEFAULTS.eur}
+function fxGet(k){var v=num(S.fx&&S.fx[k]);return v!==null&&v>0?v:null}
+/* перерахунок в євро: ₴ за курсом калькулятора, $ і lei за курсами, які задає користувач (скільки $ або lei за 1 €) */
+function toEur(b){var eur=0,miss=[];Object.keys(b).forEach(function(c){var v=b[c];
+  if(c==="€")eur+=v;else if(c==="₴")eur+=v/fxUah();else if(c==="$"){var r=fxGet("usd");if(r)eur+=v/r;else miss.push(c)}else if(c==="lei"){var r2_=fxGet("lei");if(r2_)eur+=v/r2_;else miss.push(c)}else miss.push(c)});
+  return {eur:Math.round(eur),miss:miss}}
+function earnGrid(e){var t=new Date(),M=["січень","лютий","березень","квітень","травень","червень","липень","серпень","вересень","жовтень","листопад","грудень"],q=Math.floor(t.getMonth()/3)+1;
+  function c(l,b){var x=toEur(b);return '<div><span>'+l+'</span><b>'+x.eur.toLocaleString("uk-UA")+' €</b><small>≈ '+Math.round(x.eur*fxUah()).toLocaleString("uk-UA")+' ₴'+(x.miss.length?' · без курсу: '+x.miss.join(", "):'')+'</small></div>'}
+  return c(M[t.getMonth()],e.r.m)+c(q+" квартал",e.r.q)+c(t.getFullYear()+" рік",e.r.y)}
+function fxHtml(){var f=S.fx||{};return '<details class="det"><summary>Курси <span class="hint">1 € = '+fxUah()+' ₴ (з налаштувань калькулятора)</span></summary><div class="ef"><label class="fld"><span>$ за 1 €</span><input data-fx="usd" inputmode="decimal" value="'+esc(f.usd||"")+'" placeholder="напр. 1.1"></label><label class="fld"><span>lei за 1 €</span><input data-fx="lei" inputmode="decimal" value="'+esc(f.lei||"")+'" placeholder="напр. 5"></label></div><div class="en">Усі замовлення рахуються за поточним курсом. Якщо замовлення в $ або lei без курсу, їх не видно в сумі.</div></details>'}
 function earnHtml(){
-  var e=earnCalc(),M=["січень","лютий","березень","квітень","травень","червень","липень","серпень","вересень","жовтень","листопад","грудень"],t=new Date(),q=Math.floor(t.getMonth()/3)+1;
+  var e=earnCalc();
   var note=(e.nodate?'<div class="en">Завершених без дати: '+e.nodate+' — відкрийте їх і вкажіть «Дата завершення»</div>':"")+(e.nocost?'<div class="en">Без витрат: '+e.nocost+' — для них заробіток = повна ціна</div>':"");
-  return '<section class="earn" aria-label="Заробіток"><div class="en-h">ЗАРОБІТОК · ціна мінус витрати</div><div class="eg">'
-   +'<div><span>'+M[t.getMonth()]+'</span><b>'+earnVal(e.r.m)+'</b></div>'
-   +'<div><span>'+q+' квартал</span><b>'+earnVal(e.r.q)+'</b></div>'
-   +'<div><span>'+t.getFullYear()+' рік</span><b>'+earnVal(e.r.y)+'</b></div></div>'+note+qaHtml()+'</section>'}
+  return '<section class="earn" aria-label="Заробіток"><div class="en-h">ЗАРОБІТОК · ціна мінус витрати</div><div class="eg" id="eg">'+earnGrid(e)+'</div>'+note+fxHtml()+qaHtml()+'</section>'}
 function listHtml(){
   var plan=tab==="p",arr0=S.orders.filter(function(o){return !!o.plan===plan}),arr=plan?arr0:sortOrders(arr0),n=arr.length,near=null;
   arr.forEach(function(o){if(!plan&&!stActive(o))return;var d=daysLeft(o.due);if(d!==null&&d>=0&&(near===null||d<near))near=d});
@@ -1223,7 +1229,7 @@ document.addEventListener("click",function(e){
 document.addEventListener("change",function(e){
   var el=e.target;if(el.type==="checkbox"&&el.dataset.act==="tog")tog(el.dataset.id);else if(el.id==="c-name"){var co=ord();if(co)clientFill(co)}else if(el.id==="ph-in"||el.id==="ip-in")photoPick(el);else if(el.tagName==="SELECT"&&el.dataset.fi)setIdeaF(el);else if(el.id==="mv-metal")mvMetal=el.value;else if(el.id==="mv-type")mvType=el.value});
 document.addEventListener("input",function(e){
-  var el=e.target,o;if(el.id&&el.id.slice(0,3)==="qa-")qaCalc();if(el.dataset&&el.dataset.f&&(o=ord())){o[el.dataset.f]=el.value;save();if(el.dataset.f==="due"){var di=document.getElementById("due-ind");if(di)di.innerHTML=dueInd(o)}if(/^(price|cost|fprice|fcost)$/.test(el.dataset.f)){var pfe=document.getElementById("pf");if(pfe)pfe.innerHTML=pfLine(o)}if(/^(price|adv|cur)$/.test(el.dataset.f)){var bl=document.getElementById("bal");if(bl)bl.innerHTML=moneyLine(o)}if(/^(cphone|cinsta)$/.test(el.dataset.f)){var lk=document.getElementById("clinks");if(lk)lk.innerHTML=linksHtml(o)}}else if(el.dataset&&el.dataset.fi&&ideaOpen)setIdeaF(el);else if(el.dataset&&el.dataset.fm&&mOpen){var mm=findIn(S.masters,mOpen);if(mm){mm[el.dataset.fm]=el.value;save()}}});
+  var el=e.target,o;if(el.dataset&&el.dataset.fx){S.fx=S.fx||{};S.fx[el.dataset.fx]=el.value.replace(",",".");save();var eg=document.getElementById("eg");if(eg)eg.innerHTML=earnGrid(earnCalc());return}if(el.id&&el.id.slice(0,3)==="qa-")qaCalc();if(el.dataset&&el.dataset.f&&(o=ord())){o[el.dataset.f]=el.value;save();if(el.dataset.f==="due"){var di=document.getElementById("due-ind");if(di)di.innerHTML=dueInd(o)}if(/^(price|cost|fprice|fcost)$/.test(el.dataset.f)){var pfe=document.getElementById("pf");if(pfe)pfe.innerHTML=pfLine(o)}if(/^(price|adv|cur)$/.test(el.dataset.f)){var bl=document.getElementById("bal");if(bl)bl.innerHTML=moneyLine(o)}if(/^(cphone|cinsta)$/.test(el.dataset.f)){var lk=document.getElementById("clinks");if(lk)lk.innerHTML=linksHtml(o)}}else if(el.dataset&&el.dataset.fi&&ideaOpen)setIdeaF(el);else if(el.dataset&&el.dataset.fm&&mOpen){var mm=findIn(S.masters,mOpen);if(mm){mm[el.dataset.fm]=el.value;save()}}});
 document.addEventListener("keydown",function(e){
   if(e.key!=="Enter")return;var id=e.target.id||"";
   if(id.indexOf("e-")===0){e.preventDefault();saveEdit()}
