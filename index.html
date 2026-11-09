@@ -124,13 +124,13 @@ textarea{resize:vertical;min-height:64px}
 .of-due{display:grid;grid-template-columns:1fr auto;align-items:end;gap:10px}
 .of-due .fld{margin-bottom:12px}
 .of-ind{margin-bottom:12px;min-height:40px;display:flex;align-items:center}
-.otabs{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;margin:0 0 14px;border-bottom:1px solid var(--p-line)}
-.otab{display:grid;gap:3px;justify-items:center;align-content:center;min-height:48px;padding:6px 2px;border:0;border-bottom:2px solid transparent;background:transparent;color:var(--p-mute);font:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent}
-.otab b{font:500 10px/1.1 var(--mono);letter-spacing:.06em;text-transform:uppercase;white-space:nowrap}
-.otab i{font:400 10px/1 var(--mono);font-style:normal;color:var(--p-mute);min-height:10px}
-.otab.on{color:var(--p-amb);border-bottom-color:var(--p-amb);background:linear-gradient(to top,rgba(209,139,39,.14),transparent);text-shadow:0 0 8px rgba(209,139,39,.35)}
-.otab.on i{color:var(--p-ink)}
-.otab:active{background:rgba(209,139,39,.12)}
+.otabs{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin:0 0 16px}
+.otab{display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:54px;padding:8px 14px;border:1px solid var(--p-line);border-radius:3px;background:#161912;color:var(--p-ink);font:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent;text-align:left}
+.otab b{font:600 13px/1.1 var(--mono);letter-spacing:.06em;text-transform:uppercase;white-space:nowrap}
+.otab i{font:600 13px/1 var(--mono);font-style:normal;color:var(--p-mute);min-width:18px;text-align:right}
+.otab.on{background:linear-gradient(180deg,#e09a33,#c07f1f);border-color:#D18B27;color:#10120E;box-shadow:0 0 10px rgba(209,139,39,.25)}
+.otab.on i{color:#10120E}
+.otab:active{filter:brightness(1.12)}
 .opane>.sec:first-child{margin-top:6px}
 @media (prefers-reduced-motion:no-preference){.opane{animation:opin .18s ease-out}@keyframes opin{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}}
 
