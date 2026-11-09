@@ -1010,7 +1010,9 @@ var settings,order,hlist;
 function blankOrder(){return {name:"",who:"me",metal:"own",handW:"",castW:"",hours:"",complexity:"1",masterExtra:"",clientGiven:"",icon:"",pack:"",wood:"",stones:"",gilding:"",goldEl:"",chains:"",laser:"",other:"",price:"",gift:false,budget:"",photo:""}}
 function cd(){if(!S.calc||typeof S.calc!=="object"||Array.isArray(S.calc))S.calc={};return S.calc}
 function persist(){var c=cd();c.settings=settings;c.order=order;c.hlist=hlist;save()}
-function load(){var c=cd();settings=Object.assign({},DEFAULTS,c.settings||{});order=Object.assign(blankOrder(),c.order||{});hlist=Array.isArray(c.hlist)?c.hlist:[]}
+var IMPORT_ITEMS=[{id:"k7f5y6e",ts:1794046426071,floor:22385,price:28000,photoId:"",order:{name:"Ковчег мощовик з Св. Георгієм",who:"me",metal:"own",handW:"20",castW:"40",hours:"9",complexity:"1",masterExtra:"",clientGiven:"",icon:"5000",pack:"",wood:"4000",stones:"300",gilding:"",goldEl:"",chains:"",laser:"",other:"",price:"28000",gift:false,budget:"",photo:""}}];
+function load(){var c=cd();settings=Object.assign({},DEFAULTS,c.settings||{});order=Object.assign(blankOrder(),c.order||{});hlist=Array.isArray(c.hlist)?c.hlist:[];
+  if(!c.imported1){c.imported1=1;IMPORT_ITEMS.forEach(function(it){var has=hlist.some(function(x){return x.id===it.id});if(!has)hlist.push(JSON.parse(JSON.stringify(it)))});hlist.sort(function(a,b){return b.ts-a.ts});persist()}}
 function $(id){return root.getElementById(id)}
 function qa(s){return root.querySelectorAll(s)}
 function kt(t){toast(t,false)}
