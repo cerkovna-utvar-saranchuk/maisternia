@@ -113,6 +113,27 @@ textarea{resize:vertical;min-height:64px}
 .oc-ind b{font-weight:500;color:var(--p-ink);margin-left:4px}
 .oc-ind .oc-pc{margin-left:auto;color:var(--p-amb)}
 
+/* PDA-редизайн, етап 3: екран замовлення як досьє з вкладками */
+.ofile,.otabs{--p-card:#1C2018;--p-amb:#D18B27;--p-ink:#D8D4BD;--p-mute:#929785;--p-line:#3a3c2c}
+.ofile{position:relative;background:var(--p-card);padding:10px 14px 4px 17px;margin:2px 0 10px;box-shadow:inset 0 0 0 1px var(--p-line);clip-path:polygon(0 0,calc(100% - 14px) 0,100% 14px,100% 100%,14px 100%,0 calc(100% - 14px))}
+.ofile::before{content:"";position:absolute;left:0;top:0;bottom:14px;width:3px;background:var(--p-amb);box-shadow:0 0 8px rgba(209,139,39,.35)}
+.ofile::after{content:"";position:absolute;right:0;top:0;width:14px;height:14px;background:linear-gradient(to top right,transparent calc(50% - .7px),var(--p-amb) 50%,transparent calc(50% + .7px))}
+.of-sys{display:flex;align-items:center;justify-content:space-between;gap:10px;padding-bottom:8px;border-bottom:1px solid var(--p-line);font:500 10px/1 var(--mono);letter-spacing:.14em;color:var(--p-mute);text-transform:uppercase}
+.of-id{display:flex;align-items:center;gap:8px;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ofile .o-name{font-size:22px;margin:10px 0 10px}
+.of-due{display:grid;grid-template-columns:1fr auto;align-items:end;gap:10px}
+.of-due .fld{margin-bottom:12px}
+.of-ind{margin-bottom:12px;min-height:40px;display:flex;align-items:center}
+.otabs{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;margin:0 0 14px;border-bottom:1px solid var(--p-line)}
+.otab{display:grid;gap:3px;justify-items:center;align-content:center;min-height:48px;padding:6px 2px;border:0;border-bottom:2px solid transparent;background:transparent;color:var(--p-mute);font:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.otab b{font:500 10px/1.1 var(--mono);letter-spacing:.06em;text-transform:uppercase;white-space:nowrap}
+.otab i{font:400 10px/1 var(--mono);font-style:normal;color:var(--p-mute);min-height:10px}
+.otab.on{color:var(--p-amb);border-bottom-color:var(--p-amb);background:linear-gradient(to top,rgba(209,139,39,.14),transparent);text-shadow:0 0 8px rgba(209,139,39,.35)}
+.otab.on i{color:var(--p-ink)}
+.otab:active{background:rgba(209,139,39,.12)}
+.opane>.sec:first-child{margin-top:6px}
+@media (prefers-reduced-motion:no-preference){.opane{animation:opin .18s ease-out}@keyframes opin{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}}
+
 /* таблиці */
 .sec{margin-top:22px}
 .sh{display:flex;align-items:baseline;justify-content:space-between;gap:4px 12px;flex-wrap:wrap;margin-bottom:8px}
@@ -430,19 +451,43 @@ function clientFill(o){
   if(!o.price&&!o.adv&&src.cur&&!o.cur){o.cur=src.cur}
   if(got){save();render();toast("Контакти підставлено з попереднього замовлення",false)}else render()}
 
+var otab="d",otabFor=null;
+var OTABS=[{k:"d",n:"01",t:"Досьє"},{k:"p",n:"02",t:"Позиції"},{k:"r",n:"03",t:"Ресурси"},{k:"f",n:"04",t:"Фото"}];
+function oTabCount(o,k){
+  if(k==="p"){var t=o.items.length,d=o.items.filter(function(i){return i.done}).length;return t?d+"/"+t:"—"}
+  if(k==="r")return (o.log||[]).length||"—";
+  if(k==="f")return (o.photos||[]).length||"—";
+  return ""}
+function oTabsHtml(o){
+  return '<div class="otabs" role="tablist" aria-label="Розділи замовлення">'+OTABS.map(function(x){
+    return '<button class="otab'+(otab===x.k?" on":"")+'" role="tab" aria-selected="'+(otab===x.k?"true":"false")+'" data-act="otab" data-t="'+x.k+'"><b>'+x.n+' / '+x.t+'</b><i>'+oTabCount(o,x.k)+'</i></button>'}).join("")+'</div>'}
+function setOtab(k){
+  otab=k;
+  var b=document.querySelectorAll(".otab"),i;
+  for(i=0;i<b.length;i++){var on=b[i].getAttribute("data-t")===k;b[i].classList.toggle("on",on);b[i].setAttribute("aria-selected",on?"true":"false")}
+  var pn=document.querySelectorAll(".opane");
+  for(i=0;i<pn.length;i++)pn[i].hidden=pn[i].getAttribute("data-p")!==k;
+  var bar=document.querySelector(".otabs");
+  if(bar&&bar.getBoundingClientRect().top<0)bar.scrollIntoView(true)}
 function detailHtml(){
   var o=ord();if(!o){cur=null;return listHtml()}
+  if(otabFor!==cur){otab="d";otabFor=cur}
+  var st=o.plan?"":'<span class="pill '+stInfo(o).c+'">'+stInfo(o).n+'</span>';
+  var photos=photoSection(o);
+  function pane(k,h){return '<div class="opane" role="tabpanel" data-p="'+k+'"'+(otab===k?"":" hidden")+'>'+h+'</div>'}
   return '<button class="back" data-act="home">← '+(o.plan?"Проєкти":"Замовлення")+'</button>'
+  +'<div class="ofile"><div class="of-sys"><span class="of-id"><i class="sb-dot on"></i>SARANCHUK OS / '+(o.plan?"PROJECT":"ORDER")+' FILE</span>'+st+'</div>'
   +'<input id="o-name" class="o-name" data-f="name" value="'+esc(o.name)+'" placeholder="'+(o.plan?"Назва проєкту":"Назва замовлення")+'">'
-  +statusHtml(o)+'<label class="fld"><span>Термін здачі</span><input id="o-due" type="date" data-f="due" value="'+esc(o.due)+'"></label>'
-  +clientSection(o)
-  +'<label class="fld" style="margin-top:18px"><span>Нотатки</span><textarea id="o-notes" data-f="notes" rows="2">'+esc(o.notes)+'</textarea></label>'
-  +section(o,"mat","Що замовити",matHint(o))
-  +photoSection(o)
-  +section(o,"part","Деталі виробу","галочка: зроблено")
-  +logSection(o)
-  +(o.plan?'<button class="btn" style="margin-top:20px" data-act="to-order">Перетворити на замовлення</button>':"")
-  +delBlock()}
+  +statusHtml(o)
+  +'<div class="of-due"><label class="fld"><span>Термін здачі</span><input id="o-due" type="date" data-f="due" value="'+esc(o.due)+'"></label><span id="due-ind" class="of-ind">'+duePill(o.due)+'</span></div></div>'
+  +oTabsHtml(o)
+  +pane("d",clientSection(o)
+    +'<label class="fld" style="margin-top:18px"><span>Нотатки</span><textarea id="o-notes" data-f="notes" rows="2">'+esc(o.notes)+'</textarea></label>'
+    +(o.plan?'<button class="btn" style="margin-top:20px" data-act="to-order">Перетворити на замовлення</button>':"")
+    +delBlock())
+  +pane("p",section(o,"mat","Що замовити",matHint(o))+section(o,"part","Деталі виробу","галочка: зроблено"))
+  +pane("r",logSection(o))
+  +pane("f",photos||'<section class="sec"><p class="empty">Фото додати поки неможливо.</p></section>')}
 
 /* склад */
 function stockRow(i){
@@ -947,6 +992,7 @@ function act(a,d){
     case "mv-del":del("move",d.id);break;
     case "m-settle":mSettle(true);break;
     case "m-reopen":mSettle(false);break;
+    case "otab":setOtab(d.t);break;
     case "status":var so=ord();if(so){so.status=d.s;save();render()}break;
     case "sync-retry":if(cloud.uid){cloud.busy=false;pushNow()}else if(window.FB)showLogin(true);else{setSync("pending");location.reload()}break;
     case "login":doLogin();break;
@@ -961,7 +1007,7 @@ document.addEventListener("click",function(e){
 document.addEventListener("change",function(e){
   var el=e.target;if(el.type==="checkbox"&&el.dataset.act==="tog")tog(el.dataset.id);else if(el.id==="c-name"){var co=ord();if(co)clientFill(co)}else if(el.id==="ph-in"||el.id==="ip-in")photoPick(el);else if(el.tagName==="SELECT"&&el.dataset.fi)setIdeaF(el);else if(el.id==="mv-metal")mvMetal=el.value;else if(el.id==="mv-type")mvType=el.value});
 document.addEventListener("input",function(e){
-  var el=e.target,o;if(el.dataset&&el.dataset.f&&(o=ord())){o[el.dataset.f]=el.value;save();if(/^(price|adv|cur)$/.test(el.dataset.f)){var bl=document.getElementById("bal");if(bl)bl.innerHTML=moneyLine(o)}if(/^(cphone|cinsta)$/.test(el.dataset.f)){var lk=document.getElementById("clinks");if(lk)lk.innerHTML=linksHtml(o)}}else if(el.dataset&&el.dataset.fi&&ideaOpen)setIdeaF(el);else if(el.dataset&&el.dataset.fm&&mOpen){var mm=findIn(S.masters,mOpen);if(mm){mm[el.dataset.fm]=el.value;save()}}});
+  var el=e.target,o;if(el.dataset&&el.dataset.f&&(o=ord())){o[el.dataset.f]=el.value;save();if(el.dataset.f==="due"){var di=document.getElementById("due-ind");if(di)di.innerHTML=duePill(o.due)}if(/^(price|adv|cur)$/.test(el.dataset.f)){var bl=document.getElementById("bal");if(bl)bl.innerHTML=moneyLine(o)}if(/^(cphone|cinsta)$/.test(el.dataset.f)){var lk=document.getElementById("clinks");if(lk)lk.innerHTML=linksHtml(o)}}else if(el.dataset&&el.dataset.fi&&ideaOpen)setIdeaF(el);else if(el.dataset&&el.dataset.fm&&mOpen){var mm=findIn(S.masters,mOpen);if(mm){mm[el.dataset.fm]=el.value;save()}}});
 document.addEventListener("keydown",function(e){
   if(e.key!=="Enter")return;var id=e.target.id||"";
   if(id.indexOf("e-")===0){e.preventDefault();saveEdit()}
