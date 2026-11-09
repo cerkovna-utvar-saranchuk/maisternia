@@ -83,6 +83,36 @@ textarea{resize:vertical;min-height:64px}
 @media (prefers-reduced-motion:no-preference){.wire i,.wire b{transition:width .3s,left .3s}}
 .emptyst{padding:28px 0;color:var(--mute)}
 
+/* PDA-редизайн, етап 1: системна панель і картки (змінні лише для цих елементів) */
+.sysbar,.ocard{--p-card:#1C2018;--p-amb:#D18B27;--p-ink:#D8D4BD;--p-mute:#929785;--p-ok:#69866A;--p-warn:#A84E3D;--p-line:#3a3c2c}
+.sysbar{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:2px 0 8px;padding:6px 0;border-top:1px solid var(--p-line);border-bottom:1px solid var(--p-line);font:500 10px/1 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--p-mute)}
+.sysbar .sb-l{display:flex;align-items:center;gap:8px;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sysbar .sb-r{flex:none;padding-left:10px;border-left:1px solid var(--p-line);color:var(--p-ink)}
+.sb-dot{flex:none;width:7px;height:7px;border-radius:50%;background:var(--p-ok);box-shadow:0 0 5px rgba(105,134,106,.6)}
+.sb-dot.off{background:var(--p-warn);box-shadow:0 0 5px rgba(168,78,61,.6)}
+@media (prefers-reduced-motion:no-preference){.sb-dot.on{animation:sbp 2.8s ease-in-out infinite}@keyframes sbp{50%{opacity:.45}}}
+.brand.cmp{margin:0 0 12px;padding:8px 12px}
+.brand.cmp .bs{height:4px}
+.brand.cmp .wm{margin:8px 0 2px;font-size:clamp(20px,6.6vw,40px)}
+.brand.cmp .wsub{margin:0 0 8px;font-size:10px}
+.ocard{position:relative;background:var(--p-card);border:0;border-left:0;border-radius:0;padding:12px 14px 12px 17px;box-shadow:inset 0 0 0 1px var(--p-line);clip-path:polygon(0 0,calc(100% - 12px) 0,100% 12px,100% 100%,12px 100%,0 calc(100% - 12px));transition:background .15s,box-shadow .15s}
+.ocard::before{content:"";position:absolute;left:0;top:0;bottom:12px;width:3px;background:var(--p-amb);box-shadow:0 0 8px rgba(209,139,39,.35)}
+.ocard::after{content:"";position:absolute;right:0;top:0;width:12px;height:12px;background:linear-gradient(to top right,transparent calc(50% - .7px),var(--p-amb) 50%,transparent calc(50% + .7px))}
+.ocard:active{background:#232819;box-shadow:inset 0 0 0 1px var(--p-amb),inset 0 0 14px rgba(209,139,39,.18)}
+.ocard.fin{opacity:.72}.ocard.fin::before{background:var(--p-mute);box-shadow:none}.ocard.fin.ready::before{background:var(--p-ok);box-shadow:0 0 8px rgba(105,134,106,.35)}
+.ocard .oc-name{color:var(--p-ink);font-size:18px}
+.ocard .thumb{background:#10120E;border-color:var(--p-line);clip-path:polygon(0 0,calc(100% - 6px) 0,100% 6px,100% 100%,0 100%)}
+.ocard .pill{font-size:10px;padding:2px 6px}
+.ocard .pill.ok{color:var(--p-ok)}.ocard .pill.bad{color:var(--p-warn)}.ocard .pill.ac{color:var(--p-amb)}.ocard .pill.mu{color:var(--p-mute)}
+.ocard .ccl{color:var(--p-mute)}
+.oc-seg{display:grid;grid-template-columns:repeat(10,1fr);gap:3px;margin:12px 0 7px}
+.oc-seg i{height:6px;background:#2a2d20}
+.oc-seg i.on{background:var(--p-amb)}
+.ocard.fin.ready .oc-seg i.on{background:var(--p-ok)}
+.oc-ind{display:flex;flex-wrap:wrap;gap:4px 14px;font:500 10px/1.3 var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--p-mute)}
+.oc-ind b{font-weight:500;color:var(--p-ink);margin-left:4px}
+.oc-ind .oc-pc{margin-left:auto;color:var(--p-amb)}
+
 /* таблиці */
 .sec{margin-top:22px}
 .sh{display:flex;align-items:baseline;justify-content:space-between;gap:4px 12px;flex-wrap:wrap;margin-bottom:8px}
@@ -322,8 +352,11 @@ function clientLine(o){
   if(bal>0)t+=" · залишок "+bal+" "+esc(o.cur||"₴");
   return '<div class="ccl">'+t+'</div>'}
 function card(o){
-  var t=o.items.length,d=o.items.filter(function(i){return i.done}).length,p=t?Math.round(d/t*100):0,w=o.items.filter(function(i){return i.kind==="mat"&&!i.done}).length;
-  return '<button class="ocard'+ocCls(o)+'" data-act="open" data-id="'+o.id+'"><div class="oc-top">'+thumb(o)+'<span class="oc-name">'+esc(o.name||"Без назви")+'</span><span class="pg">'+ocPills(o)+'</span></div>'+clientLine(o)+'<div class="wire" style="--p:'+p+'"><i></i><b></b></div><div class="mu sm">'+(t?d+" з "+t+" позицій виконано":"Позицій ще немає")+(w?" · замовити: "+w:"")+'</div></button>'}
+  var t=o.items.length,d=o.items.filter(function(i){return i.done}).length,p=t?Math.round(d/t*100):0,w=o.items.filter(function(i){return i.kind==="mat"&&!i.done}).length,on=Math.round(p/10),sg="";
+  for(var k=0;k<10;k++)sg+='<i'+(k<on?' class="on"':'')+'></i>';
+  return '<button class="ocard'+ocCls(o)+'" data-act="open" data-id="'+o.id+'"><div class="oc-top">'+thumb(o)+'<span class="oc-name">'+esc(o.name||"Без назви")+'</span><span class="pg">'+ocPills(o)+'</span></div>'+clientLine(o)
+   +'<div class="oc-seg" role="img" aria-label="Виконано '+p+'%">'+sg+'</div>'
+   +'<div class="oc-ind"><span>'+(t?'Позиції <b>'+d+'/'+t+'</b>':'Позицій ще немає')+'</span>'+(w?'<span>До замовлення <b>'+w+'</b></span>':'')+(t?'<span class="oc-pc">'+p+'%</span>':'')+'</div></button>'}
 function backupHtml(){
   var h='<div class="bk"><button class="lnk" data-act="bk-toggle">'+(bkOpen?"Закрити копію даних":"Копія даних")+'</button>';
   if(bkOpen)h+='<textarea id="bk" rows="6" spellcheck="false">'+esc(JSON.stringify(S))+'</textarea><div class="row"><button class="btn" data-act="bk-copy">Скопіювати</button><button class="btn ghost" id="bk-restore" data-act="bk-restore">Відновити з поля</button></div><div id="bk-msg" class="mu sm">Скопіюйте текст і збережіть у Нотатки. Щоб відновити, вставте його в поле й натисніть «Відновити».</div>';
@@ -331,13 +364,18 @@ function backupHtml(){
   if(bkOpen)h+='<div class="mu sm">Ключ для дописування від Claude: '+(ikGet()?"збережено":"не введено")+'</div><input id="ik" placeholder="Ключ від Claude" autocapitalize="off" autocomplete="off" spellcheck="false"><div class="row"><button class="btn ghost" data-act="ik-save">Зберегти ключ</button></div>';
   if(bkOpen)h+='<button class="lnk bad" data-act="logout">Вийти з акаунта</button>';
   return h+'</div>'}
+/* системна панель */
+function sysState(){return navigator.onLine===false?{t:"OFFLINE",c:"off"}:{t:"ONLINE",c:"on"}}
+function sysbarHtml(){var st=sysState();return '<div class="sysbar" aria-label="Статус системи"><span class="sb-l"><i class="sb-dot '+st.c+'" id="sb-dot"></i>SARANCHUK OS / TERMINAL 01</span><span class="sb-r" id="sb-st">STATUS: '+st.t+'</span></div>'}
+function sysUpdate(){var st=sysState(),a=document.getElementById("sb-st"),d=document.getElementById("sb-dot");if(a)a.textContent="STATUS: "+st.t;if(d)d.className="sb-dot "+st.c}
+window.addEventListener("online",sysUpdate);window.addEventListener("offline",sysUpdate);
 function listHtml(){
   var plan=tab==="p",arr0=S.orders.filter(function(o){return !!o.plan===plan}),arr=plan?arr0:sortOrders(arr0),n=arr.length,near=null;
   arr.forEach(function(o){if(!plan&&!stActive(o))return;var d=daysLeft(o.due);if(d!==null&&d>=0&&(near===null||d<near))near=d});
   var sub=plan?"заплановані проєкти: "+n:n+" "+plural(n,"замовлення","замовлення","замовлень");
   if(near!==null)sub+=" · найближчий термін "+(near===0?"сьогодні":near===1?"завтра":"через "+near+" дн.");
   var body=n?arr.map(card).join(""):'<div class="emptyst">'+(plan?"Запланованих проєктів ще немає. Додайте перший кнопкою вгорі.":"Замовлень ще немає. Додайте перше кнопкою вгорі.")+'</div>';
-  return (plan?"":alertHtml())+'<div class="brand" role="img" aria-label="Саранчук, ювелірна майстерня"><div class="bs" aria-hidden="true"></div><div class="wm" aria-hidden="true">S<i>.</i>A<i>.</i>R<i>.</i>A<i>.</i>N<i>.</i>C<i>.</i>H<i>.</i>U<i>.</i>K<i>.</i></div><div class="wsub" aria-hidden="true">ювелірна майстерня</div><div class="bs" aria-hidden="true"></div></div><div class="homebar"><p class="sub">'+sub+'</p><button class="btn" data-act="new">+ '+(plan?"Проєкт":"Замовлення")+'</button></div>'+body+backupHtml()+'<div id="sync" class="sync '+cloud.st+'" data-act="sync-retry">'+syncText()+'</div>'}
+  return sysbarHtml()+(plan?"":alertHtml())+'<div class="brand cmp" role="img" aria-label="Саранчук, ювелірна майстерня"><div class="bs" aria-hidden="true"></div><div class="wm" aria-hidden="true">S<i>.</i>A<i>.</i>R<i>.</i>A<i>.</i>N<i>.</i>C<i>.</i>H<i>.</i>U<i>.</i>K<i>.</i></div><div class="wsub" aria-hidden="true">ювелірна майстерня</div><div class="bs" aria-hidden="true"></div></div><div class="homebar"><p class="sub">'+sub+'</p><button class="btn" data-act="new">+ '+(plan?"Проєкт":"Замовлення")+'</button></div>'+body+backupHtml()+'<div id="sync" class="sync '+cloud.st+'" data-act="sync-retry">'+syncText()+'</div>'}
 
 /* замовлення */
 function itemRow(i){
