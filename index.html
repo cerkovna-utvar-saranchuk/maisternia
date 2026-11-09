@@ -1296,7 +1296,7 @@ var KHTML="<section id=\"s-item\">\n  <h2>Виріб<\/h2>\n  <div class=\"grid\
 /*CALC_START*/
 var DEFAULTS={silver:80,cast:110,lossOwn:5,lossClient:10,solderPrice:200,solderPer10:1,castSolder:0.5,
   fluxPer10:10,fluxPrice:500,fluxGrams:500,consum:50,dayRate:5000,dayHours:8,masterRate:50,rent:0,
-  eur:50,markup:65,round:100,lvlS:30,lvlM:35,lvlA:40,lvlH:45};
+  eur:50,markup:65,round:100,lvlS:35,lvlM:40,lvlA:45,lvlH:50};
 function num(v){var n=parseFloat(String(v==null?"":v).replace(/\s/g,"").replace(",","."));return isFinite(n)?n:0}
 function roundUp(x,step){step=step>0?step:1;return Math.ceil(x/step-1e-9)*step}
 function compute(s,o){
@@ -1361,6 +1361,7 @@ function cd(){if(!S.calc||typeof S.calc!=="object"||Array.isArray(S.calc))S.calc
 function persist(){var c=cd();c.settings=settings;c.order=order;c.hlist=hlist;save()}
 var IMPORT_ITEMS=[{id:"k7f5y6e",ts:1794046426071,floor:22385,price:28000,photoId:"",order:{name:"Ковчег мощовик з Св. Георгієм",who:"me",metal:"own",handW:"20",castW:"40",hours:"9",complexity:"1",masterExtra:"",clientGiven:"",icon:"5000",pack:"",wood:"4000",stones:"300",gilding:"",goldEl:"",chains:"",laser:"",other:"",price:"28000",gift:false,budget:"",photo:""}}];
 function load(){var c=cd();settings=Object.assign({},DEFAULTS,c.settings||{});order=Object.assign(blankOrder(),c.order||{});order.complexity="1";hlist=Array.isArray(c.hlist)?c.hlist:[];
+  if(!c.lvl2){c.lvl2=1;settings.lvlS=35;settings.lvlM=40;settings.lvlA=45;settings.lvlH=50;persist()}
   if(!c.imported1){c.imported1=1;IMPORT_ITEMS.forEach(function(it){var has=hlist.some(function(x){return x.id===it.id});if(!has)hlist.push(JSON.parse(JSON.stringify(it)))});hlist.sort(function(a,b){return b.ts-a.ts});persist()}}
 function $(id){return root.getElementById(id)}
 function qa(s){return root.querySelectorAll(s)}
