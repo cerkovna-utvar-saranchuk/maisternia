@@ -344,6 +344,15 @@ label.addb{text-align:center}
 .toast:not([hidden]){animation:tin .2s ease-out}@keyframes tin{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
 #app.swap{animation:swp .2s ease-out}@keyframes swp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}}
 
+
+.invest{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin-top:10px;padding:10px 12px;border:1px solid #3a3c2c;border-radius:8px;background:#1C2018}
+.invest span{color:#929785;font-size:13px}.invest b{color:#D18B27;font-size:18px;font-variant-numeric:tabular-nums}.invest small{color:#929785;font-size:12px}
+.earn{margin:10px 0;padding:10px 12px;border:1px solid #3a3c2c;border-radius:8px;background:#1C2018}
+.earn .en-h{font-size:11px;letter-spacing:.08em;color:#929785;margin-bottom:8px}
+.earn .eg{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.earn .eg div{min-width:0}.earn .eg span{display:block;font-size:12px;color:#929785}
+.earn .eg b{display:block;color:#D18B27;font-size:15px;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.earn .en{margin-top:8px;font-size:12px;color:#929785}
 </style>
 </head>
 <body>
@@ -378,6 +387,7 @@ function seed(){return {orders:[{id:"ex",name:"Філігранний хрест
 S=load()||seed();
 if(!Array.isArray(S.stock)){S.stock=defStock();saveQuiet()}
 if(!Array.isArray(S.res)){S.res=defRes();saveQuiet()}
+normS();
 if(!Array.isArray(S.ideas)){S.ideas=[];saveQuiet()}
 if(!Array.isArray(S.rubrics)){S.rubrics=[{id:uid(),name:"Філігрань"},{id:uid(),name:"Чеканка"},{id:uid(),name:"Емаль"}];saveQuiet()}
 normMasters();saveQuiet();
@@ -485,13 +495,31 @@ function sysState(){return navigator.onLine===false?{t:"OFFLINE",c:"off"}:{t:"ON
 function sysbarHtml(){var st=sysState();return '<div class="sysbar" aria-label="Статус системи"><span class="sb-l"><i class="sb-dot '+st.c+'" id="sb-dot"></i>SARANCHUK OS / TERMINAL 01</span><span class="sb-r" id="sb-st">STATUS: '+st.t+'</span></div>'}
 function sysUpdate(){var st=sysState(),a=document.getElementById("sb-st"),d=document.getElementById("sb-dot");if(a)a.textContent="STATUS: "+st.t;if(d)d.className="sb-dot "+st.c}
 window.addEventListener("online",sysUpdate);window.addEventListener("offline",sysUpdate);
+function earnCalc(){
+  var t=new Date(),y=t.getFullYear(),m=t.getMonth(),q=Math.floor(m/3),res={m:{},q:{},y:{}},nocost=0,nodate=0;
+  S.orders.forEach(function(o){
+    if(o.plan)return;var k=stOf(o);if(k!=="ready"&&k!=="given")return;
+    if(!o.doneAt){nodate++;return}
+    var d=String(o.doneAt),oy=+d.slice(0,4),om=+d.slice(5,7)-1,pr=num(o.price);if(pr===null||!(oy>0))return;
+    var c=num(o.cost);if(c===null)nocost++;var g=r2(pr-(c||0)),cur=o.cur||"₴";
+    function add(b){b[cur]=r2((b[cur]||0)+g)}
+    if(oy===y){add(res.y);if(Math.floor(om/3)===q)add(res.q);if(om===m)add(res.m)}});
+  return {r:res,nocost:nocost,nodate:nodate}}
+function earnVal(b){var ks=Object.keys(b);if(!ks.length)return"0 ₴";return ks.map(function(c){return b[c].toLocaleString("uk-UA")+" "+c}).join(" · ")}
+function earnHtml(){
+  var e=earnCalc(),M=["січень","лютий","березень","квітень","травень","червень","липень","серпень","вересень","жовтень","листопад","грудень"],t=new Date(),q=Math.floor(t.getMonth()/3)+1;
+  var note=(e.nodate?'<div class="en">Завершених без дати: '+e.nodate+' — відкрийте їх і вкажіть «Дата завершення»</div>':"")+(e.nocost?'<div class="en">Без витрат: '+e.nocost+' — для них заробіток = повна ціна</div>':"");
+  return '<section class="earn" aria-label="Заробіток"><div class="en-h">ЗАРОБІТОК · ціна мінус витрати</div><div class="eg">'
+   +'<div><span>'+M[t.getMonth()]+'</span><b>'+earnVal(e.r.m)+'</b></div>'
+   +'<div><span>'+q+' квартал</span><b>'+earnVal(e.r.q)+'</b></div>'
+   +'<div><span>'+t.getFullYear()+' рік</span><b>'+earnVal(e.r.y)+'</b></div></div>'+note+'</section>'}
 function listHtml(){
   var plan=tab==="p",arr0=S.orders.filter(function(o){return !!o.plan===plan}),arr=plan?arr0:sortOrders(arr0),n=arr.length,near=null;
   arr.forEach(function(o){if(!plan&&!stActive(o))return;var d=daysLeft(o.due);if(d!==null&&d>=0&&(near===null||d<near))near=d});
   var sub=plan?"заплановані проєкти: "+n:n+" "+plural(n,"замовлення","замовлення","замовлень");
   if(near!==null)sub+=" · найближчий термін "+(near===0?"сьогодні":near===1?"завтра":"через "+near+" дн.");
   var body=n?arr.map(card).join(""):'<div class="emptyst">'+(plan?"Запланованих проєктів ще немає. Додайте перший кнопкою вгорі.":"Замовлень ще немає. Додайте перше кнопкою вгорі.")+'</div>';
-  return sysbarHtml()+(plan?"":alertHtml())+'<div class="brand cmp" role="img" aria-label="Саранчук, ювелірна майстерня"><div class="bs" aria-hidden="true"></div><div class="wm" aria-hidden="true">S<i>.</i>A<i>.</i>R<i>.</i>A<i>.</i>N<i>.</i>C<i>.</i>H<i>.</i>U<i>.</i>K<i>.</i></div><div class="wsub" aria-hidden="true">ювелірна майстерня</div><div class="bs" aria-hidden="true"></div></div><div class="homebar"><p class="sub">'+sub+'</p><button class="btn" data-act="new">+ '+(plan?"Проєкт":"Замовлення")+'</button></div>'+body+backupHtml()+'<div id="sync" class="sync '+cloud.st+'" data-act="sync-retry">'+syncText()+'</div>'}
+  return sysbarHtml()+(plan?"":alertHtml())+'<div class="brand cmp" role="img" aria-label="Саранчук, ювелірна майстерня"><div class="bs" aria-hidden="true"></div><div class="wm" aria-hidden="true">S<i>.</i>A<i>.</i>R<i>.</i>A<i>.</i>N<i>.</i>C<i>.</i>H<i>.</i>U<i>.</i>K<i>.</i></div><div class="wsub" aria-hidden="true">ювелірна майстерня</div><div class="bs" aria-hidden="true"></div></div>'+(plan?"":earnHtml())+'<div class="homebar"><p class="sub">'+sub+'</p><button class="btn" data-act="new">+ '+(plan?"Проєкт":"Замовлення")+'</button></div>'+body+backupHtml()+'<div id="sync" class="sync '+cloud.st+'" data-act="sync-retry">'+syncText()+'</div>'}
 
 /* замовлення */
 function itemRow(i){
@@ -536,6 +564,8 @@ function clientSection(o){
    +'<div class="cl2"><label class="fld"><span>Ціна</span><input data-f="price" inputmode="decimal" value="'+esc(o.price)+'" placeholder="0"></label>'
    +'<label class="fld"><span>Аванс</span><input data-f="adv" inputmode="decimal" value="'+esc(o.adv)+'" placeholder="0"></label></div>'
    +'<label class="fld"><span>Валюта</span><select data-f="cur">'+CURS.map(function(c){return '<option'+((o.cur||"₴")===c?" selected":"")+'>'+c+'</option>'}).join("")+'</select></label>'
+   +'<div class="cl2"><label class="fld"><span>Витрати на виріб</span><input data-f="cost" inputmode="decimal" value="'+esc(o.cost)+'" placeholder="0"></label>'
+   +'<label class="fld"><span>Дата завершення</span><input data-f="doneAt" type="date" value="'+esc(o.doneAt)+'"></label></div>'
    +'<div class="bal" id="bal">'+moneyLine(o)+'</div>'
    +'<label class="fld"><span>Побажання клієнта</span><textarea data-f="wish" rows="2" placeholder="Довжина ланцюжка, розмір, гравіювання…">'+esc(o.wish)+'</textarea></label>';
   if(prev.length)h+='<div class="sh" style="margin-top:6px"><h2>Його замовлення</h2><span class="hint">'+prev.length+'</span></div>'+prev.map(function(x){var s=stInfo(x);return '<button class="prev" data-act="open" data-id="'+x.id+'"><span class="nm">'+esc(x.name||"Без назви")+'</span><span class="pill '+s.c+'">'+s.n+'</span></button>'}).join("");
@@ -632,17 +662,20 @@ function lowBar(){
   var low=S.res.filter(isLow);if(!low.length)return"";
   return '<section class="lowbar" role="alert"><div class="lb-h"><span class="lb-i">!</span>УВАГА: НИЗЬКИЙ ЗАПАС</div>'+low.map(function(r){var m=num(r.min);return '<div class="lb-r"><span>'+esc(r.name)+'</span><span>'+(r.val===""?"—":esc(r.val))+(r.unit?" "+esc(r.unit):"")+(m!==null?' <i>мін. '+esc(r.min)+'</i>':"")+'</span></div>'}).join("")+'</section>'}
 function resTile(r){
-  if(resEdit===r.id)return '<div class="rt ed"><div class="ef"><input class="full" id="r-name" value="'+esc(r.name)+'" placeholder="Назва"><input id="r-val" value="'+esc(r.val)+'" placeholder="Кількість" inputmode="decimal"><input id="r-unit" value="'+esc(r.unit)+'" placeholder="Одиниця" list="units"><input class="full" id="r-min" value="'+esc(r.min)+'" placeholder="Мінімум: підсвітити, коли не більше" inputmode="decimal">'
+  if(resEdit===r.id)return '<div class="rt ed"><div class="ef"><input class="full" id="r-name" value="'+esc(r.name)+'" placeholder="Назва"><input id="r-val" value="'+esc(r.val)+'" placeholder="Кількість" inputmode="decimal"><input id="r-unit" value="'+esc(r.unit)+'" placeholder="Одиниця" list="units"><input class="full" id="r-min" value="'+esc(r.min)+'" placeholder="Мінімум: підсвітити, коли не більше" inputmode="decimal"><input class="full" id="r-price" value="'+esc(r.price||"")+'" placeholder="Ціна за одиницю, ₴ (необов’язково)" inputmode="decimal">'
     +'<div class="adj"><button class="btn ghost" data-act="res-adj" data-d="-10">−10</button><button class="btn ghost" data-act="res-adj" data-d="-1">−1</button><button class="btn ghost" data-act="res-adj" data-d="1">+1</button><button class="btn ghost" data-act="res-adj" data-d="10">+10</button></div>'
     +'<button class="btn" data-act="res-save">Готово</button><button class="btn ghost" data-act="res-del">Видалити</button></div></div>';
   var pct=r.unit==="%",low=isLow(r),v=num(r.val),bar="";
   if(pct)bar='<span class="rgauge">'+gaugeSvg(v,num(r.min),low)+'</span>';
   return '<button class="rt'+(pct?' wide':'')+(low?' low':'')+'" data-act="res-edit" data-id="'+r.id+'" aria-label="Змінити: '+esc(r.name)+'">'+(pct?"":resIcon(r))+'<span class="rl">'+esc(r.name)+'</span><span class="rv">'+(r.val===""?"—":esc(r.val))+'<small>'+esc(r.unit)+'</small></span>'+bar+(low?'<span class="pill bad rp">мало</span>':'')+'</button>'}
+function investInfo(){var t=0,k=0,m=0;S.res.forEach(function(r){var v=num(r.val),p=num(r.price);if(v===null||v<=0)return;if(p!==null&&p>0){t+=v*p;k++}else m++});return {t:r2(t),k:k,m:m}}
+function investHtml(){var i=investInfo();if(!i.k&&!i.m)return"";
+  return '<div class="invest"><span>Вкладено в ресурси</span><b>'+(i.k?i.t.toLocaleString("uk-UA")+' ₴':'—')+'</b>'+(i.m?'<small>без ціни: '+i.m+' '+plural(i.m,"ресурс","ресурси","ресурсів")+'</small>':'')+'</div>'}
 function resSection(){
-  return '<section class="sec inv"><div class="inv-tag">// RESOURCE DATABASE</div><div class="sh"><h2>Ресурси</h2><span class="hint">торкніться плитки, щоб змінити</span></div><div class="rg">'+S.res.map(resTile).join("")+'</div><button class="addb" data-act="res-new">+ Ресурс</button></section>'}
+  return '<section class="sec inv"><div class="inv-tag">// RESOURCE DATABASE</div><div class="sh"><h2>Ресурси</h2><span class="hint">торкніться плитки, щоб змінити</span></div><div class="rg">'+S.res.map(resTile).join("")+'</div>'+investHtml()+'<button class="addb" data-act="res-new">+ Ресурс</button></section>'}
 function resSave(){
   var r=findIn(S.res,resEdit);
-  if(r){r.name=val("r-name").trim()||r.name;r.unit=val("r-unit").trim();r.val=val("r-val").trim().replace(",",".");r.min=val("r-min").trim().replace(",",".")}
+  if(r){r.name=val("r-name").trim()||r.name;r.unit=val("r-unit").trim();r.val=val("r-val").trim().replace(",",".");r.min=val("r-min").trim().replace(",",".");r.price=val("r-price").trim().replace(",",".")}
   resEdit=null;save();render()}
 function resAdj(d){var e=document.getElementById("r-val");if(!e)return;var v=num(e.value)||0;e.value=String(Math.max(0,Math.round((v+d)*100)/100))}
 
@@ -1117,7 +1150,7 @@ function act(a,d){
     case "m-settle":mSettle(true);break;
     case "m-reopen":mSettle(false);break;
     case "otab":setOtab(d.t);break;
-    case "status":var so=ord();if(so){so.status=d.s;save();render()}break;
+    case "status":var so=ord();if(so){so.status=d.s;if(d.s==="ready"||d.s==="given"){if(!so.doneAt)so.doneAt=today()}else if(d.s==="sketch"||d.s==="agree"||d.s==="work")so.doneAt="";save();render()}break;
     case "sync-retry":if(cloud.uid){cloud.busy=false;pushNow()}else if(window.FB)showLogin(true);else{setSync("pending");location.reload()}break;
     case "login":doLogin();break;
     case "logout":if(window.FB)FB.logout();break;
