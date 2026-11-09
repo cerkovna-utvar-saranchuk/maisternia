@@ -124,12 +124,12 @@ textarea{resize:vertical;min-height:64px}
 .of-due{display:grid;grid-template-columns:1fr auto;align-items:end;gap:10px}
 .of-due .fld{margin-bottom:12px}
 .of-ind{margin-bottom:12px;min-height:40px;display:flex;align-items:center}
-.otabs{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin:0 0 16px}
-.otab{display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:54px;padding:8px 14px;border:1px solid var(--p-line);border-radius:3px;background:#161912;color:var(--p-ink);font:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent;text-align:left}
-.otab b{font:600 13px/1.1 var(--mono);letter-spacing:.06em;text-transform:uppercase;white-space:nowrap}
-.otab i{font:600 13px/1 var(--mono);font-style:normal;color:var(--p-mute);min-width:18px;text-align:right}
-.otab.on{background:linear-gradient(180deg,#e09a33,#c07f1f);border-color:#D18B27;color:#10120E;box-shadow:0 0 10px rgba(209,139,39,.25)}
-.otab.on i{color:#10120E}
+/*otabs*/.otabs{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:0 0 14px}
+.otab{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;min-height:46px;padding:6px 2px;border:1px solid var(--p-line);border-radius:3px;background:#161912;color:var(--p-ink);font:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.otab b{font:600 11px/1.1 var(--mono);letter-spacing:.03em;text-transform:uppercase;white-space:nowrap}
+.otab i{font:500 10px/1 var(--mono);font-style:normal;color:var(--p-mute);min-height:10px}
+.otab.on{background:linear-gradient(180deg,#e09a33,#c07f1f);border-color:#D18B27;color:#10120E;box-shadow:0 0 8px rgba(209,139,39,.25)}
+.otab.on i{color:#3a2a0e}
 .otab:active{filter:brightness(1.12)}
 .opane>.sec:first-child{margin-top:6px}
 @media (prefers-reduced-motion:no-preference){.opane{animation:opin .18s ease-out}@keyframes opin{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}}
@@ -668,7 +668,7 @@ function oTabCount(o,k){
   return ""}
 function oTabsHtml(o){
   return '<div class="otabs" role="tablist" aria-label="Розділи замовлення">'+OTABS.map(function(x){
-    return '<button class="otab'+(otab===x.k?" on":"")+'" role="tab" aria-selected="'+(otab===x.k?"true":"false")+'" data-act="otab" data-t="'+x.k+'"><b>'+x.n+' / '+x.t+'</b><i>'+oTabCount(o,x.k)+'</i></button>'}).join("")+'</div>'}
+    return '<button class="otab'+(otab===x.k?" on":"")+'" role="tab" aria-selected="'+(otab===x.k?"true":"false")+'" data-act="otab" data-t="'+x.k+'"><b>'+x.t+'</b><i>'+oTabCount(o,x.k)+'</i></button>'}).join("")+'</div>'}
 function setOtab(k){
   otab=k;
   var b=document.querySelectorAll(".otab"),i;
