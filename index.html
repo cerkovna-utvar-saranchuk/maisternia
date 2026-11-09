@@ -174,6 +174,10 @@ textarea{resize:vertical;min-height:64px}
 .inv .seg i.on{background:var(--p-amb)}
 .inv .rt.low .seg i.on{background:var(--p-warn)}
 .inv .pill.bad{color:var(--p-warn)}
+.inv .ri{position:absolute;top:12px;right:16px;width:44px;height:44px;display:grid;place-items:center;color:#6f6a50;pointer-events:none}
+.inv .ri img{display:block;width:100%;height:100%;object-fit:contain}
+.inv .rt .rl,.inv .rt .rv{padding-right:50px}
+.inv .rt.low .ri{color:#7a4a3d}
 
 /* таблиці */
 .sec{margin-top:22px}
@@ -570,13 +574,18 @@ function defRes(){return [
   {id:uid(),name:"Припій",unit:"г",val:"",min:""},
   {id:uid(),name:"Газ у балоні",unit:"%",val:"",min:"20"}]}
 function isLow(r){var v=num(r.val),m=num(r.min);return v!==null&&m!==null&&v<=m}
+/* іконки ресурсів: файли icons/res/<ключ>.webp (див. icons/res/README.md); поки файлу немає, показується універсальна піктограма */
+var RES_ICONS={};
+var RI_GENERIC='<svg viewBox="0 0 48 48" width="44" height="44" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"><path d="M24 6l15 8v18l-15 8-15-8V14z"/><path d="M9 14l15 8 15-8M24 22v18"/><path d="M16 10l15 8" opacity=".5"/></svg>';
+function resKey(n){n=String(n||"").toLowerCase();return /срібл/.test(n)?"silver":/злот/.test(n)?"gold":/флюс/.test(n)?"flux":/припі/.test(n)?"solder":/газ|балон/.test(n)?"gas":/ультразвук/.test(n)?"ultrasonic":/чорнін/.test(n)?"blackening":""}
+function resIcon(r){var k=resKey(r.name);return '<span class="ri" aria-hidden="true">'+(k&&RES_ICONS[k]?'<img src="icons/res/'+k+'.webp" alt="" width="48" height="48" loading="lazy" decoding="async">':RI_GENERIC)+'</span>'}
 function resTile(r){
   if(resEdit===r.id)return '<div class="rt ed"><div class="ef"><input class="full" id="r-name" value="'+esc(r.name)+'" placeholder="Назва"><input id="r-val" value="'+esc(r.val)+'" placeholder="Кількість" inputmode="decimal"><input id="r-unit" value="'+esc(r.unit)+'" placeholder="Одиниця" list="units"><input class="full" id="r-min" value="'+esc(r.min)+'" placeholder="Мінімум: підсвітити, коли не більше" inputmode="decimal">'
     +'<div class="adj"><button class="btn ghost" data-act="res-adj" data-d="-10">−10</button><button class="btn ghost" data-act="res-adj" data-d="-1">−1</button><button class="btn ghost" data-act="res-adj" data-d="1">+1</button><button class="btn ghost" data-act="res-adj" data-d="10">+10</button></div>'
     +'<button class="btn" data-act="res-save">Готово</button><button class="btn ghost" data-act="res-del">Видалити</button></div></div>';
   var pct=r.unit==="%",low=isLow(r),v=num(r.val),bar="";
   if(pct){var on=v===null?0:Math.max(0,Math.min(10,Math.round(v/10)));bar='<span class="seg" aria-hidden="true">';for(var k=0;k<10;k++)bar+='<i'+(k<on?' class="on"':'')+'></i>';bar+='</span>'}
-  return '<button class="rt'+(pct?' wide':'')+(low?' low':'')+'" data-act="res-edit" data-id="'+r.id+'" aria-label="Змінити: '+esc(r.name)+'"><span class="rl">'+esc(r.name)+'</span><span class="rv">'+(r.val===""?"—":esc(r.val))+'<small>'+esc(r.unit)+'</small></span>'+bar+(low?'<span class="pill bad rp">мало</span>':'')+'</button>'}
+  return '<button class="rt'+(pct?' wide':'')+(low?' low':'')+'" data-act="res-edit" data-id="'+r.id+'" aria-label="Змінити: '+esc(r.name)+'">'+resIcon(r)+'<span class="rl">'+esc(r.name)+'</span><span class="rv">'+(r.val===""?"—":esc(r.val))+'<small>'+esc(r.unit)+'</small></span>'+bar+(low?'<span class="pill bad rp">мало</span>':'')+'</button>'}
 function resSection(){
   return '<section class="sec inv"><div class="inv-tag">// RESOURCE DATABASE</div><div class="sh"><h2>Ресурси</h2><span class="hint">торкніться плитки, щоб змінити</span></div><div class="rg">'+S.res.map(resTile).join("")+'</div><button class="addb" data-act="res-new">+ Ресурс</button></section>'}
 function resSave(){
