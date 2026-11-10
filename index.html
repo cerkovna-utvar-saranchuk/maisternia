@@ -1389,7 +1389,7 @@ function buildBreakdown(r){
   else{
     bk.push(["Разом витрати (без заробітку компанії)",r.matCosts,1,""]);
     var cx=num(order.complexity)||1;
-    bk.push(["Заробіток компанії",r.labor,0,num(order.hours)+" год × "+fmt(r.hourRate)+(cx!==1?" × складність "+cx:""),"L"]);
+    bk.push(["Заробіток компанії мінімальний",r.labor,0,num(order.hours)+" год × "+fmt(r.hourRate)+(cx!==1?" × складність "+cx:""),"L"]);
     bk.push(["Витрати + заробіток компанії = мінімальна ціна",r.floor,1,""]);
   }
   return bk;
@@ -1485,8 +1485,8 @@ function update(){
     var fh='<div class="fr"><span>Витрати: матеріали, розхідники, пакування</span><b>'+fmt(r.matCosts)+'</b></div>';
     if(order.who==="master")fh+='<div class="fr"><span>Робота майстра</span><b>'+fmt(r.labor)+'</b></div>';
     fh+='<div class="hsep"></div><div class="fl" style="text-align:center">Ціна для клієнта</div><div class="fv red">'+fmt(r.price)+'</div><div class="fs">'+fmtEur(r.price)+'</div>';
-    fh+='<div class="fl" style="text-align:center">Загальний заробіток</div><div class="fv '+(r.earnTotal<0?'red':'green')+'">'+(r.earnTotal<0?"−":"")+fmt(Math.abs(r.earnTotal))+'</div><div class="fs">'+(order.who==="master"?"ціна мінус матеріали, витрати й робота майстра":"ціна мінус витрати (заробіток компанії не витрата)")+'</div>';
-    if(order.who!=="master"&&r.labor>0)fh+='<div class="hsep"></div><div class="fr mu"><span>заробіток компанії ('+num(order.hours)+' год × '+fmt(r.hourRate*(num(order.complexity)||1))+')</span><b>'+fmt(r.labor)+'</b></div><div class="fr mu"><span>понад ціль (маржа)</span><b>'+(r.margin<0?"−":"")+fmt(Math.abs(r.margin))+'</b></div>';
+    fh+='<div class="fl" style="text-align:center">Загальний заробіток компанії</div><div class="fv '+(r.earnTotal<0?'red':'green')+'">'+(r.earnTotal<0?"−":"")+fmt(Math.abs(r.earnTotal))+'</div><div class="fs">'+(order.who==="master"?"ціна мінус матеріали, витрати й робота майстра":"ціна мінус витрати (заробіток компанії не витрата)")+'</div>';
+    if(order.who!=="master"&&r.labor>0)fh+='<div class="hsep"></div><div class="fr mu"><span>мінімальний заробіток компанії ('+num(order.hours)+' год × '+fmt(r.hourRate*(num(order.complexity)||1))+')</span><b>'+fmt(r.labor)+'</b></div><div class="fr mu"><span>понад ціль (маржа)</span><b>'+(r.margin<0?"−":"")+fmt(Math.abs(r.margin))+'</b></div>';
     fe.innerHTML='<div class="fin">'+fh+'</div>';
   }else fe.innerHTML="";
   // клієнтський метал
@@ -1531,7 +1531,7 @@ function summaryText(){
   L.push("");L.push("Калькуляція:");
   buildBreakdown(r).forEach(function(x){if(x[1]===0&&!x[3])return;L.push((x[2]?"":"- ")+x[0]+": "+(typeof x[1]==="number"?fmt(x[1]):x[1])+(x[3]&&!x[2]?" ("+x[3]+")":""))});
   L.push("");L.push("Рекомендована ціна: "+fmt(r.rec));L.push("Ціна для клієнта: "+fmt(r.price)+" "+fmtEur(r.price));
-  L.push((order.who==="master"?"Запас понад собівартість: ":"Понад ціль: ")+fmt(r.margin)+" ("+pct(r.marginPct)+")");L.push("Загальний заробіток: "+fmt(r.earnTotal));return L.join("\n");
+  L.push((order.who==="master"?"Запас понад собівартість: ":"Понад ціль: ")+fmt(r.margin)+" ("+pct(r.marginPct)+")");L.push("Загальний заробіток компанії: "+fmt(r.earnTotal));return L.join("\n");
 }
 
 function copyText(t){
@@ -1566,10 +1566,10 @@ function makeCard(){
     y+=20;
     function line(label,val,col,bold){x.fillStyle=col;x.font=(bold?"700":"400")+" 34px 'Arial Narrow',Arial,sans-serif";x.fillText(label,P,y+36);x.textAlign="right";x.font=(bold?"700":"400")+" 34px 'Courier New',monospace";x.fillText(val,W-P,y+36);x.textAlign="left";y+=64}
     if(order.who==="master")line("Собівартість (з майстром)",fmt(r.floor),"#e0932d",true);
-    else{line("Витрати",fmt(r.matCosts),"#e0932d",true);line("Заробіток компанії",fmt(r.labor),"#dcd8c4",false)}
+    else{line("Витрати",fmt(r.matCosts),"#e0932d",true);line("Заробіток компанії мінімальний",fmt(r.labor),"#dcd8c4",false)}
     line("Рекомендована ціна",fmt(r.rec),"#dcd8c4",false);
     line("Ціна для клієнта",fmt(r.price)+" "+fmtEur(r.price),"#dcd8c4",true);
-    line("Загальний заробіток",fmt(r.earnTotal),r.earnTotal<0?"#d4553b":"#93b34a",true);
+    line("Загальний заробіток компанії",fmt(r.earnTotal),r.earnTotal<0?"#d4553b":"#93b34a",true);
     line(order.who==="master"?"Запас понад собівартість":"Понад ціль",fmt(r.margin)+" · "+pct(r.marginPct),r.status==="bad"?"#d4553b":"#93b34a",false);
     x.fillStyle="#8f8c77";x.font="400 22px 'Arial Narrow',Arial,sans-serif";x.fillText("Внутрішня картка виробу · для документації",P,H-P+10);
     $("ov-img").src=c.toDataURL("image/png");$("ov").hidden=false;$("ov").scrollTop=0}
