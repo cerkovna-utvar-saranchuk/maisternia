@@ -769,21 +769,21 @@ function detailHtml(){
 
 /* склад */
 function stockRow(i){
-  return '<tr><td><div class="nm">'+esc(i.name)+'</div><button class="lnk" data-act="flip" data-id="'+i.id+'">'+(i.need?"Купив":"Дозамовити")+'</button></td><td class="q">'+fmtQty(i)+'</td><td class="x"><button class="ico" data-act="edit" data-k="stock" data-id="'+i.id+'" aria-label="Змінити">'+PEN+'</button><button class="ico" data-act="del" data-k="stock" data-id="'+i.id+'" aria-label="Видалити">×</button></td></tr>'}
+  return '<tr><td><div class="nm">'+esc(i.name)+'</div><button class="lnk" data-act="del" data-k="stock" data-id="'+i.id+'">Купив</button></td><td class="q">'+fmtQty(i)+'</td><td class="x"><button class="ico" data-act="edit" data-k="stock" data-id="'+i.id+'" aria-label="Змінити">'+PEN+'</button><button class="ico" data-act="del" data-k="stock" data-id="'+i.id+'" aria-label="Видалити">×</button></td></tr>'}
 function stockSection(need){
   var rows="",n=0,kind=need?"need":"have";
   S.stock.forEach(function(i){if(!!i.need!==need)return;n++;rows+=(edit&&edit.k==="stock"&&edit.id===i.id)?editRow(i,false,3):stockRow(i)});
   if(need)S.res.forEach(function(r){if(isLow(r)){n++;rows+=lowRow(r)}});
-  if(!n&&adding!==kind)rows='<tr><td colspan="3" class="empty">'+(need?"Нічого не треба дозамовити":"Склад порожній")+'</td></tr>';
+  if(!n&&adding!==kind)rows='<tr><td colspan="3" class="empty">'+(need?"Нічого не треба купувати":"Склад порожній")+'</td></tr>';
   if(adding===kind)rows+='<tr class="editing"><td colspan="3">'+addForm(kind)+'</td></tr>';
-  return '<section class="sec inv"><div class="inv-tag">// '+(need?"REQUISITION LIST":"STOCK ON HAND")+'</div><div class="sh"><h2>'+(need?"Треба дозамовити":"Є в наявності")+'</h2>'+(need&&n?'<span class="pill warn">'+n+'</span>':"")+'</div><div class="tw"><table><thead><tr><th>Назва</th><th class="r">К-сть</th><th></th></tr></thead><tbody>'+rows+'</tbody></table></div>'
+  return '<section class="sec inv"><div class="inv-tag">// '+(need?"REQUISITION LIST":"STOCK ON HAND")+'</div><div class="sh"><h2>'+(need?"Список закупівлі":"Є в наявності")+'</h2>'+(need&&n?'<span class="pill warn">'+n+'</span>':"")+'</div><div class="tw"><table><thead><tr><th>Назва</th><th class="r">К-сть</th><th></th></tr></thead><tbody>'+rows+'</tbody></table></div>'
     +(adding===kind?"":'<button class="addb" data-act="add" data-kind="'+kind+'">+ Додати</button>')+'</section>'}
 function stockHead(sub){
   return '<header class="top invh"><div class="of-sys"><span class="of-id"><i class="sb-dot on"></i>SARANCHUK OS / INVENTORY</span><span>RES: '+S.res.length+' · ITEMS: '+S.stock.length+'</span></div><h1>Склад</h1><p class="sub">'+sub+'</p></header>'}
 function stockHtml(){
   var n=needCount();
-  var sub=n?n+" "+plural(n,"позиція","позиції","позицій")+" треба дозамовити":"Усе потрібне є в наявності";
-  return stockHead(sub)+lowBar()+resSection()+stockSection(true)+stockSection(false)+spendSection()}
+  var sub=n?n+" "+plural(n,"позиція","позиції","позицій")+" треба дозамовити":"Дозамовляти нічого не треба";
+  return stockHead(sub)+lowBar()+resSection()+stockSection(true)+spendSection()}
 
 /* ресурси: плитки як в інвентарі */
 function num(x){var n=parseFloat(String(x).replace(",","."));return isNaN(n)?null:n}
