@@ -799,7 +799,7 @@ function tcHtml(o){
   if(t.els.length)h+='<div class="tw"><table><tbody>'+t.els.map(function(e){var c=catFind(e.a);return '<tr><td style="width:52px">'+(c?'<img class="cimg" src="'+catSrc(c)+'" alt="">':"")+'</td><td><div class="nm">'+esc(e.a)+'</div>'+(c&&c.s?'<div class="nt">Ø '+c.s+' мм</div>':"")+'</td><td class="q"><button class="ico" data-act="tc-q" data-a="'+e.a+'" data-d="-1" aria-label="Менше">−</button> ×'+e.q+' <button class="ico" data-act="tc-q" data-a="'+e.a+'" data-d="1" aria-label="Більше">+</button></td><td class="x"><button class="ico" data-act="tc-del" data-a="'+e.a+'" aria-label="Прибрати">×</button></td></tr>'}).join("")+'</tbody></table></div>';
   else h+='<p class="empty">Елементів поки немає</p>';
   h+=tcPick?'<div class="cag cpk">'+CAT.map(function(c){return '<button class="cac" data-act="tc-add" data-a="'+c.a+'"><img src="'+catSrc(c)+'" alt=""><b>'+c.a+'</b><span>'+(c.s?"Ø "+c.s+" мм":"&nbsp;")+'</span></button>'}).join("")+'</div><button class="lnk" data-act="tc-pick">Закрити довідник</button>':'<button class="addb" data-act="tc-pick">+ Елемент з довідника</button>';
-  h+='</section><section class="sec"><div class="sh"><h2>Матеріали</h2></div><div class="ef">'+f("wire","Дріт","напр. 0,25 мм, 3 м")+f("silver","Срібло","напр. 12 г")+f("stones","Камені","напр. 4 шт, Ø 6,43")+f("chain","Ланцюжок","напр. артикул, довжина")+'</div>'+f("tnotes","Нотатки для майстра","",1)+'</section>';
+  h+='</section><section class="sec"><div class="sh"><h2>Матеріали</h2></div><div class="ef">'+f("wire","Дріт","напр. 0,25 мм, 3 м")+f("plate","Пластина *","напр. 0,8 мм, 40×25 мм")+f("silver","Срібло: рекомендована вага","напр. 20 г")+f("stones","Камені","напр. 4 шт, Ø 6,43")+f("chain","Ланцюжок","напр. артикул, довжина")+'</div>'+f("tnotes","Нотатки для майстра","",1)+'</section>';
   h+='<div class="row tcact"><button class="btn" data-act="tc-gen" data-m="master">Для майстра</button><button class="btn ghost" data-act="tc-gen" data-m="own">Мій аркуш A4</button></div>';
   return h}
 function tcLoad(src){return new Promise(function(res){if(!src)return res(null);var i=new Image();i.onload=function(){res(i)};i.onerror=function(){res(null)};i.src=src})}
@@ -820,7 +820,7 @@ function tcSheet(o,mode){
     var tx=M+(ph?pw+40:0),ty=y;x.fillStyle="#111";
     function row(l,v){if(!String(v||"").trim())return;x.font="22px Arial";x.fillStyle="#777";x.fillText(l,tx,ty);ty+=28;x.font="bold 32px Arial";x.fillStyle="#111";ty=tcWrap(x,v,tx,ty,W-M-tx,38)+12}
     row("Модель",t.bart);row("Розмір",t.bsize);row("Метал",t.bmetal);row("Вага",t.bwt);
-    if(own){row("Дріт",t.wire);row("Срібло",t.silver)}
+    row("Дріт",t.wire);row("Пластина",t.plate);row("Срібло: рекомендована вага",t.silver)
     y=Math.max(ty,ph?top+pw:top)+20;
     if(t.chg){x.fillStyle="#fff3d6";var bh=60+(t.chgn?60:0);x.fillRect(M,y,W-2*M,bh+30);x.fillStyle="#7a4a00";x.font="bold 28px Arial";x.fillText("ЗМІНЕНО проти базової моделі",M+20,y+16);if(t.chgn){x.font="26px Arial";x.fillStyle="#222";tcWrap(x,t.chgn,M+20,y+56,W-2*M-40,32)}y+=bh+50}
     if(t.els.length){x.fillStyle="#777";x.font="bold 24px Arial";x.fillText("ЕЛЕМЕНТИ ЛИТВА (артикул ×кількість)",M,y);y+=40;
