@@ -381,6 +381,7 @@ details.det{margin:10px 0;padding:10px 12px;border:1px solid #3a3c2c;border-radi
 .dl-r{display:flex;align-items:center;justify-content:space-between;gap:8px;width:100%;margin:0 0 8px;padding:12px;border:1px solid #3a3c2c;border-radius:8px;background:#1C2018;color:inherit;font:inherit;text-align:left;cursor:pointer}.dl-n{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .savebar{display:flex;align-items:center;gap:12px;margin:22px 0 70px}.savebar .btn{flex:1 1 auto}
 .cag{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}.cac{display:flex;flex-direction:column;gap:4px;padding:8px;border:1px solid #3a3c2c;border-radius:6px;background:#161912;color:inherit;font:inherit;text-align:left}.cac img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:4px;background:#0e0f11}.cac b{font:600 15px/1 var(--mono)}.cac span{font-size:12px;color:#929785}.cac input{width:100%;font-size:14px}.cpk{grid-template-columns:repeat(3,1fr);margin:10px 0}.cimg{width:44px;height:44px;object-fit:cover;border-radius:4px;background:#0e0f11;display:block}.tcph{display:flex;gap:6px;overflow-x:auto;margin:10px 0 4px}.tcph .ph{flex:0 0 64px;height:64px}.tcph .ph.on{outline:2px solid #D18B27}.tcact{display:flex;gap:8px;margin:10px 0}.tcact .btn{flex:1}#tcov{position:fixed;inset:0;z-index:9999;background:#222;overflow:auto;padding:10px}#tcov .tcb{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}#tcov img{width:100%;display:block;background:#fff}@media print{body>*:not(#tcov){display:none!important}#tcov{position:static;background:#fff;padding:0}#tcov .tcb{display:none}@page{size:A4;margin:0}}
+.cac b{font:700 22px/1 var(--mono);color:#FFC83A;text-shadow:0 0 10px rgba(255,200,58,.5);letter-spacing:.02em}.cac span{font:700 16px/1.1 var(--mono);color:#FFC83A}.cac img[data-act]{cursor:zoom-in}#cfull{position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.94);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:12px}#cfull img{max-width:100%;max-height:78vh;object-fit:contain}#cfull .cfc{display:flex;flex-direction:column;align-items:center;gap:4px}#cfull .cfc b{font:700 34px/1 var(--mono);color:#FFC83A;text-shadow:0 0 14px rgba(255,200,58,.6)}#cfull .cfc span{font:700 22px/1 var(--mono);color:#FFC83A}#cfull .cfc i{font-style:normal;font-size:12px;color:#929785}
 </style>
 </head>
 <body>
@@ -775,13 +776,14 @@ var CAT=[{"a": "Б-001", "f": "b001", "s": "6,43"}, {"a": "Б-002", "f": "b002",
 var CATG=[["Б","Б"],["К","К"],["Н","Н"],["Р","Р"],["П","П"],["М","М"],["З","З"],["В","В"],["О","О"],["Х","Х"],["Ф","Ф"]];
 function catFind(a){for(var i=0;i<CAT.length;i++)if(CAT[i].a===a)return CAT[i];return null}
 function catSrc(c){return "cat/"+c.f+".webp"}
+function catFull(c){return "cat/full/"+c.f+".webp"}
 function catNote(a){return (S.catn&&S.catn[a])||""}
 function catHtml(){
   var h=head("Довідник","елементи литва: артикул, фото, розмір, де гума й віск","");
   CATG.forEach(function(g){
     var it=CAT.filter(function(c){return c.a.charAt(0)===g[0]});if(!it.length)return;
     h+='<section class="sec"><div class="sh"><h2>Артикули '+g[1]+'</h2><span class="hint">'+it.length+'</span></div><div class="cag">'
-    +it.map(function(c){return '<div class="cac"><img src="'+catSrc(c)+'" alt="'+c.a+'" loading="lazy"><b>'+c.a+'</b><span>'+(c.s?"Ø "+c.s+" мм":"&nbsp;")+'</span><input data-cn="'+c.a+'" value="'+esc(catNote(c.a))+'" placeholder="гума / віск"></div>'}).join("")+'</div></section>'});
+    +it.map(function(c){return '<div class="cac"><img src="'+catSrc(c)+'" alt="'+c.a+'" loading="lazy" data-act="tc-fo" data-a="'+c.a+'"><b>'+c.a+'</b><span>'+(c.s?"Ø "+c.s+" мм":"&nbsp;")+'</span><input data-cn="'+c.a+'" value="'+esc(catNote(c.a))+'" placeholder="гума / віск"></div>'}).join("")+'</div></section>'});
   return h}
 function tcOf(o){if(!o.tc)o.tc={};if(!Array.isArray(o.tc.els))o.tc.els=[];return o.tc}
 var tcPick=false;
@@ -846,6 +848,8 @@ function tcAct(a,d){
   if(a==="tc-q"&&o){t.els.forEach(function(z){if(z.a===d.a)z.q=Math.max(1,z.q+(+d.d))});save();render();return true}
   if(a==="tc-del"&&o){t.els=t.els.filter(function(z){return z.a!==d.a});save();render();return true}
   if(a==="tc-gen"&&o){tcShow(o,d.m);return true}
+  if(a==="tc-fo"){var c=catFind(d.a);if(!c)return true;var f=document.getElementById("cfull");if(f)f.remove();f=document.createElement("div");f.id="cfull";f.setAttribute("data-act","tc-fc");f.innerHTML='<img src="'+catFull(c)+'" alt="'+c.a+'"><div class="cfc"><b>'+c.a+'</b>'+(c.s?'<span>Ø '+c.s+' мм</span>':"")+'<i>торкніться, щоб закрити</i></div>';document.body.appendChild(f);return true}
+  if(a==="tc-fc"){var f2=document.getElementById("cfull");if(f2)f2.remove();return true}
   if(a==="tc-close"){var v=document.getElementById("tcov");if(v)v.remove();return true}
   if(a==="tc-print"){window.print();return true}
   if(a==="tc-share"){var v2=document.getElementById("tcov");if(!v2)return true;fetch(v2.__url).then(function(r){return r.blob()}).then(function(b){var f=new File([b],v2.__name,{type:"image/jpeg"});if(navigator.canShare&&navigator.canShare({files:[f]}))return navigator.share({files:[f]});var l=document.createElement("a");l.href=v2.__url;l.download=v2.__name;l.click()}).catch(function(){});return true}
