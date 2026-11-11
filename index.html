@@ -812,11 +812,13 @@ function tcSheet(o,mode){
   var t=tcOf(o),own=mode==="own",W=1240,H=1754,cv=document.createElement("canvas");cv.width=W;cv.height=H;var x=cv.getContext("2d");
   var jobs=[null].concat(t.els.map(function(e){var c=catFind(e.a);return tcLoad(c?catSrc(c):"")}));
   var pid=tcPhotoId(o);jobs[0]=pid&&typeof PH!=="undefined"&&PH[pid]?tcLoad(PH[pid]):Promise.resolve(null);
-  return Promise.all(jobs).then(function(im){
+  var lg=null;
+  return tcLoad("logo-sheet.png").then(function(l){lg=l;return Promise.all(jobs)}).then(function(im){
     x.fillStyle="#fff";x.fillRect(0,0,W,H);x.fillStyle="#111";x.textBaseline="top";
     var M=70,y=M;
-    x.font="bold 26px Arial";x.fillStyle="#777";x.fillText(own?"ТЕХКАРТА · МІЙ АРКУШ":"ТЕХНІЧНЕ ЗАВДАННЯ",M,y);
-    x.textAlign="right";x.fillText((o.due?"термін: "+String(o.due).split("-").reverse().join("."):""),W-M,y);x.textAlign="left";y+=44;
+    var ttl=own?"ТЕХКАРТА · МІЙ АРКУШ":"ТЕХНІЧНЕ ЗАВДАННЯ",dueT=o.due?"термін: "+String(o.due).split("-").reverse().join("."):"";
+    if(lg){var lw=340,lh=lw*lg.height/lg.width;x.drawImage(lg,M,y,lw,lh);x.font="bold 26px Arial";x.fillStyle="#777";x.textAlign="right";x.fillText(ttl,W-M,y+14);x.fillText(dueT,W-M,y+54);x.textAlign="left";y+=lh+26}
+    else{x.font="bold 26px Arial";x.fillStyle="#777";x.fillText(ttl,M,y);x.textAlign="right";x.fillText(dueT,W-M,y);x.textAlign="left";y+=44}
     x.fillStyle="#111";x.font="bold 54px Arial";y=tcWrap(x,o.name||"Без назви",M,y,W-2*M,62)+10;
     x.fillStyle="#222";x.fillRect(M,y,W-2*M,3);y+=26;
     var ph=im[0],pw=420,top=y;
