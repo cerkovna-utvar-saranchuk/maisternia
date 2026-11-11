@@ -369,6 +369,16 @@ details.det{margin:10px 0;padding:10px 12px;border:1px solid #3a3c2c;border-radi
 .of-seg i{height:10px}
 .of-rng{width:100%;margin:8px 0 2px;accent-color:#e0932d}
 .of-prog .lnk{margin-top:4px}
+.mny{display:block;width:100%;text-align:left;margin:10px 0 8px;padding:12px 14px;border:1px solid #3a3c2c;border-radius:8px;background:#1C2018;color:inherit;font:inherit;cursor:pointer}
+.mny-l{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#929785}
+.mny-b{display:flex;align-items:baseline;gap:10px;margin:4px 0 6px}.mny-b b{font-size:30px;color:#D18B27;font-variant-numeric:tabular-nums}.mny-b small{font-size:14px;color:#929785}
+.mny-s{display:flex;gap:18px;font-size:13px;color:#929785}.mny-s b{color:#D8D4BD;font-variant-numeric:tabular-nums}
+.hinfo{display:flex;flex-wrap:wrap;gap:6px 16px;margin:0 0 12px;font-size:13px;color:#929785}.hinfo b{color:#D8D4BD}.hinfo .bad,.hinfo .bad b{color:var(--bad)}
+.homebar .btn{flex:1 1 auto}.homebar{flex-wrap:wrap}.homebar .lnk{flex:1 1 100%;text-align:left;padding:2px 0 0}
+.hchips{margin:0 0 12px}
+.morer{display:grid;grid-template-columns:1fr auto;gap:2px 10px;align-items:center;width:100%;text-align:left;margin:0 0 10px;padding:14px;border:1px solid #3a3c2c;border-radius:8px;background:#1C2018;color:inherit;font:inherit;cursor:pointer}
+.morer b{font-size:18px;letter-spacing:.06em;text-transform:uppercase}.morer span{grid-column:1;color:#929785;font-size:13px}.morer i{grid-column:2;grid-row:1/3;font-style:normal;font-size:26px;color:var(--accent)}
+.dl-r{display:flex;align-items:center;justify-content:space-between;gap:8px;width:100%;margin:0 0 8px;padding:12px;border:1px solid #3a3c2c;border-radius:8px;background:#1C2018;color:inherit;font:inherit;text-align:left;cursor:pointer}.dl-n{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 </style>
 </head>
 <body>
@@ -425,6 +435,8 @@ var PEN='<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="cur
 var ICON_O='<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M5 6h14M5 12h14M5 18h9"/></svg>';
 var ICON_S='<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M4 8l8-4 8 4v8l-8 4-8-4zM4 8l8 4 8-4M12 12v8"/></svg>';
 
+var ICON_A='<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 20V11M12 20V4M19 20v-6"/></svg>';
+var ICON_X='<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="4" width="6.5" height="6.5" rx="1"/><rect x="13.5" y="4" width="6.5" height="6.5" rx="1"/><rect x="4" y="13.5" width="6.5" height="6.5" rx="1"/><rect x="13.5" y="13.5" width="6.5" height="6.5" rx="1"/></svg>';
 var SECT={"Майстри":"MASTERS","Цікаві ідеї":"IDEAS"};
 function head(title,sub,right){return '<header class="top">'+(SECT[title]?'<div class="of-sys"><span class="of-id"><i class="sb-dot on"></i>SARANCHUK OS / '+SECT[title]+'</span></div>':'')+'<div class="tt"><h1>'+title+'</h1>'+(right||"")+'</div>'+orn()+'<p class="sub">'+sub+'</p></header>'}
 
@@ -592,13 +604,47 @@ function earnHtml(){
   var e=earnCalc();
   var note=(e.nodate?'<div class="en">Завершених без дати: '+e.nodate+' — відкрийте їх і вкажіть «Дата завершення»</div>':"")+(e.nocost?'<div class="en">Без витрат: '+e.nocost+' — для них заробіток = повна ціна</div>':"");
   return '<section class="earn" aria-label="Заробіток"><div class="en-h">ЗАРОБІТОК · ціна мінус витрати</div><div class="eg" id="eg">'+earnGrid(e)+'</div>'+note+fxHtml()+qaHtml()+'</section>'}
+var homeF="act";
+function brandHtml(){return '<div class="brand cmp" role="img" aria-label="Саранчук, ювелірна майстерня"><div class="bs" aria-hidden="true"></div><div class="wm" aria-hidden="true">S<i>.</i>A<i>.</i>R<i>.</i>A<i>.</i>N<i>.</i>C<i>.</i>H<i>.</i>U<i>.</i>K<i>.</i></div><div class="wsub" aria-hidden="true">ювелірна майстерня</div><div class="bs" aria-hidden="true"></div></div>'}
+function backMore(){return '<button class="back" data-act="tab" data-tab="x">← Ще</button>'}
+var MON=["січень","лютий","березень","квітень","травень","червень","липень","серпень","вересень","жовтень","листопад","грудень"];
+function moneyHome(){
+  var e=earnCalc(),t=new Date(),q=Math.floor(t.getMonth()/3)+1,m=toEur(e.r.m),qq=toEur(e.r.q),y=toEur(e.r.y),u=fxUah();
+  function n(x){return x.toLocaleString("uk-UA")}
+  return '<button class="mny" data-act="tab" data-tab="a" aria-label="Заробіток, відкрити аналітику"><div class="mny-l">Чистий заробіток · '+MON[t.getMonth()]+'</div><div class="mny-b"><b>'+n(m.eur)+' €</b><small>≈ '+n(Math.round(m.eur*u))+' ₴</small></div><div class="mny-s"><span>'+q+' кв. <b>'+n(qq.eur)+' €</b></span><span>'+t.getFullYear()+' <b>'+n(y.eur)+' €</b></span></div></button>'}
+function homeInfo(){
+  var near=null,over=0,debt={};
+  S.orders.forEach(function(o){if(o.plan)return;var k=stOf(o);
+    if(stActive(o)){var d=daysLeft(o.due);if(d!==null){if(d<0)over++;else if(near===null||d<near)near=d}}
+    if(k!=="given"){var pr=num(o.price),bal=pr>0?r2(pr-(num(o.adv)||0)):0;if(bal>0){var c=o.cur||"₴";debt[c]=r2((debt[c]||0)+bal)}}});
+  var h="",dt=toEur(debt);
+  if(near!==null)h+='<span>Найближчий термін <b>'+(near===0?"сьогодні":near===1?"завтра":near+" дн.")+'</b></span>';
+  if(dt.eur>0)h+='<span>Очікує оплати <b>≈ '+Math.round(dt.eur*fxUah()).toLocaleString("uk-UA")+' ₴</b></span>';
+  if(over)h+='<span class="bad">Прострочено <b>'+over+'</b></span>';
+  return h?'<div class="hinfo">'+h+'</div>':""}
+function homeChips(){
+  var all=S.orders.filter(function(o){return !o.plan}),na=all.filter(stActive).length,nr=all.length-na;
+  function c(k,t,n){return '<button class="chip'+(homeF===k?" on":"")+'" data-act="hf" data-f="'+k+'">'+t+' ('+n+')</button>'}
+  return '<div class="chips hchips">'+c("act","Активні",na)+c("arch","Архів",nr)+c("all","Усі",all.length)+'</div>'}
+function homeHtml(){
+  var arr=sortOrders(S.orders.filter(function(o){return !o.plan}));
+  if(homeF==="act")arr=arr.filter(stActive);else if(homeF==="arch")arr=arr.filter(function(o){return !stActive(o)});
+  var body=arr.length?arr.map(card).join(""):'<div class="emptyst">'+(homeF==="arch"?"Готових і виданих замовлень ще немає.":S.orders.some(function(o){return !o.plan})?"Активних замовлень немає. Нове додайте кнопкою вгорі.":"Замовлень ще немає. Додайте перше кнопкою вгорі.")+'</div>';
+  return sysbarHtml()+brandHtml()+moneyHome()+homeInfo()+alertHtml()+'<div class="homebar"><button class="btn" data-act="new">+ Замовлення</button><button class="lnk" data-act="qa-go">Завершене замовлення в історію</button></div>'+(newPick?pickHtml():"")+homeChips()+body}
 function listHtml(){
-  var plan=tab==="p",arr0=S.orders.filter(function(o){return !!o.plan===plan}),arr=plan?arr0:sortOrders(arr0),n=arr.length,near=null;
-  arr.forEach(function(o){if(!plan&&!stActive(o))return;var d=daysLeft(o.due);if(d!==null&&d>=0&&(near===null||d<near))near=d});
-  var sub=plan?"заплановані проєкти: "+n:n+" "+plural(n,"замовлення","замовлення","замовлень");
-  if(near!==null)sub+=" · найближчий термін "+(near===0?"сьогодні":near===1?"завтра":"через "+near+" дн.");
-  var body=n?arr.map(card).join(""):'<div class="emptyst">'+(plan?"Запланованих проєктів ще немає. Додайте перший кнопкою вгорі.":"Замовлень ще немає. Додайте перше кнопкою вгорі.")+'</div>';
-  return sysbarHtml()+(plan?"":alertHtml())+'<div class="brand cmp" role="img" aria-label="Саранчук, ювелірна майстерня"><div class="bs" aria-hidden="true"></div><div class="wm" aria-hidden="true">S<i>.</i>A<i>.</i>R<i>.</i>A<i>.</i>N<i>.</i>C<i>.</i>H<i>.</i>U<i>.</i>K<i>.</i></div><div class="wsub" aria-hidden="true">ювелірна майстерня</div><div class="bs" aria-hidden="true"></div></div>'+(plan?"":earnHtml())+'<div class="homebar"><p class="sub">'+sub+'</p><button class="btn" data-act="new">+ '+(plan?"Проєкт":"Замовлення")+'</button></div>'+(newPick&&!plan?pickHtml():"")+body+backupHtml()+'<div id="sync" class="sync '+cloud.st+'" data-act="sync-retry">'+syncText()+'</div>'}
+  if(tab!=="p")return homeHtml();
+  var arr=S.orders.filter(function(o){return !!o.plan}),n=arr.length;
+  var body=n?arr.map(card).join(""):'<div class="emptyst">Запланованих проєктів ще немає. Додайте перший кнопкою вгорі.</div>';
+  return backMore()+sysbarHtml()+brandHtml()+'<div class="homebar"><p class="sub">заплановані проєкти: '+n+'</p><button class="btn" data-act="new">+ Проєкт</button></div>'+body}
+function doneList(){
+  var arr=S.orders.filter(function(o){var k=stOf(o);return !o.plan&&(k==="ready"||k==="given")&&o.doneAt&&effPrice(o)!==null}).sort(function(x,y){return String(y.doneAt).localeCompare(String(x.doneAt))}).slice(0,10);
+  if(!arr.length)return"";
+  return '<section class="sec"><div class="sh"><h2>Останні завершені</h2><span class="hint">ціна мінус витрати</span></div><div class="dl">'+arr.map(function(o){var g=r2(effPrice(o)-effCost(o));return '<button class="dl-r" data-act="open" data-id="'+o.id+'"><span class="dl-n">'+esc(o.name||"Без назви")+'</span><span class="pg"><span class="pill mu">'+esc(String(o.doneAt).split("-").reverse().join("."))+'</span><span class="pill ok">'+g.toLocaleString("uk-UA")+' '+esc(o.cur||"₴")+'</span></span></button>'}).join("")+'</div></section>'}
+function analyticsHtml(){return head("Аналітика","заробіток за датою завершення замовлень","")+earnHtml()+investHtml()+doneList()}
+function moreHtml(){
+  var nm=S.masters.length,np=S.orders.filter(function(o){return !!o.plan}).length,ni=S.ideas.length;
+  function r(k,t,d){return '<button class="morer" data-act="tab" data-tab="'+k+'"><b>'+t+'</b><span>'+d+'</span><i>›</i></button>'}
+  return head("Ще","розділи й дані","")+r("m","Майстри",nm?nm+" "+plural(nm,"майстер","майстри","майстрів"):"поки немає")+r("p","Проєкти",np?np+" "+plural(np,"проєкт","проєкти","проєктів"):"поки немає")+r("i","Ідеї",ni?ni+" "+plural(ni,"ідея","ідеї","ідей"):"поки немає")+backupHtml()+'<div id="sync" class="sync '+cloud.st+'" data-act="sync-retry">'+syncText()+'</div>'}
 
 /* замовлення */
 function itemRow(i){
@@ -1150,12 +1196,12 @@ var ICON_P='<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="
 var ICON_I='<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 2.1h5c0-.9.4-1.6 1-2.1A6 6 0 0 0 12 3z"/></svg>';
 var ICON_C='<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="3" width="14" height="18" rx="1"/><path d="M8 7h8M8 12h.01M12 12h.01M16 12h.01M8 16h.01M12 16h.01M16 16h.01"/></svg>';
 function navHtml(){
-  var c=needCount(),dsN=dueSoon().length,cr=cur?ord():null,t=cr?(cr.plan?"p":"o"):tab;
+  var c=needCount(),dsN=dueSoon().length,cr=cur?ord():null,t=cr?(cr.plan?"x":"o"):(tab==="p"||tab==="i"||tab==="m"?"x":tab);
   function b(k,ico,label,extra){return '<button data-act="tab" data-tab="'+k+'" class="'+(t===k?"on":"")+'">'+ico+'<span>'+label+'</span>'+(extra||"")+'</button>'}
-  return b("o",ICON_O,"Замовлення",dsN?'<em class="badge bad">'+dsN+'</em>':"")+b("p",ICON_P,"Проєкти")+b("i",ICON_I,"Ідеї")+b("m",ICON_M,"Майстри")+b("c",ICON_C,"Ціна")+b("s",ICON_S,"Склад",c?'<em class="badge">'+c+'</em>':"")}
+  return b("o",ICON_O,"Замовлення",dsN?'<em class="badge bad">'+dsN+'</em>':"")+b("s",ICON_S,"Склад",c?'<em class="badge">'+c+'</em>':"")+b("c",ICON_C,"Ціна")+b("a",ICON_A,"Аналітика")+b("x",ICON_X,"Ще")}
 
 function render(){
-  document.getElementById("app").innerHTML=cur?detailHtml():(tab==="c"?CALC.html():tab==="s"?stockHtml():(tab==="m"?(mOpen?masterDetailHtml():mastersHtml()):(tab==="i"?(ideaOpen?ideaDetailHtml():ideasHtml()):listHtml())));
+  document.getElementById("app").innerHTML=cur?detailHtml():(tab==="c"?CALC.html():tab==="s"?stockHtml():tab==="a"?analyticsHtml():tab==="x"?moreHtml():(tab==="m"?(mOpen?masterDetailHtml():backMore()+mastersHtml()):(tab==="i"?(ideaOpen?ideaDetailHtml():backMore()+ideasHtml()):listHtml())));
   document.getElementById("nav").innerHTML=navHtml();hydrate();
   var sk=(cur||"")+"|"+tab+"|"+mOpen+"|"+ideaOpen;if(window.__sk!==undefined&&window.__sk!==sk){var ap=document.getElementById("app");ap.classList.remove("swap");void ap.offsetWidth;ap.classList.add("swap")}window.__sk=sk;if(!cur&&tab==="c")CALC.mount()}
 
@@ -1278,6 +1324,8 @@ function act(a,d){
     case "m-settle":mSettle(true);break;
     case "m-reopen":mSettle(false);break;
     case "otab":setOtab(d.t);break;
+    case "hf":homeF=d.f;render();break;
+    case "qa-go":qaOpen=true;tab="a";cur=null;render();scrollTo(0,0);break;
     case "prog-auto":var po=ord();if(po){po.prog="";save();render()}break;
     case "status":var so=ord();if(so){so.status=d.s;if(d.s==="ready"||d.s==="given"){if(!so.doneAt)so.doneAt=today()}else if(d.s==="sketch"||d.s==="agree"||d.s==="work")so.doneAt="";save();render()}break;
     case "sync-retry":if(cloud.uid){cloud.busy=false;pushNow()}else if(window.FB)showLogin(true);else{setSync("pending");location.reload()}break;
