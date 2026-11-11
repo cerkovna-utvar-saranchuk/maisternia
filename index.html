@@ -762,7 +762,7 @@ function detailHtml(){
     +(o.plan?'<button class="btn" style="margin-top:20px" data-act="to-order">Перетворити на замовлення</button>':"")
     +delBlock())
   +pane("p",section(o,"mat","Що замовити",matHint(o))+section(o,"part","Деталі виробу","галочка: зроблено"))
-  +pane("r",logSection(o))
+  +pane("r",metalHtml(o)+logSection(o))
   +pane("f",photos||'<section class="sec"><p class="empty">Фото додати поки неможливо.</p></section>')}
 
 /* склад */
@@ -786,7 +786,8 @@ function stockHtml(){
 /* ресурси: плитки як в інвентарі */
 function num(x){var n=parseFloat(String(x).replace(",","."));return isNaN(n)?null:n}
 function defRes(){return [
-  {id:uid(),name:"Срібло",unit:"г",val:"",min:""},
+  {id:uid(),name:"Срібло 925",unit:"г",val:"",min:""},
+  {id:uid(),name:"Срібло 999",unit:"г",val:"",min:""},
   {id:uid(),name:"Золото",unit:"г",val:"",min:""},
   {id:uid(),name:"Флюс для пайки",unit:"мл",val:"",min:""},
   {id:uid(),name:"Припій",unit:"г",val:"",min:""},
@@ -838,9 +839,26 @@ function lowRow(r){return '<tr><td><div class="nm">'+esc(r.name)+'</div><span cl
 function fmtD(d){return d&&d.length>=10?d.slice(8,10)+"."+d.slice(5,7):""}
 function today(){var t=new Date(),p=function(n){return(n<10?"0":"")+n};return t.getFullYear()+"-"+p(t.getMonth()+1)+"-"+p(t.getDate())}
 function totals(log){var tot={};(log||[]).forEach(function(e){var k=e.name+"|"+e.unit;tot[k]=tot[k]||{name:e.name,unit:e.unit,amt:0};tot[k].amt=Math.round((tot[k].amt+e.amt)*100)/100});return tot}
+function agRes(f){for(var i=0;i<S.res.length;i++)if(new RegExp("срібл.*"+f,"i").test(S.res[i].name))return S.res[i];return null}
+function stockAdj(r,d){var v=num(r.val);if(v!==null)r.val=String(Math.max(0,Math.round((v+d)*100)/100))}
+function syncMetal(o){
+  var f=o.mf||"",g=num(o.mg),want=(o.mown!=="client"&&f&&g>0)?g:0,r=f?agRes(f):null;
+  o.log=o.log||[];var e=null;o.log.forEach(function(x){if(x.auto==="metal")e=x});
+  if(e&&(!r||e.rid!==r.id||want===0)){var er=findIn(S.res,e.rid);if(er)stockAdj(er,e.amt);o.log=o.log.filter(function(x){return x!==e});e=null}
+  if(want>0&&r){
+    if(e){stockAdj(r,e.amt-want);e.amt=want}
+    else{o.log.push({id:uid(),d:today(),rid:r.id,name:r.name,unit:r.unit,amt:want,note:"авто: моє срібло "+f,p:r.price||"",auto:"metal"});stockAdj(r,-want)}}
+  save()}
+function metalHtml(o){
+  var cl=o.mown==="client",r=o.mf?agRes(o.mf):null,g=num(o.mg),h="";
+  if(o.mf&&!r)h='<div class="en bad">Не знайшов у складі ресурс «Срібло '+esc(o.mf)+'» — додайте його на вкладці «Склад».</div>';
+  else if(g>0&&o.mf&&!cl)h='<div class="en">Списано зі складу: Срібло '+esc(o.mf)+' '+g+' г'+(r&&num(r.val)!==null?'. Залишок: '+r.val+' г':'')+'</div>';
+  else if(g>0&&cl)h='<div class="en">Срібло клієнта: зі складу не списується, у витрати не входить.</div>';
+  return '<section class="sec"><div class="sh"><h2>Срібло у виробі</h2><span class="hint">моє списується зі складу автоматично</span></div><div class="ef"><label class="fld"><span>Проба</span><select data-f="mf"><option value="">—</option><option value="925"'+(o.mf==="925"?" selected":"")+'>925</option><option value="999"'+(o.mf==="999"?" selected":"")+'>999</option></select></label><label class="fld"><span>Скільки пішло, г</span><input data-f="mg" inputmode="decimal" value="'+esc(o.mg||"")+'" placeholder="0"></label></div>'
+   +'<div class="kindsw"><button class="'+(cl?"":"on")+'" data-act="mown" data-v="own">Моє срібло</button><button class="'+(cl?"on":"")+'" data-act="mown" data-v="client">Срібло клієнта</button></div><div id="metal-n">'+h+'</div></section>'}
 function logSection(o){
   var log=o.log||[],rows="",tot=totals(log);
-  log.forEach(function(e){rows+='<tr><td class="mu sm" style="white-space:nowrap">'+fmtD(e.d)+'</td><td><div class="nm">'+esc(e.name)+'</div>'+(e.note?'<div class="nt">'+esc(e.note)+'</div>':"")+'</td><td class="q">'+esc(e.amt)+(e.unit?" "+esc(e.unit):"")+'</td><td class="x"><button class="ico" data-act="log-del" data-id="'+e.id+'" aria-label="Видалити запис">×</button></td></tr>'});
+  log.forEach(function(e){rows+='<tr><td class="mu sm" style="white-space:nowrap">'+fmtD(e.d)+'</td><td><div class="nm">'+esc(e.name)+'</div>'+(e.note?'<div class="nt">'+esc(e.note)+'</div>':"")+'</td><td class="q">'+esc(e.amt)+(e.unit?" "+esc(e.unit):"")+'</td><td class="x">'+(e.auto?'<span class="mu sm">авто</span>':'<button class="ico" data-act="log-del" data-id="'+e.id+'" aria-label="Видалити запис">×</button>')+'</td></tr>'});
   if(!log.length)rows='<tr><td colspan="4" class="empty">Нічого не списано</td></tr>';
   var sum=Object.keys(tot).map(function(k){return esc(tot[k].name)+" "+tot[k].amt+(tot[k].unit?" "+esc(tot[k].unit):"")}).join(" · ");
   var opts=S.res.map(function(r){return '<option value="'+r.id+'">'+esc(r.name)+(r.unit?" ("+esc(r.unit)+")":"")+'</option>'}).join("");
@@ -926,6 +944,11 @@ function pushNow(){
 function normS(){
   if(!Array.isArray(S.orders))S.orders=[];if(!Array.isArray(S.stock))S.stock=[];if(!Array.isArray(S.res))S.res=defRes();if(!Array.isArray(S.ideas))S.ideas=[];if(!Array.isArray(S.rubrics))S.rubrics=[];S.orders.forEach(function(o){if(!o.t0)o.t0=Date.now()});
   if(!S.mig2){S.mig2=1;[["res-us","Рідина для ультразвуку","мл"],["res-bl","Чорніння","мл"]].forEach(function(x){var has=S.res.some(function(r){return r.id===x[0]||String(r.name).trim().toLowerCase()===x[1].toLowerCase()});if(!has)S.res.push({id:x[0],name:x[1],unit:x[2],val:"",min:""})});saveQuiet()}
+  if(!S.mig4){S.mig4=1;var ag=null;S.res.forEach(function(r){if(!ag&&String(r.name).trim().toLowerCase()==="срібло")ag=r});
+    if(ag)ag.name="Срібло 925";
+    if(!S.res.some(function(r){return /срібл.*999/i.test(r.name)})){var nr={id:"res-ag999",name:"Срібло 999",unit:"г",val:"",min:""};var ix=ag?S.res.indexOf(ag)+1:S.res.length;S.res.splice(ix,0,nr)}
+    if(!S.res.some(function(r){return /срібл.*925/i.test(r.name)}))S.res.unshift({id:"res-ag925",name:"Срібло 925",unit:"г",val:"",min:""});
+    saveQuiet()}
   if(!S.mig3){S.mig3=1;S.res.forEach(function(r){if(String(r.name).trim().toLowerCase()==='флюс')r.name='Флюс для пайки'});saveQuiet()}
   normMasters()}
 function applyRemote(s,u){
@@ -1324,6 +1347,7 @@ function act(a,d){
     case "m-settle":mSettle(true);break;
     case "m-reopen":mSettle(false);break;
     case "otab":setOtab(d.t);break;
+    case "mown":var mo=ord();if(mo){mo.mown=d.v;syncMetal(mo);render()}break;
     case "hf":homeF=d.f;render();break;
     case "qa-go":qaOpen=true;tab="a";cur=null;render();scrollTo(0,0);break;
     case "prog-auto":var po=ord();if(po){po.prog="";save();render()}break;
@@ -1339,9 +1363,9 @@ document.addEventListener("click",function(e){
   var el=e.target.closest("[data-act]");if(!el||el.type==="checkbox")return;
   act(el.dataset.act,el.dataset)});
 document.addEventListener("change",function(e){
-  var el=e.target;if(el.id==="qa-ph"){qaFiles=Array.prototype.slice.call(el.files||[]);var ql=document.getElementById("qa-phl");if(ql)ql.textContent=qaPhText();return}if(el.type==="checkbox"&&el.dataset.act==="rest-tog")act("rest-tog",{id:el.dataset.id});else if(el.type==="checkbox"&&el.dataset.act==="tog")tog(el.dataset.id);else if(el.id==="c-name"){var co=ord();if(co)clientFill(co)}else if(el.id==="ph-in"||el.id==="ip-in")photoPick(el);else if(el.tagName==="SELECT"&&el.dataset.fi)setIdeaF(el);else if(el.id==="mv-metal")mvMetal=el.value;else if(el.id==="mv-type")mvType=el.value});
+  var el=e.target;if(el.id==="qa-ph"){qaFiles=Array.prototype.slice.call(el.files||[]);var ql=document.getElementById("qa-phl");if(ql)ql.textContent=qaPhText();return}if(el.type==="checkbox"&&el.dataset.act==="rest-tog")act("rest-tog",{id:el.dataset.id});else if(el.type==="checkbox"&&el.dataset.act==="tog")tog(el.dataset.id);else if(el.id==="c-name"){var co=ord();if(co)clientFill(co)}else if(el.id==="ph-in"||el.id==="ip-in")photoPick(el);else if(el.tagName==="SELECT"&&el.dataset.fi)setIdeaF(el);else if(el.dataset&&el.dataset.f==="mg")render();else if(el.id==="mv-metal")mvMetal=el.value;else if(el.id==="mv-type")mvType=el.value});
 document.addEventListener("input",function(e){
-  var el=e.target,o;if(el.dataset&&el.dataset.fr&&(o=ord())){var pr_=el.dataset.fr.split("|");(o.rest||[]).forEach(function(r){if(r.id===pr_[0])r[pr_[1]]=el.value});if(pr_[1]==="price")restApply(o);if(pr_[1]==="pc"){var rl=document.getElementById("rp-"+pr_[0]);if(rl)rl.textContent=el.value+"%";var pb2=document.getElementById("of-pb");if(pb2)pb2.innerHTML=progBar(o);var rg=document.getElementById("o-prog");if(rg&&progOf(o).auto)rg.value=progOf(o).p}save();return}if(el.dataset&&el.dataset.fx){S.fx=S.fx||{};S.fx[el.dataset.fx]=el.value.replace(",",".");save();var eg=document.getElementById("eg");if(eg)eg.innerHTML=earnGrid(earnCalc());return}if(el.id&&el.id.slice(0,3)==="qa-")qaCalc();if(el.dataset&&el.dataset.f&&(o=ord())){o[el.dataset.f]=el.value;save();if(el.dataset.f==="prog"){var pb=document.getElementById("of-pb");if(pb)pb.innerHTML=progBar(o);var pa=el.parentNode.querySelector('[data-act=prog-auto]');if(!pa){pa=document.createElement('button');pa.className='lnk';pa.dataset.act='prog-auto';pa.textContent='Рахувати автоматично з позицій';el.parentNode.appendChild(pa)}}if(el.dataset.f==="due"){var di=document.getElementById("due-ind");if(di)di.innerHTML=dueInd(o)}if(/^(price|cost|fprice|fcost)$/.test(el.dataset.f)){var pfe=document.getElementById("pf");if(pfe)pfe.innerHTML=pfLine(o)}if(/^(price|adv|cur)$/.test(el.dataset.f)){var bl=document.getElementById("bal");if(bl)bl.innerHTML=moneyLine(o)}if(/^(cphone|cinsta)$/.test(el.dataset.f)){var lk=document.getElementById("clinks");if(lk)lk.innerHTML=linksHtml(o)}}else if(el.dataset&&el.dataset.fi&&ideaOpen)setIdeaF(el);else if(el.dataset&&el.dataset.fm&&mOpen){var mm=findIn(S.masters,mOpen);if(mm){mm[el.dataset.fm]=el.value;save()}}});
+  var el=e.target,o;if(el.dataset&&el.dataset.fr&&(o=ord())){var pr_=el.dataset.fr.split("|");(o.rest||[]).forEach(function(r){if(r.id===pr_[0])r[pr_[1]]=el.value});if(pr_[1]==="price")restApply(o);if(pr_[1]==="pc"){var rl=document.getElementById("rp-"+pr_[0]);if(rl)rl.textContent=el.value+"%";var pb2=document.getElementById("of-pb");if(pb2)pb2.innerHTML=progBar(o);var rg=document.getElementById("o-prog");if(rg&&progOf(o).auto)rg.value=progOf(o).p}save();return}if(el.dataset&&el.dataset.fx){S.fx=S.fx||{};S.fx[el.dataset.fx]=el.value.replace(",",".");save();var eg=document.getElementById("eg");if(eg)eg.innerHTML=earnGrid(earnCalc());return}if(el.id&&el.id.slice(0,3)==="qa-")qaCalc();if(el.dataset&&el.dataset.f&&(o=ord())){o[el.dataset.f]=el.value;save();if(el.dataset.f==='mg'||el.dataset.f==='mf'){syncMetal(o);var mn=document.getElementById('metal-n');if(mn&&el.dataset.f==='mg')mn.innerHTML=metalHtml(o).split('<div id="metal-n">')[1].split('</div></section>')[0];if(el.dataset.f==='mf')render()}if(el.dataset.f==="prog"){var pb=document.getElementById("of-pb");if(pb)pb.innerHTML=progBar(o);var pa=el.parentNode.querySelector('[data-act=prog-auto]');if(!pa){pa=document.createElement('button');pa.className='lnk';pa.dataset.act='prog-auto';pa.textContent='Рахувати автоматично з позицій';el.parentNode.appendChild(pa)}}if(el.dataset.f==="due"){var di=document.getElementById("due-ind");if(di)di.innerHTML=dueInd(o)}if(/^(price|cost|fprice|fcost)$/.test(el.dataset.f)){var pfe=document.getElementById("pf");if(pfe)pfe.innerHTML=pfLine(o)}if(/^(price|adv|cur)$/.test(el.dataset.f)){var bl=document.getElementById("bal");if(bl)bl.innerHTML=moneyLine(o)}if(/^(cphone|cinsta)$/.test(el.dataset.f)){var lk=document.getElementById("clinks");if(lk)lk.innerHTML=linksHtml(o)}}else if(el.dataset&&el.dataset.fi&&ideaOpen)setIdeaF(el);else if(el.dataset&&el.dataset.fm&&mOpen){var mm=findIn(S.masters,mOpen);if(mm){mm[el.dataset.fm]=el.value;save()}}});
 document.addEventListener("keydown",function(e){
   if(e.key!=="Enter")return;var id=e.target.id||"";
   if(id.indexOf("e-")===0){e.preventDefault();saveEdit()}
