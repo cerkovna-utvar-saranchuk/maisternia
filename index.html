@@ -602,13 +602,14 @@ function telHref(v){var d=String(v||"").replace(/[^\d+]/g,"");return d?"tel:"+d:
 function instaUrl(v){v=String(v||"").trim();if(!v)return"";if(/^https?:\/\//i.test(v))return v;v=v.replace(/^@/,"").replace(/^(www\.)?instagram\.com\//i,"").replace(/[\/?#].*$/,"");return v?"https://instagram.com/"+encodeURIComponent(v):""}
 function effPrice(o){var f=num(o.fprice);return f!==null?f:num(o.price)}
 function matCost(o){var t=0,miss=0;(o.log||[]).forEach(function(e){var r=findIn(S.res,e.rid),p=num(e.p!==undefined&&e.p!==""?e.p:(r?r.price:""));if(p!==null&&p>0)t+=e.amt*p;else miss++});return {t:r2(t),miss:miss,n:(o.log||[]).length}}
-function factCost(o){var m=matCost(o),f=num(o.fcost);if(f===null&&!m.n)return null;return r2(m.t+(f||0))}
+function factCost(o){var m=matCost(o),f=num(o.fcost);if(f===null&&!(m.t>0))return null;return r2(m.t+(f||0))}
 function effCost(o){var f=factCost(o);return f!==null?f:(num(o.cost)||0)}
 function pfLine(o){
   var c=esc(o.cur||"₴"),pl=num(o.price),pc=num(o.cost)||0,m=matCost(o),fc=factCost(o),h="";
   if(pl!==null)h+='<span>План: '+r2(pl)+' − '+r2(pc)+' = <b>'+r2(pl-pc)+' '+c+'</b></span>';
   if(num(o.fprice)!==null||fc!==null){var ep=effPrice(o),ec=effCost(o);if(ep!==null){var fe=r2(ep-ec);h+='<span>Факт: '+r2(ep)+' − '+r2(ec)+' = <b>'+fe+' '+c+'</b></span>';if(pl!==null){var df=r2(fe-(pl-pc));h+='<span class="'+(df<0?"due":"")+'">Різниця: <b>'+(df>0?"+":"")+df+' '+c+'</b></span>'}}}
   if(m.n)h+='<span class="mu">Метали зі списань: '+m.t+' '+c+(m.miss?' · без ціни: '+m.miss:'')+'</span>';
+  if(fc===null&&num(o.fprice)!==null&&pc)h+='<span class="mu">Факт-витрати не внесено — беруться з плану ('+r2(pc)+' '+c+')</span>';
   return h}
 var DET=[["wt","Вага виробу, г"],["dstone","Камені, ₴"],["dwood","Дерево, ₴"],["dbox","Скринька, ₴"],["dicon","Ікона, ₴"],["dother","Інше, ₴"]];
 function detailsHtml(o){
