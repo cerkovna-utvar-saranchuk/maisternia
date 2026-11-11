@@ -380,7 +380,7 @@ details.det{margin:10px 0;padding:10px 12px;border:1px solid #3a3c2c;border-radi
 .morer b{font-size:18px;letter-spacing:.06em;text-transform:uppercase}.morer span{grid-column:1;color:#929785;font-size:13px}.morer i{grid-column:2;grid-row:1/3;font-style:normal;font-size:26px;color:var(--accent)}
 .dl-r{display:flex;align-items:center;justify-content:space-between;gap:8px;width:100%;margin:0 0 8px;padding:12px;border:1px solid #3a3c2c;border-radius:8px;background:#1C2018;color:inherit;font:inherit;text-align:left;cursor:pointer}.dl-n{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .savebar{display:flex;align-items:center;gap:12px;margin:22px 0 70px}.savebar .btn{flex:1 1 auto}
-.cag{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}.cac{display:flex;flex-direction:column;gap:4px;padding:8px;border:1px solid #3a3c2c;border-radius:6px;background:#161912;color:inherit;font:inherit;text-align:left}.cac img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:4px;background:#0e0f11}.cac b{font:600 15px/1 var(--mono)}.cac span{font-size:12px;color:#929785}.cac input{width:100%;font-size:14px}.cpk{grid-template-columns:repeat(3,1fr);margin:10px 0}.cpk .cac b{font-size:19px}.cpk .cac span{font-size:14px}.cimg{width:44px;height:44px;object-fit:cover;border-radius:4px;background:#0e0f11;display:block}.tcph{display:flex;gap:6px;overflow-x:auto;margin:10px 0 4px}.tcph .ph{flex:0 0 64px;height:64px}.tcph .ph.on{outline:2px solid #D18B27}.tcact{display:flex;gap:8px;margin:10px 0}.tcact .btn{flex:1}#tcov{position:fixed;inset:0;z-index:9999;background:#222;overflow:auto;padding:10px}#tcov .tcb{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}#tcov img{width:100%;display:block;background:#fff}@media print{body>*:not(#tcov){display:none!important}#tcov{position:static;background:#fff;padding:0}#tcov .tcb{display:none}@page{size:A4;margin:0}}
+.cag{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}.cac{display:flex;flex-direction:column;gap:4px;padding:8px;border:1px solid #3a3c2c;border-radius:6px;background:#161912;color:inherit;font:inherit;text-align:left}.cac img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:4px;background:#0e0f11}.cac b{font:600 15px/1 var(--mono)}.cac span{font-size:12px;color:#929785}.cac input{width:100%;font-size:14px}.cpk{grid-template-columns:repeat(3,1fr);margin:10px 0}.cpk .cac b{font-size:19px}.cpk .cac span{font-size:14px}.cimg{width:44px;height:44px;object-fit:cover;border-radius:4px;background:#0e0f11;display:block}.tcph{display:flex;gap:6px;overflow-x:auto;margin:10px 0 4px}.tcph .ph{flex:0 0 64px;height:64px}.tcph .ph.on{outline:2px solid #D18B27}.tcact{display:flex;gap:8px;margin:10px 0}.tcact .btn{flex:1}#tcov{position:fixed;inset:0;z-index:9999;background:#222;overflow:auto;padding:10px}#tcov .tcb{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}#tcov img{width:100%;display:block;background:#fff}@media print{body>*:not(#tcov){display:none!important}#tcov{position:static;background:#fff;padding:0}#tcov .tcb{display:none}#tcov img{break-after:page;page-break-after:always}#tcov img:last-of-type{break-after:auto;page-break-after:auto}@page{size:A4;margin:0}}
 .cac b{font:700 22px/1 var(--mono);color:#FFC83A;text-shadow:0 0 10px rgba(255,200,58,.5);letter-spacing:.02em}.cac span{font:700 16px/1.1 var(--mono);color:#FFC83A}.cac img[data-act]{cursor:zoom-in}#cfull{position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.94);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:12px}#cfull img{max-width:100%;max-height:78vh;object-fit:contain}#cfull .cfc{display:flex;flex-direction:column;align-items:center;gap:4px}#cfull .cfc b{font:700 34px/1 var(--mono);color:#FFC83A;text-shadow:0 0 14px rgba(255,200,58,.6)}#cfull .cfc span{font:700 22px/1 var(--mono);color:#FFC83A}#cfull .cfc i{font-style:normal;font-size:12px;color:#929785}
 .chips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px}.chips button{padding:9px 12px;border:1px solid #3a3c2c;border-radius:4px;background:#161912;color:inherit;font:600 13px var(--mono);text-transform:uppercase;cursor:pointer}.chips button.on{background:#D18B27;border-color:#D18B27;color:#10120E}
 .brand.cmp .brow{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:2px 8px 2px 12px}.brand.cmp .btx{text-align:left;min-width:0;flex:1}.brand.cmp .btx .wm{margin:6px 0 2px;font-size:clamp(18px,6vw,34px);text-align:left}.brand.cmp .btx .wsub{margin:0 0 6px;text-align:left}.brand.cmp .bic{width:60px;height:60px;flex:none;display:block}
@@ -809,42 +809,103 @@ function tcHtml(o){
   return h}
 function tcLoad(src){return new Promise(function(res){if(!src)return res(null);var i=new Image();i.onload=function(){res(i)};i.onerror=function(){res(null)};i.src=src})}
 function tcWrap(x,s,px,py,mw,lh){var w=String(s||"").split(/\s+/),l="",y=py,i;for(i=0;i<w.length;i++){var t=l?l+" "+w[i]:w[i];if(x.measureText(t).width>mw&&l){x.fillText(l,px,y);y+=lh;l=w[i]}else l=t}if(l){x.fillText(l,px,y);y+=lh}return y}
+function tcLines(x,s,mw){var w=String(s||"").split(/\s+/),l="",o=[],i;for(i=0;i<w.length;i++){var t=l?l+" "+w[i]:w[i];if(x.measureText(t).width>mw&&l){o.push(l);l=w[i]}else l=t}if(l)o.push(l);return o}
 function tcSheet(o,mode){
-  var t=tcOf(o),own=mode==="own",W=1240,H=1754,cv=document.createElement("canvas");cv.width=W;cv.height=H;var x=cv.getContext("2d");
+  var t=tcOf(o),own=mode==="own",W=1240,H=1754,M=70,PB=H-90,cv=document.createElement("canvas");cv.width=W;cv.height=H*4;var x=cv.getContext("2d");
+  var INK="#111",GR="#6b6b6b",LN="#cfcfcf",OR="#d98a1f",DK="#15160f",MONO="Courier New,monospace",AR="Arial,Helvetica,sans-serif";
   var jobs=[null].concat(t.els.map(function(e){var c=catFind(e.a);return tcLoad(c?catSrc(c):"")}));
   var pid=tcPhotoId(o);jobs[0]=pid&&typeof PH!=="undefined"&&PH[pid]?tcLoad(PH[pid]):Promise.resolve(null);
   var lg=null;
-  return tcLoad("logo-sheet.png").then(function(l){lg=l;return Promise.all(jobs)}).then(function(im){
-    x.fillStyle="#fff";x.fillRect(0,0,W,H);x.fillStyle="#111";x.textBaseline="top";
-    var M=70,y=M;
-    var ttl=own?"ТЕХКАРТА · МІЙ АРКУШ":"ТЕХНІЧНЕ ЗАВДАННЯ",dueT=o.due?"термін: "+String(o.due).split("-").reverse().join("."):"";
-    if(lg){var lw=340,lh=lw*lg.height/lg.width;x.drawImage(lg,M,y,lw,lh);x.font="bold 26px Arial";x.fillStyle="#777";x.textAlign="right";x.fillText(ttl,W-M,y+14);x.fillText(dueT,W-M,y+54);x.textAlign="left";y+=lh+26}
-    else{x.font="bold 26px Arial";x.fillStyle="#777";x.fillText(ttl,M,y);x.textAlign="right";x.fillText(dueT,W-M,y);x.textAlign="left";y+=44}
-    x.fillStyle="#111";x.font="bold 54px Arial";y=tcWrap(x,o.name||"Без назви",M,y,W-2*M,62)+10;
-    x.fillStyle="#222";x.fillRect(M,y,W-2*M,3);y+=26;
-    var ph=im[0],pw=420,top=y;
-    if(ph){var r=Math.min(pw/ph.width,pw/ph.height),dw=ph.width*r,dh=ph.height*r;x.fillStyle="#eee";x.fillRect(M,y,pw,pw);x.drawImage(ph,M+(pw-dw)/2,y+(pw-dh)/2,dw,dh)}
-    var tx=M+(ph?pw+40:0),ty=y;x.fillStyle="#111";
-    function row(l,v){if(!String(v||"").trim())return;x.font="22px Arial";x.fillStyle="#777";x.fillText(l,tx,ty);ty+=28;x.font="bold 32px Arial";x.fillStyle="#111";ty=tcWrap(x,v,tx,ty,W-M-tx,38)+12}
-    row("Модель",t.bart);row("Розмір",t.bsize);row("Метал",t.bmetal);row("Вага",t.bwt);
-    row("Виконавець",t.exec);row("Видано",t.issued?String(t.issued).split("-").reverse().join("."):"");row("Обсяг роботи",(t.scope==="part"?"часткова обробка":t.scope==="full"?"готовий виріб":"")+(t.finn?(t.scope?" — ":"")+t.finn:""));row("Срібло дає",t.mat==="own"?"замовник":t.mat==="master"?"майстер":"");row("Дріт",t.wire);row("Пластина",t.plate);row("Срібло: рекомендована вага",t.silver)
-    y=Math.max(ty,ph?top+pw:top)+20;
-    if(t.chg){x.fillStyle="#fff3d6";var bh=60+(t.chgn?60:0);x.fillRect(M,y,W-2*M,bh+30);x.fillStyle="#7a4a00";x.font="bold 28px Arial";x.fillText("ЗМІНЕНО проти базової моделі",M+20,y+16);if(t.chgn){x.font="26px Arial";x.fillStyle="#222";tcWrap(x,t.chgn,M+20,y+56,W-2*M-40,32)}y+=bh+50}
-    if(t.els.length){x.fillStyle="#777";x.font="bold 24px Arial";x.fillText("ЕЛЕМЕНТИ ЛИТВА (артикул ×кількість)",M,y);y+=40;
-      var cw=(W-2*M)/5,cell=cw-14,i;
-      for(i=0;i<t.els.length;i++){var cx=M+(i%5)*cw,cy=y+Math.floor(i/5)*(cell+90),g=im[i+1];x.fillStyle="#eee";x.fillRect(cx,cy,cell,cell);if(g){var r2_=Math.min(cell/g.width,cell/g.height);x.drawImage(g,cx+(cell-g.width*r2_)/2,cy+(cell-g.height*r2_)/2,g.width*r2_,g.height*r2_)}
-        x.fillStyle="#111";x.font="bold 34px Arial";x.fillText(t.els[i].a+"  ×"+t.els[i].q,cx,cy+cell+10)}
-      y+=Math.ceil(t.els.length/5)*(cell+90)+10}
-    function line(l,v){if(!String(v||"").trim())return;x.fillStyle="#777";x.font="22px Arial";x.fillText(l,M,y);y+=28;x.fillStyle="#111";x.font="30px Arial";y=tcWrap(x,v,M,y,W-2*M,38)+14}
-    line("Камені",t.stones);line("Ланцюжок",t.chain);line("Нотатки",t.tnotes);
-    return cv})}
+  return tcLoad("logo-sheet-light.png").then(function(l){lg=l;return Promise.all(jobs)}).then(function(im){
+    x.fillStyle="#fff";x.fillRect(0,0,W,cv.height);x.textBaseline="top";x.textAlign="left";
+    var y=0,no=t.no?("0"+("0"+t.no).slice(-3)).slice(-3):"";
+    function ensure(h){var p=Math.floor(y/H);if(y+h>p*H+PB&&y>p*H+200)y=(p+1)*H+100}
+    function chamf(px,py,w,h,c){x.beginPath();x.moveTo(px+c,py);x.lineTo(px+w,py);x.lineTo(px+w,py+h-c);x.lineTo(px+w-c,py+h);x.lineTo(px,py+h);x.lineTo(px,py+c);x.closePath()}
+    function dt(s){return s?String(s).split("-").reverse().join("."):""}
+    // шапка
+    x.fillStyle=DK;x.fillRect(0,0,W,150);
+    if(lg){var lh=104,lw=lh*lg.width/lg.height;x.drawImage(lg,M,23,lw,lh)}
+    x.textAlign="right";x.fillStyle="#9a9a8a";x.font="bold 22px "+MONO;x.fillText("ТЕХНІЧНА КАРТА",W-M,26);
+    x.fillStyle="#f1ead6";x.font="bold 58px "+AR;x.fillText(no?"№ "+no:"",W-M,52);
+    x.textAlign="left";
+    var bl=own?"МІЙ АРКУШ":"ТЕХНІЧНЕ ЗАВДАННЯ";x.font="bold 22px "+MONO;var bw=x.measureText(bl).width+36;
+    x.fillStyle=OR;chamf(W-M-bw,108,bw,32,9);x.fill();x.fillStyle=DK;x.textAlign="center";x.fillText(bl,W-M-bw/2,113);x.textAlign="left";
+    x.save();x.beginPath();x.rect(M,150,W-2*M,14);x.clip();for(var s=M-20;s<W-M+20;s+=44){x.fillStyle=OR;x.beginPath();x.moveTo(s,150);x.lineTo(s+22,150);x.lineTo(s+10,164);x.lineTo(s-12,164);x.closePath();x.fill()}x.restore()
+    y=200;
+    // назва і дати
+    x.fillStyle=INK;x.font="bold 54px "+AR;var tl=tcLines(x,o.name||"Без назви",W-2*M-330);
+    tl.forEach(function(l,i){x.fillText(l,M,y+i*62)});
+    x.font="24px "+AR;x.fillStyle=GR;x.textAlign="right";
+    var dl=[];if(t.issued)dl.push("Видано: "+dt(t.issued));if(o.due)dl.push("Термін: "+dt(o.due));
+    dl.forEach(function(l,i){x.fillText(l,W-M,y+8+i*34)});x.textAlign="left";
+    y+=Math.max(tl.length*62,dl.length*34+8)+14;x.fillStyle=INK;x.fillRect(M,y,W-2*M,3);y+=30;
+    function sec(n,title,right){ensure(110);y+=6;x.fillStyle=OR;x.fillRect(M,y+4,14,28);x.fillStyle=INK;x.font="bold 28px "+MONO;x.fillText(n+" / "+title,M+28,y+4);
+      if(right){x.font="24px "+AR;x.fillStyle=GR;x.textAlign="right";x.fillText(right,W-M,y+6);x.textAlign="left"}
+      x.fillStyle=LN;x.fillRect(M,y+42,W-2*M,2);y+=56}
+    // 01 основні дані
+    sec("01","ОСНОВНІ ДАНІ");
+    var ph=im[0],pw=380,top=y;
+    ensure(pw+10);top=y;
+    if(ph){var r=Math.min(pw/ph.width,pw/ph.height),dw=ph.width*r,dh=ph.height*r;x.fillStyle="#eee";chamf(M,y,pw,pw,18);x.fill();x.save();chamf(M,y,pw,pw,18);x.clip();x.drawImage(ph,M+(pw-dw)/2,y+(pw-dh)/2,dw,dh);x.restore()}
+    var tx=M+(ph?pw+40:0),tw=W-M-tx,ty=y;
+    function trow(l,v){if(!String(v||"").trim())return;x.font="bold 30px "+AR;var ls=tcLines(x,v,tw-210),h=Math.max(44,ls.length*36+12);
+      x.fillStyle=GR;x.font="22px "+AR;x.fillText(l,tx,ty+12);x.fillStyle=INK;x.font="bold 30px "+AR;ls.forEach(function(q,i){x.fillText(q,tx+210,ty+7+i*36)});
+      ty+=h;x.fillStyle=LN;x.fillRect(tx,ty-2,tw,1)}
+    trow("Модель",t.bart);trow("Розмір",t.bsize);trow("Метал",t.bmetal);trow("Вага",t.bwt);trow("Пластина",t.plate);trow("Срібло, рекоменд.",t.silver);trow("Камені",t.stones);trow("Ланцюжок",t.chain);
+    y=Math.max(ty,ph?top+pw:top)+26;
+    if(t.chg){x.font="26px "+AR;var cl=t.chgn?tcLines(x,t.chgn,W-2*M-40):[],bh=64+cl.length*34;ensure(bh+20);x.fillStyle="#fff3d6";chamf(M,y,W-2*M,bh,14);x.fill();x.fillStyle="#7a4a00";x.font="bold 26px "+AR;x.fillText("ЗМІНЕНО проти базової моделі",M+20,y+16);x.fillStyle="#222";x.font="26px "+AR;cl.forEach(function(l,i){x.fillText(l,M+20,y+56+i*34)});y+=bh+26}
+    // 02 елементи
+    if(t.els.length){var tot=0;t.els.forEach(function(e){tot+=e.q});
+      sec("02","ЕЛЕМЕНТИ ЛИТВА","Всього: "+tot+" шт. / "+t.els.length+" артикулів");
+      var cw=(W-2*M)/5,cell=cw-16,rh=cell+72,i;
+      for(i=0;i<t.els.length;i++){if(i%5===0)ensure(rh);var cx=M+(i%5)*cw,cy=y,g=im[i+1];
+        x.fillStyle="#eee";chamf(cx,cy,cell,cell,14);x.fill();
+        if(g){x.save();chamf(cx,cy,cell,cell,14);x.clip();var r2=Math.min(cell/g.width,cell/g.height);x.drawImage(g,cx+(cell-g.width*r2)/2,cy+(cell-g.height*r2)/2,g.width*r2,g.height*r2);x.restore()}
+        x.fillStyle=INK;x.font="bold 34px "+AR;x.fillText(t.els[i].a+"  ×"+t.els[i].q,cx,cy+cell+8);
+        if(i%5===4||i===t.els.length-1)y+=rh}
+      y+=10}
+    // 03 виконання
+    var ex=[["Виконавець",t.exec],["Срібло дає",t.mat==="own"?"замовник":t.mat==="master"?"майстер":""]].filter(function(r){return String(r[1]||"").trim()});
+    var sc=(t.scope==="part"?"Часткова обробка":t.scope==="full"?"Готовий виріб":"");
+    if(ex.length||sc||t.finn){sec("03","ВИКОНАННЯ");
+      var colw=(W-2*M)/2-10;
+      for(var k=0;k<ex.length;k+=2){ensure(90);[0,1].forEach(function(j){var r=ex[k+j];if(!r)return;var px=M+j*(colw+20);x.fillStyle=GR;x.font="22px "+AR;x.fillText(r[0],px,y);x.fillStyle=INK;x.font="bold 30px "+AR;x.fillText(r[1],px,y+28)});y+=68}
+      if(sc||t.finn){x.font="bold 30px "+AR;var tt=(sc?sc:"")+(t.finn?(sc?" — ":"")+t.finn:""),ls=tcLines(x,tt,W-2*M);ensure(40+ls.length*38);
+        x.fillStyle=GR;x.font="22px "+AR;x.fillText("Обсяг роботи",M,y);y+=30;x.fillStyle=INK;x.font="bold 30px "+AR;ls.forEach(function(l){x.fillText(l,M,y);y+=38});y+=16}
+      y+=6}
+    // нотатки
+    if(String(t.tnotes||"").trim()){sec("04","НОТАТКИ ДЛЯ МАЙСТРА");x.font="28px "+AR;
+      String(t.tnotes).split(/\n/).forEach(function(par){var ls=tcLines(x,par,W-2*M);if(!ls.length)ls=[""];ls.forEach(function(l){ensure(38);x.fillStyle=INK;x.font="28px "+AR;x.fillText(l,M,y);y+=37});y+=6});y+=8}
+    // комплектація
+    var tq=0;t.els.forEach(function(e){tq+=e.q});
+    var kit=[];if(t.els.length)kit.push("Литі елементи ("+t.els.length+" артикулів, "+tq+" шт.)");
+    if(String(t.silver||"").trim())kit.push("Срібло: "+t.silver);if(String(t.wire||"").trim())kit.push("Дріт: "+t.wire);if(String(t.plate||"").trim())kit.push("Пластина: "+t.plate);
+    if(String(t.stones||"").trim())kit.push("Камені: "+t.stones);if(String(t.chain||"").trim())kit.push("Ланцюжок: "+t.chain);
+    if(kit.length){sec("05","КОМПЛЕКТАЦІЯ ДЛЯ МАЙСТРА");x.font="28px "+AR;var kw=(W-2*M)/2-20;
+      for(var kk=0;kk<kit.length;kk+=2){var lsA=tcLines(x,kit[kk],kw-50),lsB=kit[kk+1]?tcLines(x,kit[kk+1],kw-50):[],kh=Math.max(lsA.length,lsB.length)*36+10;ensure(kh);
+        [lsA,lsB].forEach(function(ls,j){if(!ls.length)return;var bx=M+j*(kw+40);x.strokeStyle=INK;x.lineWidth=2.5;x.strokeRect(bx+2,y+3,26,26);x.fillStyle=INK;x.font="28px "+AR;ls.forEach(function(l,i){x.fillText(l,bx+46,y+i*36)})});y+=kh}
+      y+=10}
+    // контроль
+    var ch=215;ensure(ch);var p0=Math.floor(y/H);if(p0===0&&y+ch<PB)y=Math.max(y+10,PB-ch);
+    sec("06","КОНТРОЛЬ ВИКОНАННЯ");
+    x.font="26px "+AR;x.fillStyle=INK;x.strokeStyle="#888";x.lineWidth=1.5;
+    [["Майстер",0],["Дата початку",1],["Дата завершення",2]].forEach(function(r){var ly=y+r[1]*52;x.fillStyle=INK;x.font="26px "+AR;x.fillText(r[0]+":",M,ly);var lx=M+x.measureText(r[0]+":").width+14;x.beginPath();x.moveTo(lx,ly+30);x.lineTo(M+470,ly+30);x.stroke()});
+    ["Виготовлено","Перевірено (якість / вага / розмір)","Передано на фінішну обробку","Готово до здачі"].forEach(function(q,i){var ly=y+i*42;x.strokeStyle=INK;x.lineWidth=2.5;x.strokeRect(M+560,ly+2,26,26);x.fillStyle=INK;x.font="26px "+AR;x.fillText(q,M+604,ly)});
+    y+=170;
+    // сторінки
+    var N=Math.max(1,Math.floor((y-1)/H)+1),pages=[],p;
+    for(p=0;p<N;p++){var pc=document.createElement("canvas");pc.width=W;pc.height=H;var px=pc.getContext("2d");px.fillStyle="#fff";px.fillRect(0,0,W,H);px.drawImage(cv,0,p*H,W,H,0,0,W,H);px.textBaseline="top";
+      px.fillStyle="#999";px.font="20px "+AR;px.fillText("Саранчук — ювелірна майстерня · cerkovna_utvar_saranchuk",M,H-52);
+      if(N>1){px.textAlign="right";px.fillText("стор. "+(p+1)+" / "+N,W-M,H-52);px.textAlign="left";if(p>0)px.fillText("Техкарта "+(no?"№ "+no+" · ":"")+(o.name||""),M,44)}
+      pages.push(pc)}
+    return pages})}
 function tcShow(o,mode){
   toast("Готую аркуш…",false);
-  tcSheet(o,mode).then(function(cv){
-    var url=cv.toDataURL("image/jpeg",0.92),d=document.getElementById("tcov");if(d)d.remove();
+  tcSheet(o,mode).then(function(pages){
+    var urls=pages.map(function(c){return c.toDataURL("image/jpeg",0.92)}),d=document.getElementById("tcov");if(d)d.remove();
     d=document.createElement("div");d.id="tcov";
-    d.innerHTML='<div class="tcb"><button class="btn" data-act="tc-share">Поділитися / зберегти</button><button class="btn ghost" data-act="tc-print">Друк A4</button><button class="btn ghost" data-act="tc-close">Закрити</button></div><img src="'+url+'" alt="Техкарта">';
-    d.__url=url;d.__name=(o.name||"tehkarta").replace(/[^\wА-Яа-яІіЇїЄєҐґ]+/g,"_")+(mode==="own"?"_A4":"_TZ")+".jpg";
+    d.innerHTML='<div class="tcb"><button class="btn" data-act="tc-share">Поділитися / зберегти</button><button class="btn ghost" data-act="tc-print">Друк A4</button><button class="btn ghost" data-act="tc-close">Закрити</button></div>'+urls.map(function(u){return '<img src="'+u+'" alt="Техкарта">'}).join("");
+    d.__urls=urls;d.__url=urls[0];d.__name=(o.name||"tehkarta").replace(/[^\wА-Яа-яІіЇїЄєҐґ]+/g,"_")+(mode==="own"?"_A4":"_TZ");
     document.body.appendChild(d)})}
 function tcAct(a,d){
   var o=ord(),t=o&&tcOf(o);
@@ -856,12 +917,12 @@ function tcAct(a,d){
   if(a==="tc-del"&&o){t.els=t.els.filter(function(z){return z.a!==d.a});save();render();return true}
   if(a==="tc-fin"&&o){t.scope=(t.scope===d.v)?"":d.v;save();render();return true}
   if(a==="tc-mat"&&o){t.mat=(t.mat===d.v)?"":d.v;save();render();return true}
-  if(a==="tc-gen"&&o){if(!t.issued){var dn=new Date();t.issued=dn.getFullYear()+"-"+("0"+(dn.getMonth()+1)).slice(-2)+"-"+("0"+dn.getDate()).slice(-2);save();render()}tcShow(o,d.m);return true}
+  if(a==="tc-gen"&&o){if(!t.no){S.tcn=(S.tcn||0)+1;t.no=S.tcn;save()}if(!t.issued){var dn=new Date();t.issued=dn.getFullYear()+"-"+("0"+(dn.getMonth()+1)).slice(-2)+"-"+("0"+dn.getDate()).slice(-2);save();render()}tcShow(o,d.m);return true}
   if(a==="tc-fo"){var c=catFind(d.a);if(!c)return true;var f=document.getElementById("cfull");if(f)f.remove();f=document.createElement("div");f.id="cfull";f.setAttribute("data-act","tc-fc");f.innerHTML='<img src="'+catFull(c)+'" alt="'+c.a+'"><div class="cfc"><b>'+c.a+'</b>'+(c.s?'<span>Ø '+c.s+' мм</span>':"")+'<i>торкніться, щоб закрити</i></div>';document.body.appendChild(f);return true}
   if(a==="tc-fc"){var f2=document.getElementById("cfull");if(f2)f2.remove();return true}
   if(a==="tc-close"){var v=document.getElementById("tcov");if(v)v.remove();return true}
   if(a==="tc-print"){window.print();return true}
-  if(a==="tc-share"){var v2=document.getElementById("tcov");if(!v2)return true;fetch(v2.__url).then(function(r){return r.blob()}).then(function(b){var f=new File([b],v2.__name,{type:"image/jpeg"});if(navigator.canShare&&navigator.canShare({files:[f]}))return navigator.share({files:[f]});var l=document.createElement("a");l.href=v2.__url;l.download=v2.__name;l.click()}).catch(function(){});return true}
+  if(a==="tc-share"){var v2=document.getElementById("tcov");if(!v2)return true;Promise.all((v2.__urls||[v2.__url]).map(function(u,k,arr){return fetch(u).then(function(r){return r.blob()}).then(function(b){return new File([b],v2.__name+(arr.length>1?"_"+(k+1):"")+".jpg",{type:"image/jpeg"})})})).then(function(fs){if(navigator.canShare&&navigator.canShare({files:fs}))return navigator.share({files:fs});fs.forEach(function(f){var l=document.createElement("a");l.href=URL.createObjectURL(f);l.download=f.name;l.click()})}).catch(function(){});return true}
   return false}
 
 /* склад */
