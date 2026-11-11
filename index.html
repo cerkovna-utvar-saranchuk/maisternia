@@ -360,6 +360,13 @@ label.addb{text-align:center}
 .rest{margin:0 0 12px;padding:10px 12px;border:1px solid #3a3c2c;background:#161912}.rest.done{opacity:.6}.rest-h{display:flex;align-items:center;gap:10px;margin-bottom:6px}.rest-n{flex:1;color:#D18B27;font-size:13px}.qa-earn{margin:10px 0 6px;font-size:15px;color:#D8D4BD}.qa-earn b{color:#D18B27;font-size:18px}
 details.det{margin:10px 0;padding:10px 12px;border:1px solid #3a3c2c;border-radius:8px;background:#161912}details.det summary{cursor:pointer;color:#929785;font-size:13px;margin-bottom:0}details.det[open] summary{margin-bottom:10px}details.det .hint{font-size:11px;margin-left:6px}
 .pf{display:flex;flex-direction:column;gap:4px;align-items:flex-start}.pf b{color:#D18B27}.pf .due b{color:#A84E3D}
+.of-prog{margin:6px 0 22px}
+.of-prog.mu{font-size:13px;opacity:.7}
+.of-ph{display:flex;align-items:baseline;gap:10px;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:#8f8c77}
+.of-pc{color:var(--p-ok);font-size:20px;font-weight:700;letter-spacing:0}
+.of-pn{margin-left:auto;letter-spacing:0;text-transform:none}
+.of-seg{margin:8px 0 0}
+.of-seg i{height:10px}
 </style>
 </head>
 <body>
@@ -471,6 +478,11 @@ function clientLine(o){
   var t=esc(n)+(o.ccity?", "+esc(o.ccity):""),pr=num(o.price),bal=pr>0?r2(pr-(num(o.adv)||0)):0;
   if(bal>0)t+=" · залишок "+bal+" "+esc(o.cur||"₴");
   return '<div class="ccl">'+t+'</div>'}
+function progHtml(o){
+  var t=o.items.length,d=o.items.filter(function(i){return i.done}).length,p=t?Math.round(d/t*100):0,sg="";
+  if(!t)return '<div class="of-prog mu">Виконання: позицій ще немає</div>';
+  var on=Math.round(p/10);for(var k=0;k<10;k++)sg+='<i'+(k<on?' class="on"':'')+'></i>';
+  return '<div class="of-prog"><div class="of-ph"><span>Виконано</span><span class="of-pc">'+p+'%</span><span class="of-pn">'+d+' з '+t+' позицій</span></div><div class="oc-seg of-seg" role="img" aria-label="Виконано '+p+'%">'+sg+'</div></div>'}
 function card(o){
   var t=o.items.length,d=o.items.filter(function(i){return i.done}).length,p=t?Math.round(d/t*100):0,w=o.items.filter(function(i){return i.kind==="mat"&&!i.done}).length,on=Math.round(p/10),sg="";
   for(var k=0;k<10;k++)sg+='<i'+(k<on?' class="on"':'')+'></i>';
@@ -688,7 +700,7 @@ function detailHtml(){
   +'<div class="ofile"><div class="of-sys"><span class="of-id"><i class="sb-dot on"></i>SARANCHUK OS / '+(o.plan?"PROJECT":"ORDER")+' FILE</span>'+st+'</div>'
   +'<input id="o-name" class="o-name" data-f="name" value="'+esc(o.name)+'" placeholder="'+(o.plan?"Назва проєкту":"Назва замовлення")+'">'
   +statusHtml(o)
-  +'<div class="of-due"><label class="fld"><span>Термін здачі</span><input id="o-due" type="date" data-f="due" value="'+esc(o.due)+'"></label><span id="due-ind" class="of-ind">'+dueInd(o)+'</span></div></div>'
+  +'<div class="of-due"><label class="fld"><span>Термін здачі</span><input id="o-due" type="date" data-f="due" value="'+esc(o.due)+'"></label><span id="due-ind" class="of-ind">'+dueInd(o)+'</span></div>'+progHtml(o)+'</div>'
   +oTabsHtml(o)
   +pane("d",(o.plan?"":kindHtml(o))+(o.kind==="restore"&&!o.plan?restHtml(o):"")+clientSection(o)
     +'<label class="fld" style="margin-top:18px"><span>Нотатки</span><textarea id="o-notes" data-f="notes" rows="2">'+esc(o.notes)+'</textarea></label>'
