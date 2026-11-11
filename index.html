@@ -379,6 +379,7 @@ details.det{margin:10px 0;padding:10px 12px;border:1px solid #3a3c2c;border-radi
 .morer{display:grid;grid-template-columns:1fr auto;gap:2px 10px;align-items:center;width:100%;text-align:left;margin:0 0 10px;padding:14px;border:1px solid #3a3c2c;border-radius:8px;background:#1C2018;color:inherit;font:inherit;cursor:pointer}
 .morer b{font-size:18px;letter-spacing:.06em;text-transform:uppercase}.morer span{grid-column:1;color:#929785;font-size:13px}.morer i{grid-column:2;grid-row:1/3;font-style:normal;font-size:26px;color:var(--accent)}
 .dl-r{display:flex;align-items:center;justify-content:space-between;gap:8px;width:100%;margin:0 0 8px;padding:12px;border:1px solid #3a3c2c;border-radius:8px;background:#1C2018;color:inherit;font:inherit;text-align:left;cursor:pointer}.dl-n{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.savebar{display:flex;align-items:center;gap:12px;margin:22px 0 70px}.savebar .btn{flex:1 1 auto}
 </style>
 </head>
 <body>
@@ -763,7 +764,8 @@ function detailHtml(){
     +delBlock())
   +pane("p",section(o,"mat","Що замовити",matHint(o))+section(o,"part","Деталі виробу","галочка: зроблено"))
   +pane("r",metalHtml(o)+logSection(o))
-  +pane("f",photos||'<section class="sec"><p class="empty">Фото додати поки неможливо.</p></section>')}
+  +pane("f",photos||'<section class="sec"><p class="empty">Фото додати поки неможливо.</p></section>')
+  +'<div class="savebar"><button class="btn" data-act="save-now">Зберегти</button><span class="mu sm">Зберігається і автоматично</span></div>'}
 
 /* склад */
 function stockRow(i){
@@ -940,7 +942,13 @@ function pushNow(){
   if(cloud.busy){cloud.again=true;return}
   cloud.busy=true;setSync("saving");
   var snap=JSON.parse(JSON.stringify(S));
-  FB.saveState(cloud.uid,{u:S.updated||0,s:snap}).then(function(){cloud.busy=false;setSync("ok");if(cloud.again){cloud.again=false;pushNow()}},function(e){cloud.busy=false;cloud.again=false;cloud.code=e&&e.code;setSync("err")})}
+  FB.saveState(cloud.uid,{u:S.updated||0,s:snap}).then(function(){cloud.busy=false;setSync("ok");if(cloud.again){cloud.again=false;pushNow()}else if(cloud.cb){var f=cloud.cb;cloud.cb=null;f(true)}},function(e){cloud.busy=false;cloud.again=false;cloud.code=e&&e.code;setSync("err");if(cloud.cb){var f=cloud.cb;cloud.cb=null;f(false)}})}
+function saveNow(){
+  if(document.activeElement&&document.activeElement.blur)document.activeElement.blur();
+  clearTimeout(cloud.timer);S.updated=Date.now();saveQuiet();
+  if(!cloud.uid){toast("Збережено на цьому пристрої",false);return}
+  cloud.cb=function(ok){toast(ok?"Збережено, дані в хмарі":"Збережено на пристрої, у хмару не вдалося — спробуйте ще",false)};
+  pushNow()}
 function normS(){
   if(!Array.isArray(S.orders))S.orders=[];if(!Array.isArray(S.stock))S.stock=[];if(!Array.isArray(S.res))S.res=defRes();if(!Array.isArray(S.ideas))S.ideas=[];if(!Array.isArray(S.rubrics))S.rubrics=[];S.orders.forEach(function(o){if(!o.t0)o.t0=Date.now()});
   if(!S.mig2){S.mig2=1;[["res-us","Рідина для ультразвуку","мл"],["res-bl","Чорніння","мл"]].forEach(function(x){var has=S.res.some(function(r){return r.id===x[0]||String(r.name).trim().toLowerCase()===x[1].toLowerCase()});if(!has)S.res.push({id:x[0],name:x[1],unit:x[2],val:"",min:""})});saveQuiet()}
@@ -1348,6 +1356,7 @@ function act(a,d){
     case "m-reopen":mSettle(false);break;
     case "otab":setOtab(d.t);break;
     case "mown":var mo=ord();if(mo){mo.mown=d.v;syncMetal(mo);render()}break;
+    case "save-now":saveNow();break;
     case "hf":homeF=d.f;render();break;
     case "qa-go":qaOpen=true;tab="a";cur=null;render();scrollTo(0,0);break;
     case "prog-auto":var po=ord();if(po){po.prog="";save();render()}break;
