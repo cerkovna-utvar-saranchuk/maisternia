@@ -384,7 +384,7 @@ details.det{margin:10px 0;padding:10px 12px;border:1px solid #3a3c2c;border-radi
 .cac b{font:700 22px/1 var(--mono);color:#FFC83A;text-shadow:0 0 10px rgba(255,200,58,.5);letter-spacing:.02em}.cac span{font:700 16px/1.1 var(--mono);color:#FFC83A}.cac img[data-act]{cursor:zoom-in}#cfull{position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.94);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:12px}#cfull img{max-width:100%;max-height:78vh;object-fit:contain}#cfull .cfc{display:flex;flex-direction:column;align-items:center;gap:4px}#cfull .cfc b{font:700 34px/1 var(--mono);color:#FFC83A;text-shadow:0 0 14px rgba(255,200,58,.6)}#cfull .cfc span{font:700 22px/1 var(--mono);color:#FFC83A}#cfull .cfc i{font-style:normal;font-size:12px;color:#929785}
 .chips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px}.chips button{padding:9px 12px;border:1px solid #3a3c2c;border-radius:4px;background:#161912;color:inherit;font:600 13px var(--mono);text-transform:uppercase;cursor:pointer}.chips button.on{background:#D18B27;border-color:#D18B27;color:#10120E}
 .brand.cmp .brow{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:2px 8px 2px 12px}.brand.cmp .btx{text-align:left;min-width:0;flex:1}.brand.cmp .btx .wm{margin:6px 0 2px;font-size:clamp(18px,6vw,34px);text-align:left}.brand.cmp .btx .wsub{margin:0 0 6px;text-align:left}.brand.cmp .bic{width:60px;height:60px;flex:none;display:block}
-.strow{display:grid;grid-template-columns:1fr 1fr 44px;gap:6px;margin:6px 0}.strow input,.strow select{width:100%;min-width:0;font:inherit;padding:10px;background:transparent;color:inherit;border:1px solid var(--line,#3a3c2c);border-radius:2px;box-sizing:border-box}.strow .ico{height:100%}
+.strow{display:grid;grid-template-columns:1fr 1fr 44px;gap:6px;margin:6px 0}.strow input,.strow select{width:100%;min-width:0;font:inherit;padding:10px;background:transparent;color:inherit;border:1px solid var(--line,#3a3c2c);border-radius:2px;box-sizing:border-box}.strow .ico{height:100%} .prow{display:grid;grid-template-columns:1fr 44px;gap:6px;margin:6px 0}.prow input{width:100%;min-width:0;font:inherit;padding:10px;background:transparent;color:inherit;border:1px solid var(--line,#3a3c2c);border-radius:2px;box-sizing:border-box}.prow .ico{height:100%}
 </style>
 </head>
 <body>
@@ -793,8 +793,8 @@ var tcPick=false;
 var TCS=[["wait","Очікує"],["work","У роботі"],["qc","Контроль"],["rew","Доопрацювання"],["done","Готово"]];
 var tcCp=false;
 function tcPr(t){if(!t.pr)t.pr=[];return t.pr}
-function tcPrName(r){return (r.n||"процес")+(r.q?" — "+r.q+" шт":"")+(r.d?" · Ø "+r.d+" мм":"")}
-function tcPrRows(t){return tcPr(t).map(function(r,i){return '<div class="strow"><input data-tp="'+i+':q" inputmode="numeric" placeholder="шт" value="'+esc(r.q||"")+'"><input data-tp="'+i+':d" inputmode="decimal" placeholder="Ø мм" value="'+esc(r.d||"")+'"><button class="ico" data-act="tc-pd" data-i="'+i+'" aria-label="Видалити">✕</button><input style="grid-column:span 3" data-tp="'+i+':n" placeholder="що зробити, напр. виготовити мощовики" value="'+esc(r.n||"")+'"></div>'}).join("")+'<button class="btn ghost" data-act="tc-pa">+ Процес</button>'}
+function tcPrName(r){return r.n||""}
+function tcPrRows(t){return tcPr(t).map(function(r,i){return '<div class="prow"><input data-tp="'+i+':n" placeholder="напр. виготовити 12 мощовиків, Ø 8 мм" value="'+esc(r.n||"")+'"><button class="ico" data-act="tc-pd" data-i="'+i+'" aria-label="Видалити">✕</button></div>'}).join("")+'<button class="btn ghost" data-act="tc-pa">+ Процес</button>'}
 function tcWl(t){if(!t.wl){t.wl=String(t.wire||"").trim()?[{d:"",l:"",n:String(t.wire).trim()}]:[];t.wire=""}return t.wl}
 function tcWName(r){return [(r.d?"Ø "+r.d+" мм":""),(r.l?r.l:""),(r.n||"")].filter(Boolean).join(" · ")}
 function tcWireRows(t){return tcWl(t).map(function(r,i){return '<div class="strow"><input data-tw="'+i+':d" inputmode="decimal" placeholder="Ø мм" value="'+esc(r.d||"")+'"><input data-tw="'+i+':l" placeholder="довжина/вага" value="'+esc(r.l||"")+'"><button class="ico" data-act="tc-wd" data-i="'+i+'" aria-label="Видалити">✕</button><input style="grid-column:span 3" data-tw="'+i+':n" placeholder="призначення, напр. зовнішній каркас" value="'+esc(r.n||"")+'"></div>'}).join("")+'<button class="btn ghost" data-act="tc-wa">+ Дріт</button>'}
@@ -809,7 +809,7 @@ function tcText(o){var t=tcOf(o),L=[],no=t.no?("00"+t.no).slice(-3):"",dt=functi
   var st=TCS.filter(function(z){return z[0]===t.st})[0];if(st)L.push("Статус: "+st[1]);
   if(t.issued)L.push("Видано: "+dt(t.issued));if(o.due)L.push("Термін: "+dt(o.due));
   [["Модель",t.bart],["Розмір",t.bsize],["Метал",t.bmetal],["Пластина",t.plate],["Додаткове срібло",t.silver],["Дерево",t.wood],["Ланцюжок",t.chain]].forEach(function(r){if(String(r[1]||"").trim())L.push(r[0]+": "+r[1])});
-  var pl=tcPr(t).filter(function(r){return r.n||r.q||r.d});if(pl.length){L.push("Процеси:");pl.forEach(function(r){L.push(" • "+tcPrName(r))})}
+  var pl=tcPr(t).filter(function(r){return String(r.n||"").trim()});if(pl.length){L.push("Процеси:");pl.forEach(function(r){L.push(" • "+tcPrName(r))})}
   var wl=tcWl(t).filter(function(r){return r.d||r.l||r.n});if(wl.length){L.push("Дріт:");wl.forEach(function(r){L.push(" • "+tcWName(r))})}
   var sl=(t.stl||[]).filter(function(r){return r.q||r.d||r.c||r.n});if(sl.length){L.push("Камені:");sl.forEach(function(r){L.push(" • "+[(r.q?r.q+" шт":""),(r.d?"Ø "+r.d+" мм":""),tcStName(r)].filter(Boolean).join(" · "))})}
   if(String(t.stones||"").trim())L.push("Камені (прим.): "+t.stones);
@@ -951,7 +951,7 @@ function tcSheet(o,mode){
         if(i%per===per-1||i===ne-1)y+=rh}
       y+=6}
     // ===== процеси =====
-    var prl=tcPr(t).filter(function(r){return r.n||r.q||r.d});
+    var prl=tcPr(t).filter(function(r){return String(r.n||"").trim()});
     if(prl.length){ensure(120);y+=stitle(x,M,y,"ПРОЦЕСИ",W-2*M,"","gear");
       prl.forEach(function(r){var ls=tcLines(x,tcPrName(r),W-2*M-60);x.font="600 28px "+AR;ls=tcLines(x,tcPrName(r),W-2*M-60);ensure(ls.length*36+10);cbox(x,M+4,y,28,false);ls.forEach(function(l,i){x.fillStyle=INK;x.font="600 28px "+AR;x.fillText(l,M+46,y+i*36)});y+=ls.length*36+10});y+=8}
     // ===== вказівки | виконання =====
@@ -1023,7 +1023,7 @@ function tcAct(a,d){
   if(a==="tc-ph"&&o){var p=TCP[+d.i];if(p){var cur=String(t.tnotes||"");if(cur.indexOf(p[1])<0){t.tnotes=cur.trim()?cur.replace(/\s+$/,"")+"\n"+p[1]:p[1]}else{t.tnotes=cur.replace(p[1],"").replace(/\n{2,}/g,"\n").trim()}save();render()}return true}
   if(a==="tc-s"&&o){t.st=(t.st===d.v)?"":d.v;save();render();return true}
   if(a==="tc-txt"&&o){var tx=tcText(o);if(navigator.share){navigator.share({text:tx}).catch(function(){})}else if(navigator.clipboard){navigator.clipboard.writeText(tx).then(function(){toast("Скопійовано",false)})}return true}
-  if(a==="tc-pa"&&o){tcPr(t).push({q:"",d:"",n:""});save();render();return true}
+  if(a==="tc-pa"&&o){tcPr(t).push({n:""});save();render();return true}
   if(a==="tc-pd"&&o){tcPr(t).splice(+d.i,1);save();render();return true}
   if(a==="tc-wa"&&o){tcWl(t).push({d:"",l:"",n:""});save();render();return true}
   if(a==="tc-wd"&&o){tcWl(t).splice(+d.i,1);save();render();return true}
