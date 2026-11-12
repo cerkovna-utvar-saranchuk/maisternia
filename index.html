@@ -932,7 +932,7 @@ function tcSheet(o,mode){
     if(t.chg){x.font="26px "+AR;var cl=t.chgn?tcLines(x,t.chgn,W-2*M-40):[],bh=64+cl.length*34;ensure(bh+20);x.fillStyle="#fff1d4";x.fillRect(M,y,W-2*M,bh);x.fillStyle=OR;x.fillRect(M,y,8,bh);x.fillStyle="#7a4a00";x.font="600 28px "+DISP;x.fillText("ЗМІНЕНО ПРОТИ БАЗОВОЇ МОДЕЛІ",M+24,y+14);x.fillStyle="#222";x.font="26px "+AR;cl.forEach(function(l,i){x.fillText(l,M+24,y+54+i*34)});y+=bh+26}
     // ===== елементи =====
     if(ne){var tot=0;t.els.forEach(function(e){tot+=e.q});
-      ensure(260);y+=stitle(x,M,y,"КОМПЛЕКТУЮЧІ (ЕЛЕМЕНТИ ЛИТВА)",W-2*M,"Всього: "+tot+" шт. / "+ne+" артикулів","cube");
+      ensure(260);y+=stitle(x,M,y,"КОМПЛЕКТУЮЧІ (ЕЛЕМЕНТИ ЛИТВА)",W-2*M,"Всього: "+tot+" шт. / "+ne+" артикулів"+(function(){var w=tcCastW(t);return w.sum>0?" / ≈ "+w.txt+" г":""})(),"cube");
       var per=8,cw=131,cell=117,rh=cell+66,i;
       for(i=0;i<ne;i++){if(i%per===0)ensure(rh);var cx=M+(i%per)*cw,cy=y,g=im[i+1];
         x.fillStyle="#f1f1f1";x.fillRect(cx,cy,cell,cell);
@@ -961,7 +961,7 @@ function tcSheet(o,mode){
     // ===== камінь =====
     // ===== комплектація | контроль =====
     var tq=0;t.els.forEach(function(e){tq+=e.q});
-    var kit=[];if(ne)kit.push("Литі елементи ("+ne+" артикулів, "+tq+" шт.)");
+    var kit=[];if(ne)kit.push("Литі елементи ("+ne+" артикулів, "+tq+" шт."+(function(){var w=tcCastW(t);return w.sum>0?", ≈ "+w.txt+" г"+(w.miss?"+":""):""})()+")");
     if(String(t.silver||"").trim())kit.push("Додаткове срібло: "+t.silver);if(String(t.wire||"").trim())kit.push("Дріт: "+t.wire);if(String(t.plate||"").trim())kit.push("Пластина: "+t.plate);
     if(sl.length)kit.push("Камені: "+sl.map(function(r){return[(r.q?r.q+"×":"")+(r.d?"Ø"+r.d:""),tcStName(r)].filter(Boolean).join(" ")}).join("; "));
     else if(sst.length||sto||String(t.stones||"").trim()||String(t.stoned||"").trim())kit.push("Камені: "+([String(t.stones||"").trim()||sst.concat(sto?[sto]:[]).join(", "),String(t.stoned||"").trim()?"Ø "+String(t.stoned).trim()+" мм":""].filter(Boolean).join(", ")));if(String(t.chain||"").trim())kit.push("Ланцюжок: "+t.chain);
