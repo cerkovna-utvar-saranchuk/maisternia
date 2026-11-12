@@ -790,12 +790,31 @@ function catHtml(){
   return h}
 function tcOf(o){if(!o.tc)o.tc={};if(!Array.isArray(o.tc.els))o.tc.els=[];return o.tc}
 var tcPick=false;
+var TCS=[["wait","Очікує"],["work","У роботі"],["qc","Контроль"],["rew","Доопрацювання"],["done","Готово"]];
+var tcCp=false;
+function tcCopyHtml(o){var L=(S.orders||[]).filter(function(x){var q=x.tc;return x.id!==o.id&&q&&((q.els&&q.els.length)||q.bart)});if(!L.length)return "";
+  if(!tcCp)return '<section class="sec"><button class="btn ghost" data-act="tc-cp">Скопіювати техкарту з іншого замовлення</button></section>';
+  return '<section class="sec"><div class="sh"><h2>Скопіювати з…</h2></div>'+L.map(function(x){return '<button class="btn ghost" style="display:block;width:100%;margin:0 0 6px;text-align:left" data-act="tc-cpo" data-id="'+x.id+'">'+esc(x.name||"Без назви")+(x.tc.bart?" · "+esc(x.tc.bart):"")+'</button>'}).join("")+'<button class="lnk" data-act="tc-cp">Скасувати</button></section>'}
+function tcText(o){var t=tcOf(o),L=[],no=t.no?("00"+t.no).slice(-3):"",dt=function(v){return v?String(v).split("-").reverse().join("."):""};
+  L.push("ТЕХКАРТА"+(no?" №"+no:"")+" — "+(o.name||"Без назви"));
+  var st=TCS.filter(function(z){return z[0]===t.st})[0];if(st)L.push("Статус: "+st[1]);
+  if(t.issued)L.push("Видано: "+dt(t.issued));if(o.due)L.push("Термін: "+dt(o.due));
+  [["Модель",t.bart],["Розмір",t.bsize],["Вага",t.bwt],["Метал",t.bmetal],["Пластина",t.plate],["Додаткове срібло",t.silver],["Дріт",t.wire],["Ланцюжок",t.chain]].forEach(function(r){if(String(r[1]||"").trim())L.push(r[0]+": "+r[1])});
+  var sl=(t.stl||[]).filter(function(r){return r.q||r.d||r.c||r.n});if(sl.length){L.push("Камені:");sl.forEach(function(r){L.push(" • "+[(r.q?r.q+" шт":""),(r.d?"Ø "+r.d+" мм":""),tcStName(r)].filter(Boolean).join(" · "))})}
+  if(String(t.stones||"").trim())L.push("Камені (прим.): "+t.stones);
+  if(t.els.length){L.push("Литі елементи:");t.els.forEach(function(e){var c=catFind(e.a);L.push(" • "+e.a+" ×"+e.q+(c&&c.s?" (Ø "+c.s+" мм)":""))})}
+  if(t.exec)L.push("Виконавець: "+t.exec);if(t.mat)L.push("Срібло дає: "+(t.mat==="own"?"компанія":"майстер"));
+  var sc=t.scope==="part"?"часткова обробка":t.scope==="full"?"готовий виріб":"";if(sc||t.finn)L.push("Обсяг роботи: "+[sc,t.finn].filter(Boolean).join(" — "));
+  if(String(t.tnotes||"").trim())L.push("Нотатки: "+t.tnotes);
+  if(t.resp)L.push("Відповідальний: "+t.resp);if(t.qc)L.push("Контроль якості: "+t.qc);if(t.dstart)L.push("Початок: "+dt(t.dstart));if(t.dend)L.push("Завершення: "+dt(t.dend));
+  return L.join("\n")}
+
 function tcPhotoId(o){var t=tcOf(o),ph=o.photos||[];return (t.photo&&ph.indexOf(t.photo)>=0)?t.photo:(ph[0]||"")}
 function tcHtml(o){
   var t=tcOf(o);
   function f(k,l,ph,ta){return '<label class="fld"><span>'+l+'</span>'+(ta?'<textarea data-tc="'+k+'" rows="2" placeholder="'+ph+'">'+esc(t[k]||"")+'</textarea>':'<input data-tc="'+k+'" value="'+esc(t[k]||"")+'" placeholder="'+ph+'">')+'</label>'}
   var ph=o.photos||[],pid=tcPhotoId(o);
-  var h='<section class="sec"><div class="sh"><h2>Базова модель</h2><span class="hint">з сайту або своя</span></div><div class="ef">'+f("bart","Артикул / назва моделі","напр. хрест Георгій")+f("bsize","Розмір","напр. 45×30 мм")+f("bmetal","Метал і проба","напр. срібло 925")+f("bwt","Вага","напр. 6 г")+'</div>'
+  var h=tcCopyHtml(o)+'<section class="sec"><div class="sh"><h2>Базова модель</h2><span class="hint">з сайту або своя</span></div><div class="ef">'+f("bart","Артикул / назва моделі","напр. хрест Георгій")+f("bsize","Розмір","напр. 45×30 мм")+f("bmetal","Метал і проба","напр. срібло 925")+f("bwt","Вага","напр. 6 г")+'</div>'
   +(ph.length?'<div class="tcph">'+ph.map(function(id){return '<button class="ph'+(id===pid?" on":"")+'" data-act="tc-photo" data-id="'+id+'" aria-label="Фото в техкарту"><img src="'+phSrc(id)+'" data-ph="'+id+'" alt=""></button>'}).join("")+'</div><div class="mu sm">Фото для техкарти: оберіть готовий виріб</div>':'<div class="mu sm">Додайте фото у вкладці «Фото», вони з’являться тут.</div>')+'</section>';
   h+='<section class="sec"><div class="sh"><h2>Зміни проти моделі</h2></div><button class="btn'+(t.chg?"":" ghost")+'" data-act="tc-ch">'+(t.chg?"Змінено проти базової моделі":"Без змін, як базова модель")+'</button>'+(t.chg?f("chgn","Що змінено","напр. інша корона, підвіс, ланцюжок за побажанням клієнта",1):"")+'</section>';
   h+='<section class="sec"><div class="sh"><h2>Елементи литва</h2><span class="hint">з довідника</span></div>';
@@ -806,8 +825,8 @@ function tcHtml(o){
   +'<div class="mu sm" style="margin:8px 0 4px">Обсяг роботи</div><div class="kindsw">'+[["part","Часткова обробка"],["full","Готовий виріб"]].map(function(v){return '<button class="'+(t.scope===v[0]?"on":"")+'" data-act="tc-fin" data-v="'+v[0]+'">'+v[1]+'</button>'}).join("")+'</div>'+f("finn","Що саме зробити","напр. відпиляти литники, галтовка; або: полірування, чорніння всередині")
   +'<div class="mu sm" style="margin:8px 0 4px">Хто дає срібло</div><div class="kindsw"><button class="'+(t.mat==="own"?"on":"")+'" data-act="tc-mat" data-v="own">Моє срібло</button><button class="'+(t.mat==="master"?"on":"")+'" data-act="tc-mat" data-v="master">Срібло майстра</button></div>';
   h+='</section><section class="sec"><div class="sh"><h2>Матеріали</h2></div><div class="ef">'+f("wire","Дріт","напр. 0,25 мм, 3 м")+f("plate","Пластина *","напр. 0,8 мм, 40×25 мм")+f("silver","Додаткове срібло майстру (скільки мати свого)","напр. 20 г на пластину")+f("chain","Ланцюжок","напр. артикул, довжина")+'</div><div class="mu sm" style="margin:8px 0 4px">Камені (кількість, діаметр, колір)</div>'+tcStoneRows(t)+f("stones","Камені: примітка","напр. закріпка — каст")+f("tnotes","Нотатки для майстра","",1)+'</section>';
-  h+='</section><section class="sec"><div class="sh"><h2>Контроль</h2></div><div class="ef"><label class="fld"><span>Відповідальний за замовлення</span><input data-tc="resp" list="tc-ex" value="'+esc(t.resp||"")+'" placeholder="хто веде замовлення"></label><label class="fld"><span>Контроль якості</span><input data-tc="qc" list="tc-ex" value="'+esc(t.qc||"")+'" placeholder="хто перевіряє"></label><label class="fld"><span>Дата початку</span><input type="date" data-tc="dstart" value="'+esc(t.dstart||"")+'"></label><label class="fld"><span>Дата завершення</span><input type="date" data-tc="dend" value="'+esc(t.dend||"")+'"></label></div><div class="mu sm" style="margin:8px 0 4px">Статус (позначається в аркуші)</div><div class="chips">'+TCK.map(function(c){return '<button class="'+((t.ck||[]).indexOf(c[0])>=0?"on":"")+'" data-act="tc-ck" data-v="'+c[0]+'">'+c[1]+'</button>'}).join("")+'</div></section>';
-  h+='<div class="row tcact"><button class="btn" data-act="tc-gen" data-m="master">Для майстра</button><button class="btn ghost" data-act="tc-gen" data-m="own">Мій аркуш A4</button></div>';
+  h+='</section><section class="sec"><div class="sh"><h2>Контроль</h2></div><div class="ef"><label class="fld"><span>Відповідальний за замовлення</span><input data-tc="resp" list="tc-ex" value="'+esc(t.resp||"")+'" placeholder="хто веде замовлення"></label><label class="fld"><span>Контроль якості</span><input data-tc="qc" list="tc-ex" value="'+esc(t.qc||"")+'" placeholder="хто перевіряє"></label><label class="fld"><span>Дата початку</span><input type="date" data-tc="dstart" value="'+esc(t.dstart||"")+'"></label><label class="fld"><span>Дата завершення</span><input type="date" data-tc="dend" value="'+esc(t.dend||"")+'"></label></div><div class="mu sm" style="margin:8px 0 4px">Статус виробництва</div><div class="chips">'+TCS.map(function(c){return '<button class="'+(t.st===c[0]?"on":"")+'" data-act="tc-s" data-v="'+c[0]+'">'+c[1]+'</button>'}).join("")+'</div><div class="mu sm" style="margin:8px 0 4px">Позначки в аркуші</div><div class="chips">'+TCK.map(function(c){return '<button class="'+((t.ck||[]).indexOf(c[0])>=0?"on":"")+'" data-act="tc-ck" data-v="'+c[0]+'">'+c[1]+'</button>'}).join("")+'</div></section>';
+  h+='<div class="row tcact"><button class="btn" data-act="tc-gen" data-m="master">Для майстра</button><button class="btn ghost" data-act="tc-gen" data-m="own">Мій аркуш A4</button><button class="btn ghost" data-act="tc-txt">Текстом</button></div>';
   return h}
 function tcStName(r){return r.c==="інший"?(r.n||"камінь"):r.c?((r.n||"Фіаніт")+", "+r.c.toLowerCase()):(r.n||"")}
 function tcStoneRows(t){var L=t.stl||[];return L.map(function(r,i){return '<div class="strow"><input data-ts="'+i+':q" inputmode="numeric" placeholder="шт" value="'+esc(r.q||"")+'"><input data-ts="'+i+':d" inputmode="decimal" placeholder="Ø мм *" value="'+esc(r.d||"")+'"><button class="ico" data-act="tc-sd" data-i="'+i+'" aria-label="Видалити">✕</button><select data-ts="'+i+':c"><option value="">колір</option>'+STONES.map(function(z){return '<option'+(r.c===z[0]?" selected":"")+'>'+z[0]+'</option>'}).join("")+'<option value="інший"'+(r.c==="інший"?" selected":"")+'>Інший камінь</option></select><input style="grid-column:span 2" data-ts="'+i+':n" placeholder="'+(r.c==="інший"?"назва, напр. малахіт":"тип (за замовч. фіаніт)")+'" value="'+esc(r.n||"")+'"></div>'}).join("")+'<button class="btn ghost" data-act="tc-sa">+ Камінь</button>'}
@@ -878,7 +897,7 @@ function tcSheet(o,mode){
     haz(x,M,176,330,13,OR);x.fillStyle=INK;x.fillRect(M+345,181,W-2*M-345,2);
     y=214;
     // назва + дати
-    var dl=[];if(t.issued)dl.push("Дата видачі: "+dt(t.issued));if(o.due)dl.push("Термін виконання: "+dt(o.due));
+    var dl=[];if(t.issued)dl.push("Дата видачі: "+dt(t.issued));if(o.due)dl.push("Термін виконання: "+dt(o.due));var stn=TCS.filter(function(z){return z[0]===t.st})[0];if(stn)dl.push("Статус: "+stn[1]);
     x.font="26px "+AR;var dmw=0;dl.forEach(function(l){dmw=Math.max(dmw,x.measureText(l).width)});var dlx=dl.length?W-M-dmw:W-M;
     x.fillStyle=INK;x.font="600 60px "+DISP;var tl=tcLines(x,o.name||"Без назви",dlx-M-(dl.length?110:0));tl.forEach(function(l,i){x.fillText(l,M,y+i*68)});
     if(dl.length){x.fillStyle=INK;x.fillRect(dlx-80,y+2,2,dl.length*40+8)}
@@ -981,6 +1000,11 @@ function tcAct(a,d){
   if(a==="tc-q"&&o){t.els.forEach(function(z){if(z.a===d.a)z.q=Math.max(1,z.q+(+d.d))});save();render();return true}
   if(a==="tc-del"&&o){t.els=t.els.filter(function(z){return z.a!==d.a});save();render();return true}
   if(a==="tc-fin"&&o){t.scope=(t.scope===d.v)?"":d.v;save();render();return true}
+  if(a==="tc-cp"){tcCp=!tcCp;render();return true}
+  if(a==="tc-cpo"&&o){var src=(S.orders||[]).filter(function(x){return x.id===d.id})[0];if(src&&src.tc){["bart","bsize","bmetal","bwt","chg","chgn","wire","plate","silver","stones","chain","tnotes","scope","finn","mat","stonet","stoned","stoneo"].forEach(function(k){if(src.tc[k]!==undefined)t[k]=src.tc[k]});
+      ["els","stl","sst"].forEach(function(k){if(src.tc[k])t[k]=JSON.parse(JSON.stringify(src.tc[k]))});tcCp=false;save();render();toast("Техкарту скопійовано",false)}return true}
+  if(a==="tc-s"&&o){t.st=(t.st===d.v)?"":d.v;save();render();return true}
+  if(a==="tc-txt"&&o){var tx=tcText(o);if(navigator.share){navigator.share({text:tx}).catch(function(){})}else if(navigator.clipboard){navigator.clipboard.writeText(tx).then(function(){toast("Скопійовано",false)})}return true}
   if(a==="tc-sa"&&o){t.stl=t.stl||[];t.stl.push({q:"",d:"",c:"",n:""});save();render();return true}
   if(a==="tc-sd"&&o){(t.stl||[]).splice(+d.i,1);save();render();return true}
   if(a==="tc-ck"&&o){t.ck=t.ck||[];var ci=t.ck.indexOf(d.v);if(ci>=0)t.ck.splice(ci,1);else t.ck.push(d.v);save();render();return true}
