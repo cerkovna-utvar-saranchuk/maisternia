@@ -844,7 +844,24 @@ function tcSheet(o,mode){
     function fit(c,s,wt,fam,px,mw){while(px>16){c.font=wt+" "+px+"px "+fam;if(c.measureText(s).width<=mw)return;px-=2}c.font=wt+" "+px+"px "+fam}
     function tick(c,tx,ty,s,col){c.strokeStyle=col;c.lineWidth=5;c.beginPath();c.moveTo(tx+s*.12,ty+s*.55);c.lineTo(tx+s*.4,ty+s*.85);c.lineTo(tx+s*.95,ty+s*.1);c.stroke()}
     function cbox(c,bx,by,s,on){c.strokeStyle=INK;c.lineWidth=2.5;c.strokeRect(bx,by,s,s);if(on)tick(c,bx+2,by+2,s-4,OR)}
-    function stitle(c,tx,ty,s,w,right){c.fillStyle=OR;c.fillRect(tx,ty+8,12,30);c.fillStyle=INK;c.textAlign="left";fit(c,s,"600",DISP,36,w-40-(right?c.measureText(right).width*0+260:0));c.fillText(s,tx+26,ty+2);
+    function icon(c,n,ix,iy,sz){c.save();c.translate(ix,iy);c.scale(sz/32,sz/32);c.strokeStyle=INK;c.fillStyle=OR;c.lineWidth=2.3;c.lineJoin="round";c.lineCap="round";c.beginPath();
+      function P(a){c.moveTo(a[0],a[1]);for(var i=2;i<a.length;i+=2)c.lineTo(a[i],a[i+1])}
+      if(n==="cube"){P([16,3,28,10,28,22,16,29,4,22,4,10]);c.closePath();P([4,10,16,17,28,10]);P([16,17,16,29])}
+      else if(n==="ruler"){c.translate(16,16);c.rotate(-Math.PI/4);c.rect(-14,-6,28,12);[-9,-3,3,9].forEach(function(q,i){c.moveTo(q,-6);c.lineTo(q,i%2?-2:0)})}
+      else if(n==="scales"){P([16,5,16,26]);P([8,26,24,26]);P([5,9,27,9]);P([5,9,2,18]);P([5,9,8,18]);P([27,9,24,18]);P([27,9,30,18]);c.moveTo(2,18);c.arc(5,18,3,Math.PI,0,true);c.moveTo(24,18);c.arc(27,18,3,Math.PI,0,true)}
+      else if(n==="ingots"){P([2,27,5,20,15,20,18,27]);c.closePath();P([14,27,17,20,27,20,30,27]);c.closePath();P([8,20,11,13,21,13,24,20]);c.closePath()}
+      else if(n==="sheet"){P([4,20,10,12,28,12,22,20]);c.closePath();P([4,20,4,24,22,24,22,20]);P([22,24,28,16,28,12])}
+      else if(n==="weight"){P([6,28,9,12,23,12,26,28]);c.closePath();c.moveTo(12,12);c.arc(16,9,4,Math.PI,0)}
+      else if(n==="gem"){P([3,12,9,5,23,5,29,12,16,28]);c.closePath();c.globalAlpha=.3;c.fill();c.globalAlpha=1;P([3,12,29,12]);P([9,5,12,12,16,28]);P([23,5,20,12,16,28])}
+      else if(n==="chain"){c.ellipse(11,16,9,5,-.6,0,7);c.moveTo(30,16);c.ellipse(21,16,9,5,.6,0,7)}
+      else if(n==="gear"){c.arc(16,16,6,0,7);c.moveTo(18.5,16);c.arc(16,16,2.5,0,7);c.stroke();c.beginPath();c.lineWidth=4.5;c.lineCap="butt";for(var g=0;g<8;g++){var a=g*Math.PI/4;c.moveTo(16+Math.cos(a)*9,16+Math.sin(a)*9);c.lineTo(16+Math.cos(a)*13,16+Math.sin(a)*13)}c.stroke();c.beginPath();c.lineWidth=2.3;c.arc(16,16,9.5,0,7)}
+      else if(n==="tools"){c.lineWidth=3.2;P([5,27,24,8]);P([27,27,8,8]);c.moveTo(29,6);c.arc(26,6,3,0,7);c.moveTo(9,6);c.arc(6,6,3,0,7)}
+      else if(n==="layers"){P([16,4,29,10,16,16,3,10]);c.closePath();P([3,15,16,21,29,15]);P([3,20,16,26,29,20])}
+      else if(n==="clip"){c.rect(6,6,20,23);c.rect(11,3,10,6);P([10,15,22,15]);P([10,20,22,20]);P([10,25,17,25])}
+      else if(n==="person"){c.moveTo(21,10);c.arc(16,10,5,0,7);c.moveTo(5,29);c.quadraticCurveTo(5,18,16,18);c.quadraticCurveTo(27,18,27,29)}
+      else if(n==="check"){c.arc(16,16,12,0,7);P([9,16,14,21,23,11])}
+      c.stroke();c.restore()}
+    function stitle(c,tx,ty,s,w,right,ic){var off=ic?50:26;if(ic)icon(c,ic,tx,ty+3,36);else{c.fillStyle=OR;c.fillRect(tx,ty+8,12,30)}c.fillStyle=INK;c.textAlign="left";fit(c,s,"600",DISP,36,w-off-14-(right?260:0));c.fillText(s,tx+off,ty+2);
       if(right){c.font="24px "+AR;c.fillStyle=GR;c.textAlign="right";c.fillText(right,tx+w,ty+8);c.textAlign="left"}
       c.fillStyle=INK;c.fillRect(tx,ty+52,w,2);return 70}
     // ===== шапка =====
@@ -869,16 +886,16 @@ function tcSheet(o,mode){
     if(ph){var r=Math.min(pw/ph.width,pw/ph.height),dw=ph.width*r,dh=ph.height*r;x.fillStyle="#f3f3f3";x.fillRect(M,y,pw,pw);x.drawImage(ph,M+(pw-dw)/2,y+(pw-dh)/2,dw,dh);brk(x,M-6,y-6,pw+12,pw+12,26)}
     var tx=M+(ph?pw+30:0);
     if(ph&&ex2i.length){ex2i.forEach(function(g,i){var gy=y+i*(sm+20),r3=Math.min(sm/g.width,sm/g.height);x.fillStyle="#f3f3f3";x.fillRect(tx,gy,sm,sm);x.drawImage(g,tx+(sm-g.width*r3)/2,gy+(sm-g.height*r3)/2,g.width*r3,g.height*r3);brk(x,tx-5,gy-5,sm+10,sm+10,18)});tx+=sm+30}
-    var tw=W-M-tx,ty=y;ty+=stitle(x,tx,ty,"ОСНОВНІ ХАРАКТЕРИСТИКИ",tw);
-    function trow(l,v){if(!String(v||"").trim())return;var lw2=Math.min(220,tw*.42);x.font="600 30px "+AR;var ls=tcLines(x,v,tw-lw2-24),h=Math.max(46,ls.length*36+12);
-      x.fillStyle=GR;x.font="24px "+AR;x.fillText(l,tx+4,ty+11);x.fillStyle=INK;x.fillRect(tx+lw2,ty,1.5,h);x.font="600 30px "+AR;ls.forEach(function(q,i){x.fillText(q,tx+lw2+18,ty+8+i*36)});
+    var tw=W-M-tx,ty=y;ty+=stitle(x,tx,ty,"ОСНОВНІ ХАРАКТЕРИСТИКИ",tw,"","gear");
+    function trow(l,v,ic){if(!String(v||"").trim())return;var lw2=Math.min(240,tw*.46);x.font="600 30px "+AR;var ls=tcLines(x,v,tw-lw2-24),h=Math.max(46,ls.length*36+12);
+      if(ic)icon(x,ic,tx+4,ty+(h-34)/2,34);x.fillStyle=GR;x.font="23px "+AR;x.fillText(l,tx+(ic?46:4),ty+11);x.fillStyle=INK;x.fillRect(tx+lw2,ty,1.5,h);x.font="600 30px "+AR;ls.forEach(function(q,i){x.fillText(q,tx+lw2+18,ty+8+i*36)});
       ty+=h;x.fillStyle=INK;x.fillRect(tx,ty-1,tw,1.5)}
-    trow("Модель",t.bart);trow("Розмір",t.bsize);trow("Вага",t.bwt);trow("Метал",t.bmetal);trow("Пластина",t.plate);trow("Срібло, рекоменд.",t.silver);trow("Камені",t.stones);trow("Ланцюжок",t.chain);
+    trow("Модель",t.bart,"cube");trow("Розмір",t.bsize,"ruler");trow("Вага",t.bwt,"scales");trow("Метал",t.bmetal,"ingots");trow("Пластина",t.plate,"sheet");trow("Срібло, рекоменд.",t.silver,"weight");trow("Камені",t.stones,"gem");trow("Ланцюжок",t.chain,"chain");
     y=Math.max(ty,ph?top+pw:top)+30;
     if(t.chg){x.font="26px "+AR;var cl=t.chgn?tcLines(x,t.chgn,W-2*M-40):[],bh=64+cl.length*34;ensure(bh+20);x.fillStyle="#fff1d4";x.fillRect(M,y,W-2*M,bh);x.fillStyle=OR;x.fillRect(M,y,8,bh);x.fillStyle="#7a4a00";x.font="600 28px "+DISP;x.fillText("ЗМІНЕНО ПРОТИ БАЗОВОЇ МОДЕЛІ",M+24,y+14);x.fillStyle="#222";x.font="26px "+AR;cl.forEach(function(l,i){x.fillText(l,M+24,y+54+i*34)});y+=bh+26}
     // ===== елементи =====
     if(ne){var tot=0;t.els.forEach(function(e){tot+=e.q});
-      ensure(260);y+=stitle(x,M,y,"КОМПЛЕКТУЮЧІ (ЕЛЕМЕНТИ ЛИТВА)",W-2*M,"Всього: "+tot+" шт. / "+ne+" артикулів");
+      ensure(260);y+=stitle(x,M,y,"КОМПЛЕКТУЮЧІ (ЕЛЕМЕНТИ ЛИТВА)",W-2*M,"Всього: "+tot+" шт. / "+ne+" артикулів","cube");
       var per=8,cw=131,cell=117,rh=cell+66,i;
       for(i=0;i<ne;i++){if(i%per===0)ensure(rh);var cx=M+(i%per)*cw,cy=y,g=im[i+1];
         x.fillStyle="#f1f1f1";x.fillRect(cx,cy,cell,cell);
@@ -891,11 +908,11 @@ function tcSheet(o,mode){
     var scp=t.scope,notes=String(t.tnotes||"").replace(/([.!?])\s+(?=[А-ЯІЇЄҐA-Z])/g,"$1\n").split(/\n+/).filter(function(q){return q.trim()});
     var hasEx=String(t.exec||"").trim()||t.mat||scp||String(t.finn||"").trim();
     var cwid=(W-2*M-50)/2;
-    function colNotes(c,cx,cy,w){var h=stitle(c,cx,cy,"ТЕХНОЛОГІЧНІ ВКАЗІВКИ",w);c.font="27px "+AR;notes.forEach(function(p){var ls=tcLines(c,p,w-34);c.fillStyle=INK;c.fillRect(cx+2,cy+h+11,11,11);ls.forEach(function(l,i){c.fillStyle=INK;c.font="27px "+AR;c.fillText(l,cx+30,cy+h+i*34)});h+=ls.length*34+8});return h+10}
-    function colExec(c,cx,cy,w){var h=stitle(c,cx,cy,"ВИКОНАННЯ",w);
-      function kv(l,v){if(!String(v||"").trim())return;c.fillStyle=GR;c.font="22px "+AR;c.fillText(l,cx+4,cy+h);c.fillStyle=INK;c.font="600 30px "+AR;c.fillText(v,cx+4,cy+h+26);h+=70}
-      kv("Виконавець",t.exec);kv("Срібло дає",t.mat==="own"?"замовник":t.mat==="master"?"майстер":"");
-      if(scp||t.finn){c.fillStyle=GR;c.font="22px "+AR;c.fillText("Обсяг роботи",cx+4,cy+h);h+=30;
+    function colNotes(c,cx,cy,w){var h=stitle(c,cx,cy,"ТЕХНОЛОГІЧНІ ВКАЗІВКИ",w,"","tools");c.font="27px "+AR;notes.forEach(function(p){var ls=tcLines(c,p,w-34);c.fillStyle=INK;c.fillRect(cx+2,cy+h+11,11,11);ls.forEach(function(l,i){c.fillStyle=INK;c.font="27px "+AR;c.fillText(l,cx+30,cy+h+i*34)});h+=ls.length*34+8});return h+10}
+    function colExec(c,cx,cy,w){var h=stitle(c,cx,cy,"ВИКОНАННЯ",w,"","person");
+      function kv(l,v,ic){if(!String(v||"").trim())return;icon(c,ic,cx+2,cy+h+8,34);c.fillStyle=GR;c.font="22px "+AR;c.fillText(l,cx+48,cy+h);c.fillStyle=INK;c.font="600 30px "+AR;c.fillText(v,cx+48,cy+h+26);h+=70}
+      kv("Виконавець",t.exec,"person");kv("Срібло дає",t.mat==="own"?"замовник":t.mat==="master"?"майстер":"","weight");
+      if(scp||t.finn){icon(c,"layers",cx+2,cy+h-2,30);c.fillStyle=GR;c.font="22px "+AR;c.fillText("Обсяг роботи",cx+48,cy+h);h+=34;
         [["part","Часткова обробка"],["full","Готовий виріб"]].forEach(function(q){cbox(c,cx+4,cy+h,28,scp===q[0]);c.fillStyle=INK;c.font="600 28px "+AR;c.fillText(q[1],cx+46,cy+h);h+=42});
         if(t.finn){c.font="26px "+AR;tcLines(c,t.finn,w-10).forEach(function(l){c.fillStyle=INK;c.fillText(l,cx+4,cy+h);h+=33})}h+=6}
       return h+10}
@@ -908,7 +925,7 @@ function tcSheet(o,mode){
     var sst=t.sst||[],sto=String(t.stoneo||"").trim(),stt=String(t.stonet||"").trim()||"Фіаніт";
     if(sst.length||sto){var items=sst.map(function(n){var f=STONES.filter(function(z){return z[0]===n})[0];return {txt:stt+", "+n.toLowerCase(),col:f?f[1]:""}});
       if(sto)items.push({txt:sto,col:""});
-      ensure(110);y+=stitle(x,M,y,"КАМІНЬ",W-2*M);var ix=M,iy=y;
+      ensure(110);y+=stitle(x,M,y,"КАМІНЬ",W-2*M,"","gem");var ix=M,iy=y;
       items.forEach(function(it){x.font="600 28px "+AR;var tw2=x.measureText(it.txt).width,iw=tw2+54;if(ix+iw>W-M){ix=M;iy+=54}
         if(it.col)tcStone(x,ix+22,iy+22,22,it.col);else{var gx=ix+22,gy=iy+22,gr=18;x.fillStyle="#f4d9a8";x.strokeStyle="#9a6a1c";x.lineWidth=2;x.beginPath();x.moveTo(gx-gr,gy-gr*.45);x.lineTo(gx-gr*.55,gy-gr*.9);x.lineTo(gx+gr*.55,gy-gr*.9);x.lineTo(gx+gr,gy-gr*.45);x.lineTo(gx,gy+gr);x.closePath();x.fill();x.stroke()}
         x.fillStyle=INK;x.fillText(it.txt,ix+54,iy+8);ix+=iw+30});
@@ -918,8 +935,8 @@ function tcSheet(o,mode){
     var kit=[];if(ne)kit.push("Литі елементи ("+ne+" артикулів, "+tq+" шт.)");
     if(String(t.silver||"").trim())kit.push("Срібло: "+t.silver);if(String(t.wire||"").trim())kit.push("Дріт: "+t.wire);if(String(t.plate||"").trim())kit.push("Пластина: "+t.plate);
     if(sst.length||sto||String(t.stones||"").trim())kit.push("Камені: "+(String(t.stones||"").trim()||sst.concat(sto?[sto]:[]).join(", ")));if(String(t.chain||"").trim())kit.push("Ланцюжок: "+t.chain);
-    function colKit(c,cx,cy,w){var h=stitle(c,cx,cy,"КОМПЛЕКТАЦІЯ ДЛЯ МАЙСТРА",w);c.font="27px "+AR;kit.forEach(function(q){var ls=tcLines(c,q,w-50);cbox(c,cx+2,cy+h+2,28,false);ls.forEach(function(l,i){c.fillStyle=INK;c.font="27px "+AR;c.fillText(l,cx+46,cy+h+i*34)});h+=ls.length*34+10});return h+10}
-    function colCtl(c,cx,cy,w){var h=stitle(c,cx,cy,"КОНТРОЛЬ ВИКОНАННЯ",w);
+    function colKit(c,cx,cy,w){var h=stitle(c,cx,cy,"КОМПЛЕКТАЦІЯ ДЛЯ МАЙСТРА",w,"","clip");c.font="27px "+AR;kit.forEach(function(q){var ls=tcLines(c,q,w-50);cbox(c,cx+2,cy+h+2,28,false);ls.forEach(function(l,i){c.fillStyle=INK;c.font="27px "+AR;c.fillText(l,cx+46,cy+h+i*34)});h+=ls.length*34+10});return h+10}
+    function colCtl(c,cx,cy,w){var h=stitle(c,cx,cy,"КОНТРОЛЬ ВИКОНАННЯ",w,"","check");
       [["Майстер"],["Дата початку"],["Дата завершення"]].forEach(function(r,i){var ly=cy+h+i*48;c.fillStyle=INK;c.font="25px "+AR;c.fillText(r[0]+":",cx+2,ly);var lx=cx+c.measureText(r[0]+":").width+14;c.strokeStyle="#777";c.lineWidth=1.5;c.beginPath();c.moveTo(lx,ly+30);c.lineTo(cx+w,ly+30);c.stroke()});h+=3*48+10;
       ["Виготовлено","Перевірено (якість / вага / розмір)","Передано на фінішну обробку","Готово до здачі"].forEach(function(q){cbox(c,cx+2,cy+h+1,26,false);c.fillStyle=INK;c.font="25px "+AR;c.fillText(q,cx+44,cy+h);h+=40});return h+6}
     var kh=Math.max(kit.length?colKit(sx,M,0,cwid):0,colCtl(sx,M+cwid+50,0,cwid));ensure(kh);
