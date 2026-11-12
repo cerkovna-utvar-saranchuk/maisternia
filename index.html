@@ -802,7 +802,7 @@ function tcText(o){var t=tcOf(o),L=[],no=t.no?("00"+t.no).slice(-3):"",dt=functi
   L.push("ТЕХКАРТА"+(no?" №"+no:"")+" — "+(o.name||"Без назви"));
   var st=TCS.filter(function(z){return z[0]===t.st})[0];if(st)L.push("Статус: "+st[1]);
   if(t.issued)L.push("Видано: "+dt(t.issued));if(o.due)L.push("Термін: "+dt(o.due));
-  [["Модель",t.bart],["Розмір",t.bsize],["Вага",t.bwt],["Метал",t.bmetal],["Пластина",t.plate],["Додаткове срібло",t.silver],["Дріт",t.wire],["Ланцюжок",t.chain]].forEach(function(r){if(String(r[1]||"").trim())L.push(r[0]+": "+r[1])});
+  [["Модель",t.bart],["Розмір",t.bsize],["Метал",t.bmetal],["Пластина",t.plate],["Додаткове срібло",t.silver],["Дріт",t.wire],["Ланцюжок",t.chain]].forEach(function(r){if(String(r[1]||"").trim())L.push(r[0]+": "+r[1])});
   var sl=(t.stl||[]).filter(function(r){return r.q||r.d||r.c||r.n});if(sl.length){L.push("Камені:");sl.forEach(function(r){L.push(" • "+[(r.q?r.q+" шт":""),(r.d?"Ø "+r.d+" мм":""),tcStName(r)].filter(Boolean).join(" · "))})}
   if(String(t.stones||"").trim())L.push("Камені (прим.): "+t.stones);
   if(t.els.length){L.push("Литі елементи:");t.els.forEach(function(e){var c=catFind(e.a);L.push(" • "+e.a+" ×"+e.q+(c&&c.s?" (Ø "+c.s+" мм)":"")+(c&&c.w?" "+c.w+" г":""))})}
@@ -817,7 +817,7 @@ function tcHtml(o){
   var t=tcOf(o);
   function f(k,l,ph,ta){return '<label class="fld"><span>'+l+'</span>'+(ta?'<textarea data-tc="'+k+'" rows="2" placeholder="'+ph+'">'+esc(t[k]||"")+'</textarea>':'<input data-tc="'+k+'" value="'+esc(t[k]||"")+'" placeholder="'+ph+'">')+'</label>'}
   var ph=o.photos||[],pid=tcPhotoId(o);
-  var h=tcCopyHtml(o)+'<section class="sec"><div class="sh"><h2>Базова модель</h2><span class="hint">з сайту або своя</span></div><div class="ef">'+f("bart","Артикул / назва моделі","напр. хрест Георгій")+f("bsize","Розмір","напр. 45×30 мм")+f("bmetal","Метал і проба","напр. срібло 925")+f("bwt","Вага","напр. 6 г")+'</div>'
+  var h=tcCopyHtml(o)+'<section class="sec"><div class="sh"><h2>Базова модель</h2><span class="hint">з сайту або своя</span></div><div class="ef">'+f("bart","Артикул / назва моделі","напр. хрест Георгій")+f("bsize","Розмір","напр. 45×30 мм")+f("bmetal","Метал і проба","напр. срібло 925")+'</div>'
   +(ph.length?'<div class="tcph">'+ph.map(function(id){return '<button class="ph'+(id===pid?" on":"")+'" data-act="tc-photo" data-id="'+id+'" aria-label="Фото в техкарту"><img src="'+phSrc(id)+'" data-ph="'+id+'" alt=""></button>'}).join("")+'</div><div class="mu sm">Фото для техкарти: оберіть готовий виріб</div>':'<div class="mu sm">Додайте фото у вкладці «Фото», вони з’являться тут.</div>')+'</section>';
   h+='<section class="sec"><div class="sh"><h2>Зміни проти моделі</h2></div><button class="btn'+(t.chg?"":" ghost")+'" data-act="tc-ch">'+(t.chg?"Змінено проти базової моделі":"Без змін, як базова модель")+'</button>'+(t.chg?f("chgn","Що змінено","напр. інша корона, підвіс, ланцюжок за побажанням клієнта",1):"")+'</section>';
   h+='<section class="sec"><div class="sh"><h2>Елементи литва</h2><span class="hint">з довідника</span></div>';
@@ -922,7 +922,7 @@ function tcSheet(o,mode){
     function trow(l,v,ic){if(!String(v||"").trim())return;var lw2=Math.min(240,tw*.46);x.font="600 30px "+AR;var ls=tcLines(x,v,tw-lw2-24),h=Math.max(46,ls.length*36+12);
       if(ic)icon(x,ic,tx+4,ty+(h-34)/2,34);x.fillStyle=GR;x.font="23px "+AR;x.fillText(l,tx+(ic?46:4),ty+11);x.fillStyle=INK;x.fillRect(tx+lw2,ty,1.5,h);x.font="600 30px "+AR;ls.forEach(function(q,i){x.fillText(q,tx+lw2+18,ty+8+i*36)});
       ty+=h;x.fillStyle=INK;x.fillRect(tx,ty-1,tw,1.5)}
-    trow("Модель",t.bart,"cube");trow("Розмір",t.bsize,"ruler");trow("Вага",t.bwt,"scales");trow("Метал",t.bmetal,"ingots");trow("Пластина",t.plate,"sheet");trow("Додатк. срібло",t.silver,"weight");(function(){var w=tcCastW(t);if(w.sum>0)trow("Вага литва","≈ "+w.txt+" г"+(w.miss?"+":""),"weight")})();(function(){var sd=sl.length?"":String(t.stoned||"").trim(),txt=[String(t.stones||"").trim(),sd?"Ø "+sd+" мм":""].filter(Boolean).join(", ");if(!txt&&!sitems.length)return;var lw2=Math.min(240,tw*.46),h=Math.max(46,(txt?42:0)+sitems.length*42+10);
+    trow("Модель",t.bart,"cube");trow("Розмір",t.bsize,"ruler");trow("Метал",t.bmetal,"ingots");trow("Пластина",t.plate,"sheet");trow("Додатк. срібло",t.silver,"weight");(function(){var w=tcCastW(t);if(w.sum>0)trow("Вага литва","≈ "+w.txt+" г"+(w.miss?"+":""),"weight")})();(function(){var sd=sl.length?"":String(t.stoned||"").trim(),txt=[String(t.stones||"").trim(),sd?"Ø "+sd+" мм":""].filter(Boolean).join(", ");if(!txt&&!sitems.length)return;var lw2=Math.min(240,tw*.46),h=Math.max(46,(txt?42:0)+sitems.length*42+10);
       icon(x,"gem",tx+4,ty+8,34);x.fillStyle=GR;x.font="23px "+AR;x.fillText("Камені",tx+46,ty+11);x.fillStyle=INK;x.fillRect(tx+lw2,ty,1.5,h);
       var vy=ty+6;if(txt){x.font="600 30px "+AR;x.fillStyle=INK;x.fillText(txt,tx+lw2+18,vy+2);vy+=42}
       sitems.forEach(function(it){if(it.col)tcStone(x,tx+lw2+36,vy+19,17,it.col);else{var gx=tx+lw2+36,gy=vy+19,gr=15;x.fillStyle="#f4d9a8";x.strokeStyle="#9a6a1c";x.lineWidth=2;x.beginPath();x.moveTo(gx-gr,gy-gr*.45);x.lineTo(gx-gr*.55,gy-gr*.9);x.lineTo(gx+gr*.55,gy-gr*.9);x.lineTo(gx+gr,gy-gr*.45);x.lineTo(gx,gy+gr);x.closePath();x.fill();x.stroke()}
