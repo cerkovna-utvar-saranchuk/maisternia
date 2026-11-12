@@ -804,7 +804,7 @@ function tcHtml(o){
   h+='</section><section class="sec"><div class="sh"><h2>Виконання</h2></div><div class="ef"><label class="fld"><span>Виконавець</span><input data-tc="exec" list="tc-ex" value="'+esc(t.exec||"")+'" placeholder="кому видано"><datalist id="tc-ex">'+(S.masters||[]).map(function(m){return '<option value="'+esc(m.name||"")+'">'}).join("")+'</datalist></label><label class="fld"><span>Дата видачі</span><input type="date" data-tc="issued" value="'+esc(t.issued||"")+'"></label></div>'
   +'<div class="mu sm" style="margin:8px 0 4px">Обсяг роботи</div><div class="kindsw">'+[["part","Часткова обробка"],["full","Готовий виріб"]].map(function(v){return '<button class="'+(t.scope===v[0]?"on":"")+'" data-act="tc-fin" data-v="'+v[0]+'">'+v[1]+'</button>'}).join("")+'</div>'+f("finn","Що саме зробити","напр. відпиляти литники, галтовка; або: полірування, чорніння всередині")
   +'<div class="mu sm" style="margin:8px 0 4px">Хто дає срібло</div><div class="kindsw"><button class="'+(t.mat==="own"?"on":"")+'" data-act="tc-mat" data-v="own">Моє срібло</button><button class="'+(t.mat==="master"?"on":"")+'" data-act="tc-mat" data-v="master">Срібло майстра</button></div>';
-  h+='</section><section class="sec"><div class="sh"><h2>Матеріали</h2></div><div class="ef">'+f("wire","Дріт","напр. 0,25 мм, 3 м")+f("plate","Пластина *","напр. 0,8 мм, 40×25 мм")+f("silver","Срібло: рекомендована вага","напр. 20 г")+f("stones","Камені","напр. 4 шт, Ø 6,43")+f("chain","Ланцюжок","напр. артикул, довжина")+'</div><div class="mu sm" style="margin:8px 0 4px">Колір каменя (для аркуша)</div><div class="chips">'+STONES.map(function(sn){var on=(t.sst||[]).indexOf(sn[0])>=0;return '<button class="'+(on?"on":"")+'" data-act="tc-st" data-v="'+sn[0]+'"><i style="display:inline-block;width:11px;height:11px;border-radius:50%;background:'+sn[1]+';margin-right:6px;vertical-align:-1px"></i>'+sn[0]+'</button>'}).join("")+'</div>'+f("stoneo","Інший камінь (вручну)","напр. малахіт, Ø 8 мм")+f("tnotes","Нотатки для майстра","",1)+'</section>';
+  h+='</section><section class="sec"><div class="sh"><h2>Матеріали</h2></div><div class="ef">'+f("wire","Дріт","напр. 0,25 мм, 3 м")+f("plate","Пластина *","напр. 0,8 мм, 40×25 мм")+f("silver","Срібло: рекомендована вага","напр. 20 г")+f("stones","Камені","напр. 4 шт, Ø 6,43")+f("chain","Ланцюжок","напр. артикул, довжина")+'</div><div class="mu sm" style="margin:8px 0 4px">Колір каменя (для аркуша)</div><div class="chips">'+STONES.map(function(sn){var on=(t.sst||[]).indexOf(sn[0])>=0;return '<button class="'+(on?"on":"")+'" data-act="tc-st" data-v="'+sn[0]+'"><i style="display:inline-block;width:11px;height:11px;border-radius:50%;background:'+sn[1]+';margin-right:6px;vertical-align:-1px"></i>'+sn[0]+'</button>'}).join("")+'</div>'+f("stonet","Тип каменя (за замовчуванням фіаніт)","фіаніт")+f("stoneo","Інший камінь (вручну)","напр. малахіт, Ø 8 мм")+f("tnotes","Нотатки для майстра","",1)+'</section>';
   h+='<div class="row tcact"><button class="btn" data-act="tc-gen" data-m="master">Для майстра</button><button class="btn ghost" data-act="tc-gen" data-m="own">Мій аркуш A4</button></div>';
   return h}
 function tcLoad(src){return new Promise(function(res){if(!src)return res(null);var i=new Image();i.onload=function(){res(i)};i.onerror=function(){res(null)};i.src=src})}
@@ -879,12 +879,12 @@ function tcSheet(o,mode){
     // ===== елементи =====
     if(ne){var tot=0;t.els.forEach(function(e){tot+=e.q});
       ensure(260);y+=stitle(x,M,y,"КОМПЛЕКТУЮЧІ (ЕЛЕМЕНТИ ЛИТВА)",W-2*M,"Всього: "+tot+" шт. / "+ne+" артикулів");
-      var per=7,cw=(W-2*M)/per,cell=cw-14,rh=cell+74,i;
+      var per=8,cw=131,cell=117,rh=cell+66,i;
       for(i=0;i<ne;i++){if(i%per===0)ensure(rh);var cx=M+(i%per)*cw,cy=y,g=im[i+1];
         x.fillStyle="#f1f1f1";x.fillRect(cx,cy,cell,cell);
         if(g){var r2=Math.min(cell/g.width,cell/g.height);x.drawImage(g,cx+(cell-g.width*r2)/2,cy+(cell-g.height*r2)/2,g.width*r2,g.height*r2)}
-        x.font="700 25px "+AR;var aw=x.measureText(t.els[i].a).width+18;x.strokeStyle=INK;x.lineWidth=2;x.strokeRect(cx,cy+cell+10,aw,38);x.fillStyle=INK;x.fillText(t.els[i].a,cx+9,cy+cell+17);
-        x.fillStyle="#e6e6e6";x.fillRect(cx+aw+4,cy+cell+10,cell-aw-4,38);x.fillStyle=INK;x.font="700 25px "+AR;x.fillText("×"+t.els[i].q,cx+aw+12,cy+cell+17);
+        x.font="700 22px "+AR;var aw=x.measureText(t.els[i].a).width+14;x.strokeStyle=INK;x.lineWidth=2;x.strokeRect(cx,cy+cell+8,aw,34);x.fillStyle=INK;x.fillText(t.els[i].a,cx+7,cy+cell+14);
+        x.fillStyle="#e6e6e6";x.fillRect(cx+aw+3,cy+cell+8,cell-aw-3,34);x.fillStyle=INK;x.font="700 22px "+AR;x.fillText("×"+t.els[i].q,cx+aw+9,cy+cell+14);
         if(i%per===per-1||i===ne-1)y+=rh}
       y+=6}
     // ===== вказівки | виконання =====
@@ -905,18 +905,14 @@ function tcSheet(o,mode){
       else{var h2=colExec(sx,M,0,W-2*M);ensure(h2);y+=colExec(x,M,y,W-2*M)}
       y+=10}
     // ===== камінь =====
-    var sst=t.sst||[],sto=String(t.stoneo||"").trim();
-    if(sst.length||sto){var ns=STONES.length+(sto?1:0),sw=(W-2*M)/ns,sh=128;ensure(sh+80);y+=stitle(x,M,y,"КАМІНЬ",W-2*M,"позначено вибір");
-      STONES.concat(sto?[["",""]]:[]).forEach(function(s,i){var cust=i===STONES.length,on=cust?true:sst.indexOf(s[0])>=0,cx=M+i*sw,cwd=sw-10;
-        x.fillStyle=on?"#fff6e3":"#fff";x.fillRect(cx,y,cwd,sh-10);x.strokeStyle=on?OR:LN;x.lineWidth=on?4:1.5;x.strokeRect(cx,y,cwd,sh-10);
-        if(cust){var gx=cx+cwd/2,gy=y+40,gr=28;x.fillStyle="#f4d9a8";x.strokeStyle="#9a6a1c";x.lineWidth=2;x.beginPath();x.moveTo(gx-gr,gy-gr*.45);x.lineTo(gx-gr*.55,gy-gr*.9);x.lineTo(gx+gr*.55,gy-gr*.9);x.lineTo(gx+gr,gy-gr*.45);x.lineTo(gx,gy+gr);x.closePath();x.fill();x.stroke();
-          x.beginPath();x.moveTo(gx-gr,gy-gr*.45);x.lineTo(gx+gr,gy-gr*.45);x.moveTo(gx-gr*.55,gy-gr*.9);x.lineTo(gx-gr*.28,gy-gr*.45);x.lineTo(gx,gy+gr);x.moveTo(gx+gr*.55,gy-gr*.9);x.lineTo(gx+gr*.28,gy-gr*.45);x.lineTo(gx,gy+gr);x.stroke()}
-        else tcStone(x,cx+cwd/2,y+40,34,s[1]);
-        x.fillStyle=INK;x.textAlign="center";var nm=cust?sto:s[0];
-        if(cust){x.font="600 20px "+DISP;tcLines(x,nm,cwd-8).slice(0,2).forEach(function(l,j){x.fillText(l,cx+cwd/2,y+80+j*22)})}
-        else{fit(x,nm.toUpperCase(),"600",DISP,22,cwd-8);x.fillText(nm.toUpperCase(),cx+cwd/2,y+84)}
-        x.textAlign="left";if(on&&!cust){x.fillStyle=OR;x.fillRect(cx+cwd-26,y,26,26);tick(x,cx+cwd-23,y+4,18,"#fff")}});
-      y+=sh+14}
+    var sst=t.sst||[],sto=String(t.stoneo||"").trim(),stt=String(t.stonet||"").trim()||"Фіаніт";
+    if(sst.length||sto){var items=sst.map(function(n){var f=STONES.filter(function(z){return z[0]===n})[0];return {txt:stt+", "+n.toLowerCase(),col:f?f[1]:""}});
+      if(sto)items.push({txt:sto,col:""});
+      ensure(110);y+=stitle(x,M,y,"КАМІНЬ",W-2*M);var ix=M,iy=y;
+      items.forEach(function(it){x.font="600 28px "+AR;var tw2=x.measureText(it.txt).width,iw=tw2+54;if(ix+iw>W-M){ix=M;iy+=54}
+        if(it.col)tcStone(x,ix+22,iy+22,22,it.col);else{var gx=ix+22,gy=iy+22,gr=18;x.fillStyle="#f4d9a8";x.strokeStyle="#9a6a1c";x.lineWidth=2;x.beginPath();x.moveTo(gx-gr,gy-gr*.45);x.lineTo(gx-gr*.55,gy-gr*.9);x.lineTo(gx+gr*.55,gy-gr*.9);x.lineTo(gx+gr,gy-gr*.45);x.lineTo(gx,gy+gr);x.closePath();x.fill();x.stroke()}
+        x.fillStyle=INK;x.fillText(it.txt,ix+54,iy+8);ix+=iw+30});
+      y=iy+62}
     // ===== комплектація | контроль =====
     var tq=0;t.els.forEach(function(e){tq+=e.q});
     var kit=[];if(ne)kit.push("Литі елементи ("+ne+" артикулів, "+tq+" шт.)");
