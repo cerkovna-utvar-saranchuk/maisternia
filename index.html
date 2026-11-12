@@ -918,7 +918,7 @@ function tcSheet(o,mode){
     function colNotes(c,cx,cy,w){var h=stitle(c,cx,cy,"ТЕХНОЛОГІЧНІ ВКАЗІВКИ",w,"","tools");c.font="27px "+AR;notes.forEach(function(p){var ls=tcLines(c,p,w-34);c.fillStyle=INK;c.fillRect(cx+2,cy+h+11,11,11);ls.forEach(function(l,i){c.fillStyle=INK;c.font="27px "+AR;c.fillText(l,cx+30,cy+h+i*34)});h+=ls.length*34+8});return h+10}
     function colExec(c,cx,cy,w){var h=stitle(c,cx,cy,"ВИКОНАННЯ",w,"","person");
       function kv(l,v,ic){if(!String(v||"").trim())return;icon(c,ic,cx+2,cy+h+8,34);c.fillStyle=GR;c.font="22px "+AR;c.fillText(l,cx+48,cy+h);c.fillStyle=INK;c.font="600 30px "+AR;c.fillText(v,cx+48,cy+h+26);h+=70}
-      kv("Виконавець",t.exec,"person");kv("Срібло дає",t.mat==="own"?"замовник":t.mat==="master"?"майстер":"","weight");
+      kv("Виконавець",t.exec,"person");kv("Срібло дає",t.mat==="own"?"компанія":t.mat==="master"?"майстер":"","weight");
       if(scp||t.finn){icon(c,"layers",cx+2,cy+h-2,30);c.fillStyle=GR;c.font="22px "+AR;c.fillText("Обсяг роботи",cx+48,cy+h);h+=34;
         [["part","Часткова обробка"],["full","Готовий виріб"]].forEach(function(q){cbox(c,cx+4,cy+h,28,scp===q[0]);c.fillStyle=INK;c.font="600 28px "+AR;c.fillText(q[1],cx+46,cy+h);h+=42});
         if(t.finn){c.font="26px "+AR;tcLines(c,t.finn,w-10).forEach(function(l){c.fillStyle=INK;c.fillText(l,cx+4,cy+h);h+=33})}h+=6}
