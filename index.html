@@ -927,11 +927,12 @@ function tcSheet(o,mode){
     var sl=(t.stl||[]).filter(function(r){return r.q||r.d||r.c||r.n});
     var sitems=sl.length?sl.map(function(r){var f=STONES.filter(function(z){return z[0]===r.c})[0];return {txt:[(r.q?r.q+" шт":""),(r.d?"Ø "+r.d+" мм":""),tcStName(r)].filter(Boolean).join(" · "),col:f?f[1]:""}}):sst.map(function(n){var f=STONES.filter(function(z){return z[0]===n})[0];return {txt:stt+", "+n.toLowerCase(),col:f?f[1]:""}});
     if(!sl.length&&sto)sitems.push({txt:sto,col:""});
+    var blank=!ne&&!sl.length&&!sst.length&&!sto&&!tcWl(t).some(function(r){return r.d||r.l||r.n})&&!tcPr(t).some(function(r){return String(r.n||"").trim()})&&!["plate","silver","wood","chain","stones","tnotes","stoned"].some(function(k){return String(t[k]||"").trim()});
     var tw=W-M-tx,ty=y;ty+=stitle(x,tx,ty,"ОСНОВНІ ХАРАКТЕРИСТИКИ",tw,"","gear");
-    function trow(l,v,ic){if(!String(v||"").trim())return;var lw2=Math.min(240,tw*.46);x.font="600 30px "+AR;var ls=tcLines(x,v,tw-lw2-24),h=Math.max(46,ls.length*36+12);
-      if(ic)icon(x,ic,tx+4,ty+(h-34)/2,34);x.fillStyle=GR;x.font="23px "+AR;x.fillText(l,tx+(ic?46:4),ty+11);x.fillStyle=INK;x.fillRect(tx+lw2,ty,1.5,h);x.font="600 30px "+AR;ls.forEach(function(q,i){x.fillText(q,tx+lw2+18,ty+8+i*36)});
+    function trow(l,v,ic,hint){var emp=!String(v||"").trim();if(emp&&!blank)return;var lw2=Math.min(240,tw*.46);x.font="600 30px "+AR;var ls=emp?[]:tcLines(x,v,tw-lw2-24),h=emp?54:Math.max(46,ls.length*36+12);
+      if(ic)icon(x,ic,tx+4,ty+(h-34)/2,34);if(l){x.fillStyle=GR;x.font="23px "+AR;x.fillText(l,tx+(ic?46:4),ty+(emp?16:11))}x.fillStyle=INK;x.fillRect(tx+lw2,ty,1.5,h);if(emp&&hint){x.fillStyle="#b5b5b5";x.font="22px "+AR;x.fillText(hint,tx+lw2+18,ty+16)}x.fillStyle=INK;x.font="600 30px "+AR;ls.forEach(function(q,i){x.fillText(q,tx+lw2+18,ty+8+i*36)});
       ty+=h;x.fillStyle=INK;x.fillRect(tx,ty-1,tw,1.5)}
-    trow("Модель",t.bart,"cube");trow("Розмір",t.bsize,"ruler");trow("Метал",t.bmetal,"ingots");trow("Пластина",t.plate,"sheet");trow("Додатк. срібло",t.silver,"weight");trow("Дерево",t.wood,"layers");(function(){var w=tcCastW(t);if(w.sum>0)trow("Вага литва","≈ "+w.txt+" г"+(w.miss?"+":""),"weight")})();(function(){var sd=sl.length?"":String(t.stoned||"").trim(),txt=[String(t.stones||"").trim(),sd?"Ø "+sd+" мм":""].filter(Boolean).join(", ");if(!txt&&!sitems.length)return;var lw2=Math.min(240,tw*.46),h=Math.max(46,(txt?42:0)+sitems.length*42+10);
+    trow("Модель",t.bart,"cube");trow("Розмір",t.bsize,"ruler");trow("Метал",t.bmetal,"ingots");trow("Пластина",t.plate,"sheet");trow("Додатк. срібло",t.silver,"weight");trow("Дерево",t.wood,"layers");if(blank){trow("Дріт","","clip","Ø мм · довжина · призначення");trow("","","")}(function(){var w=tcCastW(t);if(w.sum>0)trow("Вага литва","≈ "+w.txt+" г"+(w.miss?"+":""),"weight")})();(function(){var sd=sl.length?"":String(t.stoned||"").trim(),txt=[String(t.stones||"").trim(),sd?"Ø "+sd+" мм":""].filter(Boolean).join(", ");if(!txt&&!sitems.length){if(blank){trow("Камені","","gem","шт · Ø мм · колір");trow("","","");trow("","","")}return}var lw2=Math.min(240,tw*.46),h=Math.max(46,(txt?42:0)+sitems.length*42+10);
       icon(x,"gem",tx+4,ty+8,34);x.fillStyle=GR;x.font="23px "+AR;x.fillText("Камені",tx+46,ty+11);x.fillStyle=INK;x.fillRect(tx+lw2,ty,1.5,h);
       var vy=ty+6;if(txt){x.font="600 30px "+AR;x.fillStyle=INK;x.fillText(txt,tx+lw2+18,vy+2);vy+=42}
       sitems.forEach(function(it){if(it.col)tcStone(x,tx+lw2+36,vy+19,17,it.col);else{var gx=tx+lw2+36,gy=vy+19,gr=15;x.fillStyle="#f4d9a8";x.strokeStyle="#9a6a1c";x.lineWidth=2;x.beginPath();x.moveTo(gx-gr,gy-gr*.45);x.lineTo(gx-gr*.55,gy-gr*.9);x.lineTo(gx+gr*.55,gy-gr*.9);x.lineTo(gx+gr,gy-gr*.45);x.lineTo(gx,gy+gr);x.closePath();x.fill();x.stroke()}
@@ -950,15 +951,18 @@ function tcSheet(o,mode){
         x.fillStyle="#e6e6e6";x.fillRect(cx+aw+3,cy+cell+8,cell-aw-3,34);x.fillStyle=INK;x.font="700 22px "+AR;x.fillText("×"+t.els[i].q,cx+aw+9,cy+cell+14);
         if(i%per===per-1||i===ne-1)y+=rh}
       y+=6}
+    else if(blank){ensure(260);y+=stitle(x,M,y,"КОМПЛЕКТУЮЧІ (ЕЛЕМЕНТИ ЛИТВА)",W-2*M,"","cube");var bi;for(bi=0;bi<8;bi++){var bx=M+bi*131;x.fillStyle="#f6f6f6";x.fillRect(bx,y,117,117);x.strokeStyle="#bdbdbd";x.lineWidth=2;x.strokeRect(bx,y,117,117);x.strokeStyle=INK;x.strokeRect(bx,y+125,117,34)}y+=190}
     // ===== процеси =====
     var prl=tcPr(t).filter(function(r){return String(r.n||"").trim()});
     if(prl.length){ensure(120);y+=stitle(x,M,y,"ПРОЦЕСИ",W-2*M,"","gear");
       prl.forEach(function(r){var ls=tcLines(x,tcPrName(r),W-2*M-60);x.font="600 28px "+AR;ls=tcLines(x,tcPrName(r),W-2*M-60);ensure(ls.length*36+10);cbox(x,M+4,y,28,false);ls.forEach(function(l,i){x.fillStyle=INK;x.font="600 28px "+AR;x.fillText(l,M+46,y+i*36)});y+=ls.length*36+10});y+=8}
+    else if(blank){ensure(260);y+=stitle(x,M,y,"ПРОЦЕСИ",W-2*M,"","gear");var pi2;for(pi2=0;pi2<4;pi2++){cbox(x,M+4,y,28,false);x.fillStyle=LN;x.fillRect(M+46,y+36,W-2*M-46,1.5);y+=56}y+=8}
     // ===== вказівки | виконання =====
     var scp=t.scope,notes=String(t.tnotes||"").replace(/([.!?])\s+(?=[А-ЯІЇЄҐA-Z])/g,"$1\n").split(/\n+/).filter(function(q){return q.trim()});
+    if(blank&&!notes.length)notes=["","","",""];
     var hasEx=String(t.exec||"").trim()||t.mat||scp||String(t.finn||"").trim();
     var cwid=(W-2*M-50)/2;
-    function colNotes(c,cx,cy,w){var h=stitle(c,cx,cy,"ТЕХНОЛОГІЧНІ ВКАЗІВКИ",w,"","tools");c.font="27px "+AR;notes.forEach(function(p){var ls=tcLines(c,p,w-34);c.fillStyle=INK;c.fillRect(cx+2,cy+h+11,11,11);ls.forEach(function(l,i){c.fillStyle=INK;c.font="27px "+AR;c.fillText(l,cx+30,cy+h+i*34)});h+=ls.length*34+8});return h+10}
+    function colNotes(c,cx,cy,w){var h=stitle(c,cx,cy,"ТЕХНОЛОГІЧНІ ВКАЗІВКИ",w,"","tools");c.font="27px "+AR;notes.forEach(function(p){if(!p){c.fillStyle=INK;c.fillRect(cx+2,cy+h+11,11,11);c.fillStyle=LN;c.fillRect(cx+30,cy+h+36,w-34,1.5);h+=52;return}var ls=tcLines(c,p,w-34);c.fillStyle=INK;c.fillRect(cx+2,cy+h+11,11,11);ls.forEach(function(l,i){c.fillStyle=INK;c.font="27px "+AR;c.fillText(l,cx+30,cy+h+i*34)});h+=ls.length*34+8});return h+10}
     function colExec(c,cx,cy,w){var h=stitle(c,cx,cy,"ВИКОНАННЯ",w,"","person");
       function kv(l,v,ic){if(!String(v||"").trim())return;icon(c,ic,cx+2,cy+h+8,34);c.fillStyle=GR;c.font="22px "+AR;c.fillText(l,cx+48,cy+h);c.fillStyle=INK;c.font="600 30px "+AR;c.fillText(v,cx+48,cy+h+26);h+=70}
       kv("Виконавець",t.exec,"person");kv("Срібло дає",t.mat==="own"?"компанія":t.mat==="master"?"майстер":"","weight");
