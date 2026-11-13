@@ -1929,7 +1929,7 @@ function makeCard(){
   function draw(img){
     var W=1080,P=60,IW=W-2*P,dw=0,dh=0;
     if(img){var sc=Math.min(IW/img.width,1000/img.height);dw=img.width*sc;dh=img.height*sc}
-    var H=P+40+90+(img?dh+40:0)+60+rows.length*60+20+6*64+110;
+    var H=P+40+90+(img?dh+40:0)+60+rows.length*60+20+(6+(num(order.hours)>0?1:0))*64+110;
     var c=document.createElement("canvas");c.width=W;c.height=H;var x=c.getContext("2d");
     x.fillStyle="#12130e";x.fillRect(0,0,W,H);
     var y=P;
@@ -1951,6 +1951,7 @@ function makeCard(){
     function line(label,val,col,bold){x.fillStyle=col;x.font=(bold?"700":"400")+" 34px 'Arial Narrow',Arial,sans-serif";x.fillText(label,P,y+36);x.textAlign="right";x.font=(bold?"700":"400")+" 34px 'Courier New',monospace";x.fillText(val,W-P,y+36);x.textAlign="left";y+=64}
     if(order.who==="master")line("Собівартість (з майстром)",fmt(r.floor),"#e0932d",true);
     else{line("Витрати",fmt(r.matCosts),"#e0932d",true);line("Заробіток компанії мінімальний",fmt(r.labor),"#dcd8c4",false)}
+    if(num(order.hours)>0)line("Витрачено годин",num(order.hours)+" год","#dcd8c4",false);
     line("Рекомендована ціна",fmt(r.rec),"#dcd8c4",false);
     line("Ціна для клієнта",fmt(r.price)+" "+fmtEur(r.price),"#dcd8c4",true);
     line("Загальний заробіток компанії",fmt(r.earnTotal),r.earnTotal<0?"#d4553b":"#93b34a",true);
