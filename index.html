@@ -917,10 +917,10 @@ function tcSheet(o,mode){
     dl.forEach(function(l,i){var dy=y+8+i*40;x.strokeStyle=INK;x.lineWidth=2;x.strokeRect(dlx-50,dy+2,24,22);x.fillStyle=OR;x.fillRect(dlx-50,dy+2,24,7);x.fillStyle=INK;x.font="26px "+AR;x.fillText(l,dlx,dy)});
     y+=Math.max(tl.length*68,dl.length*40+8)+16;x.fillStyle=INK;x.fillRect(M,y,W-2*M,2);y+=28;
     // ===== фото + характеристики =====
-    var ph=im[0],pw=ex2.length?390:420,sm=185,top0=y,rowsH=0;
+    var ph=im[0],pw=ex2.length?400:470,sm=ex2.length?150:185,top0=y,rowsH=0,pbh=(ph&&ph.height>ph.width*1.15)?720:pw;
     var ex2i=im.slice(1+ne);
-    ensure(pw+20);var top=y;
-    if(ph){var r=Math.min(pw/ph.width,pw/ph.height),dw=ph.width*r,dh=ph.height*r;x.fillStyle="#f3f3f3";x.fillRect(M,y,pw,pw);x.drawImage(ph,M+(pw-dw)/2,y+(pw-dh)/2,dw,dh);brk(x,M-6,y-6,pw+12,pw+12,26)}
+    ensure(pbh+20);var top=y;
+    if(ph){var r=Math.min(pw/ph.width,pbh/ph.height),dw=ph.width*r,dh=ph.height*r;x.fillStyle="#f3f3f3";x.fillRect(M,y,pw,pbh);x.drawImage(ph,M+(pw-dw)/2,y+(pbh-dh)/2,dw,dh);brk(x,M-6,y-6,pw+12,pbh+12,26)}
     var tx=M+(ph?pw+30:0);
     if(ph&&ex2i.length){ex2i.forEach(function(g,i){var gy=y+i*(sm+20),r3=Math.min(sm/g.width,sm/g.height);x.fillStyle="#f3f3f3";x.fillRect(tx,gy,sm,sm);x.drawImage(g,tx+(sm-g.width*r3)/2,gy+(sm-g.height*r3)/2,g.width*r3,g.height*r3);brk(x,tx-5,gy-5,sm+10,sm+10,18)});tx+=sm+30}
     var sst=t.sst||[],sto=String(t.stoneo||"").trim(),stt=String(t.stonet||"").trim()||"Фіаніт";
@@ -938,7 +938,7 @@ function tcSheet(o,mode){
       sitems.forEach(function(it){if(it.col)tcStone(x,tx+lw2+36,vy+19,17,it.col);else{var gx=tx+lw2+36,gy=vy+19,gr=15;x.fillStyle="#f4d9a8";x.strokeStyle="#9a6a1c";x.lineWidth=2;x.beginPath();x.moveTo(gx-gr,gy-gr*.45);x.lineTo(gx-gr*.55,gy-gr*.9);x.lineTo(gx+gr*.55,gy-gr*.9);x.lineTo(gx+gr,gy-gr*.45);x.lineTo(gx,gy+gr);x.closePath();x.fill();x.stroke()}
         x.fillStyle=INK;fit(x,it.txt,"600",AR,28,tw-lw2-80);x.fillText(it.txt,tx+lw2+62,vy+5);vy+=42});
       ty+=h;x.fillStyle=INK;x.fillRect(tx,ty-1,tw,1.5)})();trow("Ланцюжок",t.chain,"chain");
-    y=Math.max(ty,ph?top+pw:top)+30;
+    y=Math.max(ty,ph?top+pbh:top)+30;
     if(t.chg){x.font="26px "+AR;var cl=t.chgn?tcLines(x,t.chgn,W-2*M-40):[],bh=64+cl.length*34;ensure(bh+20);x.fillStyle="#fff1d4";x.fillRect(M,y,W-2*M,bh);x.fillStyle=OR;x.fillRect(M,y,8,bh);x.fillStyle="#7a4a00";x.font="600 28px "+DISP;x.fillText("ЗМІНЕНО ПРОТИ БАЗОВОЇ МОДЕЛІ",M+24,y+14);x.fillStyle="#222";x.font="26px "+AR;cl.forEach(function(l,i){x.fillText(l,M+24,y+54+i*34)});y+=bh+26}
     // ===== елементи =====
     if(ne){var tot=0;t.els.forEach(function(e){tot+=e.q});
