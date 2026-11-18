@@ -650,7 +650,7 @@ function analyticsHtml(){return head("Аналітика","заробіток з
 function moreHtml(){
   var nm=S.masters.length,np=S.orders.filter(function(o){return !!o.plan}).length,ni=S.ideas.length;
   function r(k,t,d){return '<button class="morer" data-act="tab" data-tab="'+k+'"><b>'+t+'</b><span>'+d+'</span><i>›</i></button>'}
-  return head("Ще","розділи й дані","")+r("m","Майстри",nm?nm+" "+plural(nm,"майстер","майстри","майстрів"):"поки немає")+r("p","Проєкти",np?np+" "+plural(np,"проєкт","проєкти","проєктів"):"поки немає")+r("k","Довідник елементів",CAT.length+" артикулів")+r("i","Ідеї",ni?ni+" "+plural(ni,"ідея","ідеї","ідей"):"поки немає")+backupHtml()+'<div id="sync" class="sync '+cloud.st+'" data-act="sync-retry">'+syncText()+'</div>'}
+  return head("Ще","розділи й дані","")+r("m","Майстри",nm?nm+" "+plural(nm,"майстер","майстри","майстрів"):"поки немає")+r("p","Проєкти",np?np+" "+plural(np,"проєкт","проєкти","проєктів"):"поки немає")+r("k","Довідник елементів",CAT.length+" артикулів")+r("t","Архів техкарт",tcArch().length?tcArch().length+" "+plural(tcArch().length,"техкарта","техкарти","техкарт"):"поки немає")+r("i","Ідеї",ni?ni+" "+plural(ni,"ідея","ідеї","ідей"):"поки немає")+backupHtml()+'<div id="sync" class="sync '+cloud.st+'" data-act="sync-retry">'+syncText()+'</div>'}
 
 /* замовлення */
 function itemRow(i){
@@ -792,6 +792,10 @@ function tcOf(o){if(!o.tc)o.tc={};if(!Array.isArray(o.tc.els))o.tc.els=[];return
 var tcPick=false;
 var TCS=[["wait","Очікує"],["work","У роботі"],["qc","Контроль"],["rew","Доопрацювання"],["done","Готово"]];
 var tcCp=false;
+function tcArch(){return (S.orders||[]).filter(function(o){return o.tc&&o.tc.no}).sort(function(a,b){return b.tc.no-a.tc.no})}
+function archiveHtml(){var L=tcArch(),dt=function(v){return v?String(v).split("-").reverse().join("."):""};
+  return head("Архів техкарт",L.length?L.length+" збережено":"поки порожньо","")+(L.length?L.map(function(o){var t=o.tc,st=TCS.filter(function(z){return z[0]===t.st})[0],n=("00"+t.no).slice(-3),sub=[t.issued?"видано "+dt(t.issued):"",st?st[1]:"",(t.els&&t.els.length)?t.els.length+" елем.":""].filter(Boolean).join(" · ");
+    return '<div class="morer" style="cursor:default"><b>№'+n+' · '+esc(o.name||"Без назви")+'</b><span>'+esc(sub)+'</span><i></i><div style="grid-column:1/3;display:flex;flex-wrap:wrap;gap:8px;margin-top:8px"><button class="btn" style="flex:1" data-act="tc-ao" data-id="'+o.id+'" data-m="master">Для майстра</button><button class="btn ghost" style="flex:1" data-act="tc-ao" data-id="'+o.id+'" data-m="own">Мій аркуш</button><button class="btn ghost" style="flex-basis:100%" data-act="open" data-id="'+o.id+'">Відкрити замовлення</button></div></div>'}).join(""):'<p class="empty">Тут з’являться техкарти після першого створення аркуша.</p>')}
 function tcPr(t){if(!t.pr)t.pr=[];return t.pr}
 function tcPrName(r){return r.n||""}
 function tcPrRows(t){return tcPr(t).map(function(r,i){return '<div class="prow"><input data-tp="'+i+':n" placeholder="напр. виготовити 12 мощовиків, Ø 8 мм" value="'+esc(r.n||"")+'"><button class="ico" data-act="tc-pd" data-i="'+i+'" aria-label="Видалити">✕</button></div>'}).join("")+'<button class="btn ghost" data-act="tc-pa">+ Процес</button>'}
@@ -1032,6 +1036,8 @@ function tcAct(a,d){
   if(a==="tc-txt"&&o){var tx=tcText(o);if(navigator.share){navigator.share({text:tx}).catch(function(){})}else if(navigator.clipboard){navigator.clipboard.writeText(tx).then(function(){toast("Скопійовано",false)})}return true}
   if(a==="tc-pa"&&o){tcPr(t).push({n:""});save();render();return true}
   if(a==="tc-pd"&&o){tcPr(t).splice(+d.i,1);save();render();return true}
+  if(a==="tc-ao"){var ao=(S.orders||[]).filter(function(x){return x.id===d.id})[0];if(ao){var ids=(ao.photos||[]).slice(0,5).concat(),need=ids.filter(function(i){return !PH[i]});
+      Promise.all(need.map(function(i){return (window.FB&&cloud.uid)?FB.getPhoto(cloud.uid,i).then(function(u){if(u)PH[i]=u}).catch(function(){}):null})).then(function(){tcShow(ao,d.m||"master")})}return true}
   if(a==="tc-hrs"&&o){t.hrs=String(d.v);save();render();return true}
   if(a==="tc-wa"&&o){tcWl(t).push({d:"",l:"",n:""});save();render();return true}
   if(a==="tc-wd"&&o){tcWl(t).splice(+d.i,1);save();render();return true}
@@ -1508,12 +1514,12 @@ var ICON_P='<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="
 var ICON_I='<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 2.1h5c0-.9.4-1.6 1-2.1A6 6 0 0 0 12 3z"/></svg>';
 var ICON_C='<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="3" width="14" height="18" rx="1"/><path d="M8 7h8M8 12h.01M12 12h.01M16 12h.01M8 16h.01M12 16h.01M16 16h.01"/></svg>';
 function navHtml(){
-  var c=needCount(),dsN=dueSoon().length,cr=cur?ord():null,t=cr?(cr.plan?"x":"o"):(tab==="p"||tab==="i"||tab==="m"||tab==="k"?"x":tab);
+  var c=needCount(),dsN=dueSoon().length,cr=cur?ord():null,t=cr?(cr.plan?"x":"o"):(tab==="p"||tab==="i"||tab==="m"||tab==="k"||tab==="t"?"x":tab);
   function b(k,ico,label,extra){return '<button data-act="tab" data-tab="'+k+'" class="'+(t===k?"on":"")+'">'+ico+'<span>'+label+'</span>'+(extra||"")+'</button>'}
   return b("o",ICON_O,"Замовлення",dsN?'<em class="badge bad">'+dsN+'</em>':"")+b("s",ICON_S,"Склад",c?'<em class="badge">'+c+'</em>':"")+b("c",ICON_C,"Ціна")+b("a",ICON_A,"Аналітика")+b("x",ICON_X,"Ще")}
 
 function render(){
-  document.getElementById("app").innerHTML=cur?detailHtml():(tab==="c"?CALC.html():tab==="s"?stockHtml():tab==="a"?analyticsHtml():tab==="x"?moreHtml():(tab==="m"?(mOpen?masterDetailHtml():backMore()+mastersHtml()):(tab==="i"?(ideaOpen?ideaDetailHtml():backMore()+ideasHtml()):(tab==="k"?backMore()+catHtml():listHtml()))));
+  document.getElementById("app").innerHTML=cur?detailHtml():(tab==="c"?CALC.html():tab==="s"?stockHtml():tab==="a"?analyticsHtml():tab==="x"?moreHtml():(tab==="m"?(mOpen?masterDetailHtml():backMore()+mastersHtml()):(tab==="i"?(ideaOpen?ideaDetailHtml():backMore()+ideasHtml()):(tab==="k"?backMore()+catHtml():(tab==="t"?backMore()+archiveHtml():listHtml())))));
   document.getElementById("nav").innerHTML=navHtml();hydrate();
   var sk=(cur||"")+"|"+tab+"|"+mOpen+"|"+ideaOpen;if(window.__sk!==undefined&&window.__sk!==sk){var ap=document.getElementById("app");ap.classList.remove("swap");void ap.offsetWidth;ap.classList.add("swap")}window.__sk=sk;if(!cur&&tab==="c")CALC.mount()}
 
