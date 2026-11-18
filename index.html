@@ -930,7 +930,7 @@ function tcSheet(o,mode){
     var ph=im[0],ex2i=im.slice(1+ne),Wf=W-2*M,pl=[ph].concat(ex2i).filter(Boolean).slice(0,4),top=y,side=false,sidex=M,sidew=Wf,PH0=0;
     function pbx(g,bx,by,bw,bh){x.fillStyle="#f3f3f3";x.fillRect(bx,by,bw,bh);var r=Math.min(bw/g.width,bh/g.height),dw=g.width*r,dh=g.height*r;x.drawImage(g,bx+(bw-dw)/2,by+(bh-dh)/2,dw,dh);brk(x,bx-6,by-6,bw+12,bh+12,22)}
     if(pl.length){var asp=pl.map(function(g){return Math.max(.4,Math.min(2.2,g.width/g.height))}),sa=0,gp=20;asp.forEach(function(q){sa+=q});
-      PH0=Math.min(720*F/K,(Wf-gp*(pl.length-1))/sa);var rowW=sa*PH0+gp*(pl.length-1);side=pl.length===1&&Wf-rowW>=520;
+      PH0=Math.min(936*F/K,(Wf-gp*(pl.length-1))/sa);var rowW=sa*PH0+gp*(pl.length-1);side=pl.length===1&&Wf-rowW>=520;
       ensure(PH0+20);top=y;var px=side?M:M+(Wf-rowW)/2;
       pl.forEach(function(g,i){var bw=asp[i]*PH0;pbx(g,px,y,bw,PH0);px+=bw+gp});
       if(side){sidex=M+rowW+36;sidew=Wf-rowW-36}else y+=PH0+34}
@@ -944,10 +944,21 @@ function tcSheet(o,mode){
       sitems.forEach(function(it){if(it.col)tcStone(x,tx+lw2+36,vy+19,17,it.col);else{var gx=tx+lw2+36,gy=vy+19,gr=15;x.fillStyle="#f4d9a8";x.strokeStyle="#9a6a1c";x.lineWidth=2;x.beginPath();x.moveTo(gx-gr,gy-gr*.45);x.lineTo(gx-gr*.55,gy-gr*.9);x.lineTo(gx+gr*.55,gy-gr*.9);x.lineTo(gx+gr,gy-gr*.45);x.lineTo(gx,gy+gr);x.closePath();x.fill();x.stroke()}
         x.fillStyle=INK;fit(x,it.txt,"600",AR,28,tw-lw2-80);x.fillText(it.txt,tx+lw2+62,vy+5);vy+=42});
       ty+=h;x.fillStyle=INK;x.fillRect(tx,ty-1,tw,1.5)})();trow("Ланцюжок",t.chain,"chain");
+    var elsSide=false;
+    if(side&&(ne||blank)){var ey=ty+26,per2=Math.max(1,Math.floor((sidew+14)/131)),cw3=131,cell3=117,rh3=cell3+66,i2,tt=0;t.els.forEach(function(e){tt+=e.q});
+      ey+=stitle(x,sidex,ey,"КОМПЛЕКТУЮЧІ (ЕЛЕМЕНТИ ЛИТВА)",sidew,ne?"Всього: "+tt+" шт. / "+ne+" артикулів"+(function(){var w=tcCastW(t);return w.sum>0?" / ≈ "+w.txt+" г":""})():"","cube");
+      if(ne){for(i2=0;i2<ne;i2++){var cx3=sidex+(i2%per2)*cw3,cy3=ey+Math.floor(i2/per2)*rh3,g3=im[i2+1];
+        x.fillStyle="#f1f1f1";x.fillRect(cx3,cy3,cell3,cell3);
+        if(g3){var r3=Math.min(cell3/g3.width,cell3/g3.height);x.drawImage(g3,cx3+(cell3-g3.width*r3)/2,cy3+(cell3-g3.height*r3)/2,g3.width*r3,g3.height*r3)}
+        x.font="700 22px "+AR;var aw3=x.measureText(t.els[i2].a).width+14;x.strokeStyle=INK;x.lineWidth=2;x.strokeRect(cx3,cy3+cell3+8,aw3,34);x.fillStyle=INK;x.fillText(t.els[i2].a,cx3+7,cy3+cell3+14);
+        x.fillStyle="#e6e6e6";x.fillRect(cx3+aw3+3,cy3+cell3+8,cell3-aw3-3,34);x.fillStyle=INK;x.font="700 22px "+AR;x.fillText("×"+t.els[i2].q,cx3+aw3+9,cy3+cell3+14)}
+        ey+=Math.ceil(ne/per2)*rh3}
+      else{for(i2=0;i2<Math.min(8,per2);i2++){var bx3=sidex+i2*cw3;x.fillStyle="#f6f6f6";x.fillRect(bx3,ey,cell3,cell3);x.strokeStyle="#bdbdbd";x.lineWidth=2;x.strokeRect(bx3,ey,cell3,cell3);x.strokeStyle=INK;x.strokeRect(bx3,ey+cell3+8,cell3,34)}ey+=190}
+      ty=ey;elsSide=true}
     y=Math.max(ty,side?top+PH0:0)+30;
     if(t.chg){x.font="26px "+AR;var cl=t.chgn?tcLines(x,t.chgn,W-2*M-40):[],bh=64+cl.length*34;ensure(bh+20);x.fillStyle="#fff1d4";x.fillRect(M,y,W-2*M,bh);x.fillStyle=OR;x.fillRect(M,y,8,bh);x.fillStyle="#7a4a00";x.font="600 28px "+DISP;x.fillText("ЗМІНЕНО ПРОТИ БАЗОВОЇ МОДЕЛІ",M+24,y+14);x.fillStyle="#222";x.font="26px "+AR;cl.forEach(function(l,i){x.fillText(l,M+24,y+54+i*34)});y+=bh+26}
     // ===== елементи =====
-    if(ne){var tot=0;t.els.forEach(function(e){tot+=e.q});
+    if(ne&&!elsSide){var tot=0;t.els.forEach(function(e){tot+=e.q});
       ensure(260);y+=stitle(x,M,y,"КОМПЛЕКТУЮЧІ (ЕЛЕМЕНТИ ЛИТВА)",W-2*M,"Всього: "+tot+" шт. / "+ne+" артикулів"+(function(){var w=tcCastW(t);return w.sum>0?" / ≈ "+w.txt+" г":""})(),"cube");
       var per=8,cw=131,cell=117,rh=cell+66,i;
       for(i=0;i<ne;i++){if(i%per===0)ensure(rh);var cx=M+(i%per)*cw,cy=y,g=im[i+1];
@@ -957,7 +968,7 @@ function tcSheet(o,mode){
         x.fillStyle="#e6e6e6";x.fillRect(cx+aw+3,cy+cell+8,cell-aw-3,34);x.fillStyle=INK;x.font="700 22px "+AR;x.fillText("×"+t.els[i].q,cx+aw+9,cy+cell+14);
         if(i%per===per-1||i===ne-1)y+=rh}
       y+=6}
-    else if(blank){ensure(260);y+=stitle(x,M,y,"КОМПЛЕКТУЮЧІ (ЕЛЕМЕНТИ ЛИТВА)",W-2*M,"","cube");var bi;for(bi=0;bi<8;bi++){var bx=M+bi*131;x.fillStyle="#f6f6f6";x.fillRect(bx,y,117,117);x.strokeStyle="#bdbdbd";x.lineWidth=2;x.strokeRect(bx,y,117,117);x.strokeStyle=INK;x.strokeRect(bx,y+125,117,34)}y+=190}
+    else if(blank&&!elsSide){ensure(260);y+=stitle(x,M,y,"КОМПЛЕКТУЮЧІ (ЕЛЕМЕНТИ ЛИТВА)",W-2*M,"","cube");var bi;for(bi=0;bi<8;bi++){var bx=M+bi*131;x.fillStyle="#f6f6f6";x.fillRect(bx,y,117,117);x.strokeStyle="#bdbdbd";x.lineWidth=2;x.strokeRect(bx,y,117,117);x.strokeStyle=INK;x.strokeRect(bx,y+125,117,34)}y+=190}
     // ===== процеси =====
     var prl=tcPr(t).filter(function(r){return String(r.n||"").trim()});
     if(prl.length){ensure(120);y+=stitle(x,M,y,"ПРОЦЕСИ",W-2*M,"","gear");
@@ -1010,13 +1021,13 @@ function tcSheet(o,mode){
   var r=draw(1,1,4,1),bk=1,F=1;
   if(r.ypx>1646){
     // спершу стискаємо текст (не менше ≈50%), якщо не вміщається — зменшуємо висоту фото кроками
-    var Fs=[1,.92,.84,.76,.68,.6],fi,found=false,lo,hi,best,k,it,q;
+    var Fs=[1,.96,.92,.88,.84,.78,.72,.66,.6,.54,.48,.42,.36],fi,found=false,lo,hi,best,k,it,q;
     for(fi=0;fi<Fs.length&&!found;fi++){F=Fs[fi];
       if(draw(.5,1,4,F).ypx>1646)continue;
       lo=.5;hi=1;best=null;
       for(it=0;it<7;it++){k=(lo+hi)/2;q=draw(k,1,4,F);if(q.ypx<=1646){best=q;lo=k}else hi=k}
       r=best||draw(.5,1,4,F);bk=r.K;found=true}
-    if(!found){F=.6;r=draw(.5,1,4,F);bk=.5}}
+    if(!found){F=.36;r=draw(.5,1,4,F);bk=.5}}
   // друга проба: той самий макет у 300 dpi (запас: ~9 млн пікселів на канвас, щоб iPhone витримав)
   var Q=Math.min(2,Math.sqrt(9e6/(1240*1754*r.N)));
   if(Q>1.05){try{var hq=draw(bk,Q,r.N,F);if(okPages(hq.pages)&&hq.N===r.N)return hq.pages}catch(e){}}
