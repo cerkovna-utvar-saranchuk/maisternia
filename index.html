@@ -873,11 +873,12 @@ function tcSheet(o,mode){
   var fl=Promise.all([document.fonts.load("600 40px Oswald"),document.fonts.load("700 20px Arial")]).catch(function(){});
   var lg=null,bi=null;
   return fl.then(function(){return Promise.all([tcLoad("logo-sheet.png"),tcLoad("brand-icon.png")])}).then(function(l){lg=l[0];bi=l[1];return Promise.all(jobs)}).then(function(im){
-  function draw(K){
-    var W=1240/K,H=1754/K,PB=1644/K,cv=document.createElement("canvas");cv.width=1240;cv.height=1754*4;var x=cv.getContext("2d");x.scale(K,K);
-    x.fillStyle="#fff";x.fillRect(0,0,W,cv.height/K);x.textBaseline="top";x.textAlign="left";
+  function draw(K,Q,NP,F){
+    Q=Q||1;NP=NP||4;F=F||1;
+    var W=1240/K,H=1754/K,PB=1644/K,cv=document.createElement("canvas");cv.width=Math.round(1240*Q);cv.height=Math.round(1754*NP*Q);var x=cv.getContext("2d");if(!x)throw new Error("cv");x.imageSmoothingEnabled=true;x.imageSmoothingQuality="high";x.scale(K*Q,K*Q);
+    x.fillStyle="#fff";x.fillRect(0,0,W,cv.height/(K*Q));x.textBaseline="top";x.textAlign="left";
     var y=0,no=t.no?("0"+("0"+t.no).slice(-3)).slice(-3):"",ne=t.els.length;
-    function ensure(h){var p=Math.floor(y/H);if(y+h>p*H+PB&&y>p*H+200)y=(p+1)*H+100}
+    function ensure(h){var p=Math.floor(y/H);if(y+h>p*H+PB&&y>p*H+200)y=(p+1)*H+100/K}
     function dt(s){return s?String(s).split("-").reverse().join("."):""}
     function brk(c,bx,by,bw,bh,l,col){c.strokeStyle=col||INK;c.lineWidth=3;[[bx,by,1,1],[bx+bw,by,-1,1],[bx,by+bh,1,-1],[bx+bw,by+bh,-1,-1]].forEach(function(q){c.beginPath();c.moveTo(q[0]+q[2]*l,q[1]);c.lineTo(q[0],q[1]);c.lineTo(q[0],q[1]+q[3]*l);c.stroke()})}
     function haz(c,hx,hy,hw,hh,col){c.save();c.beginPath();c.rect(hx,hy,hw,hh);c.clip();c.fillStyle=col;for(var s=hx-hh;s<hx+hw+hh;s+=hh*1.6){c.beginPath();c.moveTo(s+hh,hy);c.lineTo(s+hh+hh*.8,hy);c.lineTo(s+hh*.8,hy+hh);c.lineTo(s,hy+hh);c.closePath();c.fill()}c.restore()}
@@ -929,7 +930,7 @@ function tcSheet(o,mode){
     var ph=im[0],ex2i=im.slice(1+ne),Wf=W-2*M,pl=[ph].concat(ex2i).filter(Boolean).slice(0,4),top=y,side=false,sidex=M,sidew=Wf,PH0=0;
     function pbx(g,bx,by,bw,bh){x.fillStyle="#f3f3f3";x.fillRect(bx,by,bw,bh);var r=Math.min(bw/g.width,bh/g.height),dw=g.width*r,dh=g.height*r;x.drawImage(g,bx+(bw-dw)/2,by+(bh-dh)/2,dw,dh);brk(x,bx-6,by-6,bw+12,bh+12,22)}
     if(pl.length){var asp=pl.map(function(g){return Math.max(.4,Math.min(2.2,g.width/g.height))}),sa=0,gp=20;asp.forEach(function(q){sa+=q});
-      PH0=Math.min(720/K,(Wf-gp*(pl.length-1))/sa);var rowW=sa*PH0+gp*(pl.length-1);side=pl.length===1&&Wf-rowW>=520;
+      PH0=Math.min(720*F/K,(Wf-gp*(pl.length-1))/sa);var rowW=sa*PH0+gp*(pl.length-1);side=pl.length===1&&Wf-rowW>=520;
       ensure(PH0+20);top=y;var px=side?M:M+(Wf-rowW)/2;
       pl.forEach(function(g,i){var bw=asp[i]*PH0;pbx(g,px,y,bw,PH0);px+=bw+gp});
       if(side){sidex=M+rowW+36;sidew=Wf-rowW-36}else y+=PH0+34}
@@ -998,16 +999,27 @@ function tcSheet(o,mode){
     y+=kh;
     // ===== сторінки =====
     var ypx=y*K,N=Math.max(1,Math.floor((ypx-1)/1754)+1),pages=[],p,mk=M*K;
-    for(p=0;p<N;p++){var pc=document.createElement("canvas");pc.width=1240;pc.height=1754;var px=pc.getContext("2d");px.fillStyle="#fff";px.fillRect(0,0,1240,1754);px.drawImage(cv,0,p*1754,1240,1754,0,0,1240,1754);px.textBaseline="top";
+    for(p=0;p<N;p++){var pc=document.createElement("canvas");pc.width=Math.round(1240*Q);pc.height=Math.round(1754*Q);var px=pc.getContext("2d");if(!px)throw new Error("pc");px.imageSmoothingQuality="high";px.fillStyle="#fff";px.fillRect(0,0,pc.width,pc.height);px.drawImage(cv,0,p*pc.height,pc.width,pc.height,0,0,pc.width,pc.height);px.scale(Q,Q);px.textBaseline="top";
       px.save();px.scale(K,K);haz(px,M,(1754-62)/K,200,12,OR);px.fillStyle=INK;px.fillRect(M+215,(1754-57)/K,W-2*M-215,2);px.restore();
       px.fillStyle="#888";px.font="20px "+AR;px.fillText("Саранчук — ювелірна майстерня · cerkovna_utvar_saranchuk",mk,1754-40);
       if(N>1){px.textAlign="right";px.fillText("стор. "+(p+1)+" / "+N,1240-mk,1754-40);px.textAlign="left";if(p>0)px.fillText("Техкарта "+(no?"№"+no+" · ":"")+(o.name||""),mk,44)}
+      px.fillStyle="#fefefe";px.fillRect(0,0,1,1);
       pages.push(pc)}
-    return {pages:pages,ypx:ypx}}
-  var r=draw(1);
-  if(r.ypx>1646){var lo=.5,hi=1,best=null,it,k;
-    for(it=0;it<7;it++){k=(lo+hi)/2;var q=draw(k);if(q.ypx<=1646){best=q;lo=k}else hi=k}
-    r=best||draw(.5)}
+    return {pages:pages,ypx:ypx,K:K,N:N}}
+  function okPages(pg){return pg.every(function(c){try{var d=c.getContext("2d").getImageData(0,0,1,1).data;return d[0]===254&&d[3]===255}catch(e){return false}})}
+  var r=draw(1,1,4,1),bk=1,F=1;
+  if(r.ypx>1646){
+    // спершу стискаємо текст (не менше ≈50%), якщо не вміщається — зменшуємо висоту фото кроками
+    var Fs=[1,.92,.84,.76,.68,.6],fi,found=false,lo,hi,best,k,it,q;
+    for(fi=0;fi<Fs.length&&!found;fi++){F=Fs[fi];
+      if(draw(.5,1,4,F).ypx>1646)continue;
+      lo=.5;hi=1;best=null;
+      for(it=0;it<7;it++){k=(lo+hi)/2;q=draw(k,1,4,F);if(q.ypx<=1646){best=q;lo=k}else hi=k}
+      r=best||draw(.5,1,4,F);bk=r.K;found=true}
+    if(!found){F=.6;r=draw(.5,1,4,F);bk=.5}}
+  // друга проба: той самий макет у 300 dpi (запас: ~9 млн пікселів на канвас, щоб iPhone витримав)
+  var Q=Math.min(2,Math.sqrt(9e6/(1240*1754*r.N)));
+  if(Q>1.05){try{var hq=draw(bk,Q,r.N,F);if(okPages(hq.pages)&&hq.N===r.N)return hq.pages}catch(e){}}
   return r.pages})}
 function tcShow(o,mode){
   toast("Готую аркуш…",false);
