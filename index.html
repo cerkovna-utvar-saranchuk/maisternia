@@ -929,7 +929,7 @@ function tcSheet(o,mode){
     var ph=im[0],ex2i=im.slice(1+ne),Wf=W-2*M,pl=[ph].concat(ex2i).filter(Boolean).slice(0,4),top=y,side=false,sidex=M,sidew=Wf,PH0=0;
     function pbx(g,bx,by,bw,bh){x.fillStyle="#f3f3f3";x.fillRect(bx,by,bw,bh);var r=Math.min(bw/g.width,bh/g.height),dw=g.width*r,dh=g.height*r;x.drawImage(g,bx+(bw-dw)/2,by+(bh-dh)/2,dw,dh);brk(x,bx-6,by-6,bw+12,bh+12,22)}
     if(pl.length){var asp=pl.map(function(g){return Math.max(.4,Math.min(2.2,g.width/g.height))}),sa=0,gp=20;asp.forEach(function(q){sa+=q});
-      PH0=Math.min(860,(Wf-gp*(pl.length-1))/sa);var rowW=sa*PH0+gp*(pl.length-1);side=pl.length===1&&Wf-rowW>=520;
+      PH0=Math.min(720/K,(Wf-gp*(pl.length-1))/sa);var rowW=sa*PH0+gp*(pl.length-1);side=pl.length===1&&Wf-rowW>=520;
       ensure(PH0+20);top=y;var px=side?M:M+(Wf-rowW)/2;
       pl.forEach(function(g,i){var bw=asp[i]*PH0;pbx(g,px,y,bw,PH0);px+=bw+gp});
       if(side){sidex=M+rowW+36;sidew=Wf-rowW-36}else y+=PH0+34}
