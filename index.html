@@ -921,31 +921,29 @@ function tcSheet(o,mode){
     dl.forEach(function(l,i){var dy=y+8+i*40;x.strokeStyle=INK;x.lineWidth=2;x.strokeRect(dlx-50,dy+2,24,22);x.fillStyle=OR;x.fillRect(dlx-50,dy+2,24,7);x.fillStyle=INK;x.font="26px "+AR;x.fillText(l,dlx,dy)});
     y+=Math.max(tl.length*68,dl.length*40+8)+16;x.fillStyle=INK;x.fillRect(M,y,W-2*M,2);y+=28;
     // ===== фото + характеристики =====
-    var ph=im[0],ex2i=im.slice(1+ne),Wf=W-2*M,BH=840,pl=[ph].concat(ex2i).filter(Boolean).slice(0,4),top=y;
-    function pbx(g,bx,by,bw,bh){x.fillStyle="#f3f3f3";x.fillRect(bx,by,bw,bh);var r=Math.min(bw/g.width,bh/g.height),dw=g.width*r,dh=g.height*r;x.drawImage(g,bx+(bw-dw)/2,by+(bh-dh)/2,dw,dh);brk(x,bx-6,by-6,bw+12,bh+12,22)}
-    if(pl.length){ensure(BH+20);top=y;
-      if(pl.length===1)pbx(pl[0],M,y,Wf,BH);
-      else{var mw=Math.round(Wf/2)-10,rx=M+mw+20,rw=Wf-mw-20,rs=pl.slice(1),h2=(BH-20)/2;pbx(pl[0],M,y,mw,BH);
-        if(rs.length===1)pbx(rs[0],rx,y,rw,BH);
-        else if(rs.length===2){pbx(rs[0],rx,y,rw,h2);pbx(rs[1],rx,y+h2+20,rw,h2)}
-        else{pbx(rs[0],rx,y,rw,h2);var hw=(rw-20)/2;pbx(rs[1],rx,y+h2+20,hw,h2);pbx(rs[2],rx+hw+20,y+h2+20,hw,h2)}}
-      y+=BH+34}
     var sst=t.sst||[],sto=String(t.stoneo||"").trim(),stt=String(t.stonet||"").trim()||"Фіаніт";
     var sl=(t.stl||[]).filter(function(r){return r.q||r.d||r.c||r.n});
     var sitems=sl.length?sl.map(function(r){var f=STONES.filter(function(z){return z[0]===r.c})[0];return {txt:[(r.q?r.q+" шт":""),(r.d?"Ø "+r.d+" мм":""),tcStName(r)].filter(Boolean).join(" · "),col:f?f[1]:""}}):sst.map(function(n){var f=STONES.filter(function(z){return z[0]===n})[0];return {txt:stt+", "+n.toLowerCase(),col:f?f[1]:""}});
     if(!sl.length&&sto)sitems.push({txt:sto,col:""});
     var blank=!ne&&!sl.length&&!sst.length&&!sto&&!tcWl(t).some(function(r){return r.d||r.l||r.n})&&!tcPr(t).some(function(r){return String(r.n||"").trim()})&&!["plate","silver","wood","chain","stones","tnotes","stoned"].some(function(k){return String(t[k]||"").trim()});
-    var tx=M,tw=Wf,ty=y;ty+=stitle(x,tx,ty,"ОСНОВНІ ХАРАКТЕРИСТИКИ",tw,"","gear");var cw2=(Wf-40)/2,ty0=ty,tyL=0;tw=cw2;
+    var ph=im[0],ex2i=im.slice(1+ne),Wf=W-2*M,pl=[ph].concat(ex2i).filter(Boolean).slice(0,4),top=y,side=false,sidex=M,sidew=Wf,PH0=0;
+    function pbx(g,bx,by,bw,bh){x.fillStyle="#f3f3f3";x.fillRect(bx,by,bw,bh);var r=Math.min(bw/g.width,bh/g.height),dw=g.width*r,dh=g.height*r;x.drawImage(g,bx+(bw-dw)/2,by+(bh-dh)/2,dw,dh);brk(x,bx-6,by-6,bw+12,bh+12,22)}
+    if(pl.length){var asp=pl.map(function(g){return Math.max(.4,Math.min(2.2,g.width/g.height))}),sa=0,gp=20;asp.forEach(function(q){sa+=q});
+      PH0=Math.min(860,(Wf-gp*(pl.length-1))/sa);var rowW=sa*PH0+gp*(pl.length-1);side=pl.length===1&&Wf-rowW>=520;
+      ensure(PH0+20);top=y;var px=side?M:M+(Wf-rowW)/2;
+      pl.forEach(function(g,i){var bw=asp[i]*PH0;pbx(g,px,y,bw,PH0);px+=bw+gp});
+      if(side){sidex=M+rowW+36;sidew=Wf-rowW-36}else y+=PH0+34}
+    var tx=side?sidex:M,tw=side?sidew:Wf,ty=y;ty+=stitle(x,tx,ty,"ОСНОВНІ ХАРАКТЕРИСТИКИ",tw,"","gear");var cw2=(Wf-40)/2,ty0=ty,tyL=0;if(!side)tw=cw2;
     function trow(l,v,ic,hint){var emp=!String(v||"").trim();if(emp&&!blank)return;var lw2=Math.min(240,tw*.46);x.font="600 30px "+AR;var ls=emp?[]:tcLines(x,v,tw-lw2-24),h=emp?54:Math.max(46,ls.length*36+12);
       if(ic)icon(x,ic,tx+4,ty+(h-34)/2,34);if(l){x.fillStyle=GR;x.font="23px "+AR;x.fillText(l,tx+(ic?46:4),ty+(emp?16:11))}x.fillStyle=INK;x.fillRect(tx+lw2,ty,1.5,h);if(emp&&hint){x.fillStyle="#b5b5b5";x.font="22px "+AR;x.fillText(hint,tx+lw2+18,ty+16)}x.fillStyle=INK;x.font="600 30px "+AR;ls.forEach(function(q,i){x.fillText(q,tx+lw2+18,ty+8+i*36)});
       ty+=h;x.fillStyle=INK;x.fillRect(tx,ty-1,tw,1.5)}
-    trow("Модель",t.bart,"cube");trow("Розмір",t.bsize,"ruler");trow("Метал",t.bmetal,"ingots");trow("Пластина",t.plate,"sheet");trow("Додатк. срібло",t.silver,"weight");tyL=ty;tx=M+cw2+40;ty=ty0;trow("Дерево",t.wood,"layers");if(blank){trow("Дріт","","clip","Ø мм · довжина · призначення");trow("","","")}(function(){var w=tcCastW(t);if(w.sum>0)trow("Вага литва","≈ "+w.txt+" г"+(w.miss?"+":""),"weight")})();ty=Math.max(ty,tyL);tx=M;tw=Wf;(function(){var sd=sl.length?"":String(t.stoned||"").trim(),txt=[String(t.stones||"").trim(),sd?"Ø "+sd+" мм":""].filter(Boolean).join(", ");if(!txt&&!sitems.length){if(blank){trow("Камені","","gem","шт · Ø мм · колір");trow("","","");trow("","","")}return}var lw2=Math.min(240,tw*.46),h=Math.max(46,(txt?42:0)+sitems.length*42+10);
+    trow("Модель",t.bart,"cube");trow("Розмір",t.bsize,"ruler");trow("Метал",t.bmetal,"ingots");trow("Пластина",t.plate,"sheet");trow("Додатк. срібло",t.silver,"weight");if(!side){tyL=ty;tx=M+cw2+40;ty=ty0}trow("Дерево",t.wood,"layers");if(blank){trow("Дріт","","clip","Ø мм · довжина · призначення");if(!pl.length)trow("","","")}(function(){var w=tcCastW(t);if(w.sum>0)trow("Вага литва","≈ "+w.txt+" г"+(w.miss?"+":""),"weight")})();if(!side){ty=Math.max(ty,tyL);tx=M;tw=Wf}(function(){var sd=sl.length?"":String(t.stoned||"").trim(),txt=[String(t.stones||"").trim(),sd?"Ø "+sd+" мм":""].filter(Boolean).join(", ");if(!txt&&!sitems.length){if(blank){trow("Камені","","gem","шт · Ø мм · колір");trow("","","");if(!pl.length)trow("","","")}return}var lw2=Math.min(240,tw*.46),h=Math.max(46,(txt?42:0)+sitems.length*42+10);
       icon(x,"gem",tx+4,ty+8,34);x.fillStyle=GR;x.font="23px "+AR;x.fillText("Камені",tx+46,ty+11);x.fillStyle=INK;x.fillRect(tx+lw2,ty,1.5,h);
       var vy=ty+6;if(txt){x.font="600 30px "+AR;x.fillStyle=INK;x.fillText(txt,tx+lw2+18,vy+2);vy+=42}
       sitems.forEach(function(it){if(it.col)tcStone(x,tx+lw2+36,vy+19,17,it.col);else{var gx=tx+lw2+36,gy=vy+19,gr=15;x.fillStyle="#f4d9a8";x.strokeStyle="#9a6a1c";x.lineWidth=2;x.beginPath();x.moveTo(gx-gr,gy-gr*.45);x.lineTo(gx-gr*.55,gy-gr*.9);x.lineTo(gx+gr*.55,gy-gr*.9);x.lineTo(gx+gr,gy-gr*.45);x.lineTo(gx,gy+gr);x.closePath();x.fill();x.stroke()}
         x.fillStyle=INK;fit(x,it.txt,"600",AR,28,tw-lw2-80);x.fillText(it.txt,tx+lw2+62,vy+5);vy+=42});
       ty+=h;x.fillStyle=INK;x.fillRect(tx,ty-1,tw,1.5)})();trow("Ланцюжок",t.chain,"chain");
-    y=ty+30;
+    y=Math.max(ty,side?top+PH0:0)+30;
     if(t.chg){x.font="26px "+AR;var cl=t.chgn?tcLines(x,t.chgn,W-2*M-40):[],bh=64+cl.length*34;ensure(bh+20);x.fillStyle="#fff1d4";x.fillRect(M,y,W-2*M,bh);x.fillStyle=OR;x.fillRect(M,y,8,bh);x.fillStyle="#7a4a00";x.font="600 28px "+DISP;x.fillText("ЗМІНЕНО ПРОТИ БАЗОВОЇ МОДЕЛІ",M+24,y+14);x.fillStyle="#222";x.font="26px "+AR;cl.forEach(function(l,i){x.fillText(l,M+24,y+54+i*34)});y+=bh+26}
     // ===== елементи =====
     if(ne){var tot=0;t.els.forEach(function(e){tot+=e.q});
@@ -963,10 +961,10 @@ function tcSheet(o,mode){
     var prl=tcPr(t).filter(function(r){return String(r.n||"").trim()});
     if(prl.length){ensure(120);y+=stitle(x,M,y,"ПРОЦЕСИ",W-2*M,"","gear");
       prl.forEach(function(r){var ls=tcLines(x,tcPrName(r),W-2*M-60);x.font="600 28px "+AR;ls=tcLines(x,tcPrName(r),W-2*M-60);ensure(ls.length*36+10);cbox(x,M+4,y,28,false);ls.forEach(function(l,i){x.fillStyle=INK;x.font="600 28px "+AR;x.fillText(l,M+46,y+i*36)});y+=ls.length*36+10});y+=8}
-    else if(blank){ensure(260);y+=stitle(x,M,y,"ПРОЦЕСИ",W-2*M,"","gear");var pi2;for(pi2=0;pi2<4;pi2++){cbox(x,M+4,y,28,false);x.fillStyle=LN;x.fillRect(M+46,y+36,W-2*M-46,1.5);y+=56}y+=8}
+    else if(blank){ensure(260);y+=stitle(x,M,y,"ПРОЦЕСИ",W-2*M,"","gear");var pi2;for(pi2=0;pi2<(pl.length?3:4);pi2++){cbox(x,M+4,y,28,false);x.fillStyle=LN;x.fillRect(M+46,y+36,W-2*M-46,1.5);y+=56}y+=8}
     // ===== вказівки | виконання =====
     var scp=t.scope,notes=String(t.tnotes||"").replace(/([.!?])\s+(?=[А-ЯІЇЄҐA-Z])/g,"$1\n").split(/\n+/).filter(function(q){return q.trim()});
-    if(blank&&!notes.length)notes=["","","",""];
+    if(blank&&!notes.length)notes=pl.length?["","",""]:["","","",""];
     var hasEx=String(t.exec||"").trim()||t.mat||scp||String(t.finn||"").trim();
     var cwid=(W-2*M-50)/2;
     function colNotes(c,cx,cy,w){var h=stitle(c,cx,cy,"ТЕХНОЛОГІЧНІ ВКАЗІВКИ",w,"","tools");c.font="27px "+AR;notes.forEach(function(p){if(!p){c.fillStyle=INK;c.fillRect(cx+2,cy+h+11,11,11);c.fillStyle=LN;c.fillRect(cx+30,cy+h+36,w-34,1.5);h+=52;return}var ls=tcLines(c,p,w-34);c.fillStyle=INK;c.fillRect(cx+2,cy+h+11,11,11);ls.forEach(function(l,i){c.fillStyle=INK;c.font="27px "+AR;c.fillText(l,cx+30,cy+h+i*34)});h+=ls.length*34+8});return h+10}
