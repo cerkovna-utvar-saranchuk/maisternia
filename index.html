@@ -385,6 +385,23 @@ details.det{margin:10px 0;padding:10px 12px;border:1px solid #3a3c2c;border-radi
 .chips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px}.chips button{padding:9px 12px;border:1px solid #3a3c2c;border-radius:4px;background:#161912;color:inherit;font:600 13px var(--mono);text-transform:uppercase;cursor:pointer}.chips button.on{background:#D18B27;border-color:#D18B27;color:#10120E}
 .brand.cmp .brow{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:2px 8px 2px 12px}.brand.cmp .btx{text-align:left;min-width:0;flex:1}.brand.cmp .btx .wm{margin:6px 0 2px;font-size:clamp(18px,6vw,34px);text-align:left}.brand.cmp .btx .wsub{margin:0 0 6px;text-align:left}.brand.cmp .bic{width:60px;height:60px;flex:none;display:block}
 .strow{display:grid;grid-template-columns:1fr 1fr 44px;gap:6px;margin:6px 0}.strow input,.strow select{width:100%;min-width:0;font:inherit;padding:10px;background:transparent;color:inherit;border:1px solid var(--line,#3a3c2c);border-radius:2px;box-sizing:border-box}.strow .ico{height:100%} .prow{display:grid;grid-template-columns:1fr 44px;gap:6px;margin:6px 0}.prow input{width:100%;min-width:0;font:inherit;padding:10px;background:transparent;color:inherit;border:1px solid var(--line,#3a3c2c);border-radius:2px;box-sizing:border-box}.prow .ico{height:100%}
+/*time*/.otabs{grid-template-columns:repeat(6,1fr)}.otab b{font-size:10px;letter-spacing:.01em}
+.tbar{position:sticky;top:0;z-index:15;display:flex;align-items:center;gap:10px;margin:0 0 10px;padding:8px 12px;background:#1C2018;border:1px solid #D18B27;border-radius:3px;color:#D8D4BD}
+.tbar b{font:600 18px var(--mono);color:#D18B27;letter-spacing:.04em}.tbar span{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:13px;color:#929785}
+.tbar button{min-height:36px;padding:6px 14px}
+.tcard{background:#1C2018;border:1px solid #3a3c2c;border-radius:4px;padding:14px;margin:0 0 12px}.tcard .tv{display:block;font:600 34px var(--mono);color:#D18B27;letter-spacing:.04em;margin:2px 0 10px}
+.tcard .tt{font:500 11px var(--mono);letter-spacing:.1em;text-transform:uppercase;color:#929785}.tcard .tb{font:600 20px var(--display);margin:2px 0 8px}
+.tcard .row2{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}.tcard .row2 .btn{flex:1 1 130px;font-size:13px;letter-spacing:.03em;padding:11px 8px}
+.cal{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin:8px 0 12px}.cal .wd{font:500 10px var(--mono);color:#929785;text-align:center;text-transform:uppercase;padding:2px 0}
+.cal button{position:relative;min-height:50px;padding:4px 0;border:1px solid #3a3c2c;border-radius:3px;background:#161912;color:#D8D4BD;font:inherit;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;cursor:pointer}
+.cal button b{font:600 14px var(--mono)}.cal button i{font:500 10px var(--mono);font-style:normal;color:#D18B27;min-height:11px}
+.cal button.has{background:#2a2518}.cal button.sel{border-color:#D18B27;box-shadow:inset 0 0 0 1px #D18B27}.cal button.td b{text-decoration:underline;text-underline-offset:3px}.cal .em{border:0;background:transparent;cursor:default}
+.mnav{display:flex;align-items:center;gap:8px;margin:6px 0}.mnav b{flex:1;text-align:center;font:600 18px var(--display);letter-spacing:.06em;text-transform:uppercase}.mnav .ico{width:44px;height:44px;border:1px solid #3a3c2c;color:#D8D4BD}
+.tle{display:grid;grid-template-columns:1fr auto;gap:2px 8px;align-items:center;padding:10px 12px;margin:0 0 6px;border:1px solid #3a3c2c;border-radius:4px;background:#161912}.tle b{font-size:16px}.tle span{grid-column:1;color:#929785;font-size:13px}.tle button{grid-column:2;grid-row:1/3}
+.tsum{display:flex;flex-wrap:wrap;gap:6px 14px;font:500 12px var(--mono);color:#929785;margin:2px 0 10px}.tsum b{color:#D8D4BD}
+.tf{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0}.tf .full{grid-column:1/3}.tf label{display:grid;gap:4px}.tf label span{font:500 11px var(--mono);letter-spacing:.1em;text-transform:uppercase;color:#929785}
+.tf input,.tf select{width:100%;min-height:44px;box-sizing:border-box}
+
 </style>
 </head>
 <body>
@@ -650,7 +667,7 @@ function analyticsHtml(){return head("Аналітика","заробіток з
 function moreHtml(){
   var nm=S.masters.length,np=S.orders.filter(function(o){return !!o.plan}).length,ni=S.ideas.length;
   function r(k,t,d){return '<button class="morer" data-act="tab" data-tab="'+k+'"><b>'+t+'</b><span>'+d+'</span><i>›</i></button>'}
-  return head("Ще","розділи й дані","")+r("m","Майстри",nm?nm+" "+plural(nm,"майстер","майстри","майстрів"):"поки немає")+r("p","Проєкти",np?np+" "+plural(np,"проєкт","проєкти","проєктів"):"поки немає")+r("k","Довідник елементів",CAT.length+" артикулів")+r("t","Архів техкарт",tcArch().length?tcArch().length+" "+plural(tcArch().length,"техкарта","техкарти","техкарт"):"поки немає")+r("i","Ідеї",ni?ni+" "+plural(ni,"ідея","ідеї","ідей"):"поки немає")+backupHtml()+'<div id="sync" class="sync '+cloud.st+'" data-act="sync-retry">'+syncText()+'</div>'}
+  return head("Ще","розділи й дані","")+r("m","Майстри",nm?nm+" "+plural(nm,"майстер","майстри","майстрів"):"поки немає")+r("p","Проєкти",np?np+" "+plural(np,"проєкт","проєкти","проєктів"):"поки немає")+r("k","Довідник елементів",CAT.length+" артикулів")+r("t","Архів техкарт",tcArch().length?tcArch().length+" "+plural(tcArch().length,"техкарта","техкарти","техкарт"):"поки немає")+r("l","Облік часу",(function(){var td=dkey(new Date()),t=tlSumDays(td,td);return S.tmr?"таймер іде":(t?"сьогодні: "+tlFmt(t):(tlArr().length?"записів: "+tlArr().length:"поки немає"))})())+r("i","Ідеї",ni?ni+" "+plural(ni,"ідея","ідеї","ідей"):"поки немає")+backupHtml()+'<div id="sync" class="sync '+cloud.st+'" data-act="sync-retry">'+syncText()+'</div>'}
 
 /* замовлення */
 function itemRow(i){
@@ -734,13 +751,95 @@ function clientFill(o){
   if(got){save();render();toast("Контакти підставлено з попереднього замовлення",false)}else render()}
 
 var otab="d",otabFor=null;
-var OTABS=[{k:"d",n:"01",t:"Досьє"},{k:"p",n:"02",t:"Позиції"},{k:"r",n:"03",t:"Ресурси"},{k:"f",n:"04",t:"Фото"},{k:"t",n:"05",t:"Техкарта"}];
+var OTABS=[{k:"d",n:"01",t:"Досьє"},{k:"p",n:"02",t:"Позиції"},{k:"r",n:"03",t:"Ресурси"},{k:"f",n:"04",t:"Фото"},{k:"t",n:"05",t:"Техкарта"},{k:"h",n:"06",t:"Час"}];
 function oTabCount(o,k){
   if(k==="p"){var t=o.items.length,d=o.items.filter(function(i){return i.done}).length;return t?d+"/"+t:"—"}
   if(k==="r")return (o.log||[]).length||"—";
   if(k==="f")return (o.photos||[]).length||"—";
   if(k==="t")return (o.tc&&o.tc.els&&o.tc.els.length)||"—";
+  if(k==="h"){var tm=tlOrd(o.id);return tm?tlHrs(tm)+" год":"—"}
   return ""}
+
+/* ===== облік часу ===== */
+var TLM=["Січень","Лютий","Березень","Квітень","Травень","Червень","Липень","Серпень","Вересень","Жовтень","Листопад","Грудень"],TLMG=["січня","лютого","березня","квітня","травня","червня","липня","серпня","вересня","жовтня","листопада","грудня"],TLWD=["неділя","понеділок","вівторок","середа","четвер","пʼятниця","субота"];
+function tlArr(){if(!Array.isArray(S.tl))S.tl=[];return S.tl}
+function pad2(n){return("0"+n).slice(-2)}
+function dkey(dt){return dt.getFullYear()+"-"+pad2(dt.getMonth()+1)+"-"+pad2(dt.getDate())}
+function dparse(k){var a=String(k||"").split("-");return new Date(+a[0],(+a[1]||1)-1,+a[2]||1)}
+function tlFmt(m){m=Math.round(m);var h=Math.floor(m/60),mm=m%60;return h?h+" год"+(mm?" "+mm+" хв":""):mm+" хв"}
+function tlHrs(m){return(Math.round(m/6)/10).toString().replace(".",",")}
+function tlOrd(id){var t=0;tlArr().forEach(function(e){if(e.o===id)t+=e.m});return t}
+function tlSumDays(from,to){var t=0;tlArr().forEach(function(e){if(e.d>=from&&e.d<=to)t+=e.m});return t}
+function tlName(id){if(!id)return"Без замовлення";var o=findIn(S.orders,id);return o?(o.name||"Без назви"):"Видалене замовлення"}
+var tlMon=(function(){var n=new Date();return new Date(n.getFullYear(),n.getMonth(),1)})(),tlSel=dkey(new Date()),tlF=null,tlIv=null;
+function tmrMs(){return S.tmr?Math.max(0,Date.now()-S.tmr.t0):0}
+function tmrTxt(ms){var s=Math.floor(ms/1000);return pad2(Math.floor(s/3600))+":"+pad2(Math.floor(s/60)%60)+":"+pad2(s%60)}
+function tmrStart(oid){if(S.tmr)tmrStop(true);S.tmr={o:oid||"",t0:Date.now()};save();tmrKeep()}
+function tmrStop(quiet){
+  if(!S.tmr)return 0;var t0=S.tmr.t0,end=Date.now(),oid=S.tmr.o,cur0=t0,tot=0;S.tmr=null;
+  while(cur0<end){var dd=new Date(cur0),nx=new Date(dd.getFullYear(),dd.getMonth(),dd.getDate()+1).getTime(),seg=Math.min(end,nx),mins=Math.round((seg-cur0)/60000);
+    if(mins>0){tlArr().push({id:uid(),d:dkey(dd),o:oid,m:mins,s:"t"});tot+=mins}cur0=seg}
+  save();tmrKeep();if(!quiet)toast(tot?"Записано: "+tlFmt(tot):"Менше хвилини, не записано",false);return tot}
+function tmrKeep(){if(S.tmr&&!tlIv)tlIv=setInterval(tmrTick,1000);if(!S.tmr&&tlIv){clearInterval(tlIv);tlIv=null}}
+function tmrTick(){if(!S.tmr)return;var t=tmrTxt(tmrMs()),els=document.querySelectorAll(".tv.run,.tbar b"),i;for(i=0;i<els.length;i++)els[i].textContent=t}
+function tbarHtml(){if(!S.tmr)return"";return'<div class="tbar"><b>'+tmrTxt(tmrMs())+'</b><span>'+esc(tlName(S.tmr.o))+'</span><button class="btn" data-act="tl-stop">Стоп</button></div>'}
+function tlForm(fix){
+  if(!tlF)return"";var f=tlF,ords=S.orders.filter(function(o){return !o.plan||o.id===f.o});
+  return'<div class="tcard"><div class="tt">'+(f.id?"Редагувати запис":"Додати час")+'</div><div class="tf">'
+   +'<label class="full"><span>Дата</span><input type="date" data-tl="d" value="'+esc(f.d)+'"></label>'
+   +(fix?'':'<label class="full"><span>Замовлення</span><select data-tl="o"><option value="">Без замовлення</option>'+ords.map(function(o){return'<option value="'+o.id+'"'+(o.id===f.o?" selected":"")+'>'+esc(o.name||"Без назви")+'</option>'}).join("")+'</select></label>')
+   +'<label><span>Годин</span><input data-tl="h" inputmode="numeric" placeholder="0" value="'+esc(f.h)+'"></label><label><span>Хвилин</span><input data-tl="mn" inputmode="numeric" placeholder="0" value="'+esc(f.mn)+'"></label></div>'
+   +'<div class="row2"><button class="btn" data-act="tl-save">Зберегти</button><button class="btn ghost" data-act="tl-cancel">Скасувати</button></div>'
+   +(f.id?'<button class="lnk bad" data-act="tl-del" data-id="'+f.id+'" style="margin-top:8px">Видалити запис</button>':"")+'</div>'}
+function tlRow(e,showOrd){
+  var d=dparse(e.d);return'<div class="tle"><b>'+tlFmt(e.m)+'</b><span>'+pad2(d.getDate())+"."+pad2(d.getMonth()+1)+" · "+TLWD[d.getDay()]+(showOrd?" · "+esc(tlName(e.o)):"")+(e.s==="t"?" · таймер":"")+'</span><button class="ico" data-act="tl-edit" data-id="'+e.id+'" aria-label="Редагувати">✎</button></div>'}
+function timeOrderHtml(o){
+  var run=S.tmr&&S.tmr.o===o.id,other=S.tmr&&!run,tot=tlOrd(o.id),L=tlArr().filter(function(e){return e.o===o.id}).sort(function(a,b){return a.d<b.d?1:a.d>b.d?-1:0});
+  var f=tlF&&tlF.fix&&tlF.o===o.id;
+  return'<section class="sec"><div class="tcard"><div class="tt">Таймер</div>'
+   +(run?'<span class="tv run">'+tmrTxt(tmrMs())+'</span><button class="btn" data-act="tl-stop">Стоп</button>'
+    :'<span class="tv" style="color:#929785">00:00:00</span><button class="btn" data-act="tl-start" data-o="'+o.id+'">Старт</button>'+(other?'<div class="mu sm" style="margin-top:8px">Зараз іде таймер: '+esc(tlName(S.tmr.o))+'. Старт тут зупинить його й запише час.</div>':""))
+   +'</div>'
+   +'<div class="tcard"><div class="tt">Всього на це замовлення</div><div class="tb">'+(tot?tlFmt(tot)+' <span class="mu sm">≈ '+tlHrs(tot)+' год</span>':'ще немає записів')+'</div>'
+   +(tot?'<div class="row2"><button class="btn ghost" data-act="tl-tc" data-id="'+o.id+'">У техкарту</button><button class="btn ghost" data-act="tl-calc" data-id="'+o.id+'">У калькулятор</button></div><div class="mu sm" style="margin-top:6px">Підставляє «'+tlHrs(tot)+' год» у поле «Години роботи» техкарти або в поточний розрахунок калькулятора.</div>':"")+'</div>'
+   +(f?tlForm(true):'<button class="btn ghost" style="width:100%;margin:0 0 12px" data-act="tl-add" data-o="'+o.id+'" data-fix="1">+ Додати час вручну</button>')
+   +(L.length?L.map(function(e){return tlRow(e,false)}).join(""):"")+'</section>'}
+function timeHtml(){
+  var y=tlMon.getFullYear(),mo=tlMon.getMonth(),first=dkey(tlMon),last=dkey(new Date(y,mo+1,0)),mtot=tlSumDays(first,last),days={},td=dkey(new Date());
+  tlArr().forEach(function(e){if(e.d>=first&&e.d<=last)days[e.d]=(days[e.d]||0)+e.m});
+  var nd=Object.keys(days).length,lead=(tlMon.getDay()+6)%7,dim=new Date(y,mo+1,0).getDate(),i,cal='<div class="wd">Пн</div><div class="wd">Вт</div><div class="wd">Ср</div><div class="wd">Чт</div><div class="wd">Пт</div><div class="wd">Сб</div><div class="wd">Нд</div>';
+  for(i=0;i<lead;i++)cal+='<button class="em" tabindex="-1" aria-hidden="true"></button>';
+  for(i=1;i<=dim;i++){var k=y+"-"+pad2(mo+1)+"-"+pad2(i);cal+='<button data-act="tl-day" data-d="'+k+'" class="'+(days[k]?"has ":"")+(k===tlSel?"sel ":"")+(k===td?"td":"")+'"><b>'+i+'</b><i>'+(days[k]?tlHrs(days[k]):"")+'</i></button>'}
+  var sd=dparse(tlSel),dow=(sd.getDay()+6)%7,ws=new Date(sd.getFullYear(),sd.getMonth(),sd.getDate()-dow),we=new Date(ws.getFullYear(),ws.getMonth(),ws.getDate()+6),dayL=tlArr().filter(function(e){return e.d===tlSel}),dayT=0;dayL.forEach(function(e){dayT+=e.m});
+  var f=tlF&&!tlF.fix;
+  var run=S.tmr?'<div class="tcard"><div class="tt">Таймер · '+esc(tlName(S.tmr.o))+'</div><span class="tv run">'+tmrTxt(tmrMs())+'</span><button class="btn" data-act="tl-stop">Стоп</button></div>'
+   :'<div class="tcard"><div class="tt">Таймер</div><div class="tf"><label class="full"><span>Над чим працюєш</span><select id="tl-so"><option value="">Без замовлення</option>'+S.orders.filter(function(o){return !o.plan}).map(function(o){return'<option value="'+o.id+'">'+esc(o.name||"Без назви")+'</option>'}).join("")+'</select></label></div><button class="btn" data-act="tl-start" data-o="*">Старт</button></div>';
+  return head("Облік часу",mtot?TLM[mo].toLowerCase()+": "+tlFmt(mtot):"поки порожньо","")+run
+   +'<div class="mnav"><button class="ico" data-act="tl-mo" data-n="-1" aria-label="Попередній місяць">‹</button><b>'+TLM[mo]+" "+y+'</b><button class="ico" data-act="tl-mo" data-n="1" aria-label="Наступний місяць">›</button></div>'
+   +'<div class="tsum"><span>За місяць: <b>'+(mtot?tlFmt(mtot):"0")+'</b></span><span>Робочих днів: <b>'+nd+'</b></span>'+(nd?'<span>У середньому: <b>'+tlFmt(mtot/nd)+'</b></span>':"")+'</div>'
+   +'<div class="cal">'+cal+'</div>'
+   +'<div class="sh"><h2>'+sd.getDate()+" "+TLMG[sd.getMonth()]+", "+TLWD[sd.getDay()]+'</h2><span class="hint">'+(dayT?tlFmt(dayT):"")+'</span></div>'
+   +'<div class="tsum"><span>Тиждень ('+pad2(ws.getDate())+"."+pad2(ws.getMonth()+1)+"–"+pad2(we.getDate())+"."+pad2(we.getMonth()+1)+'): <b>'+tlFmt(tlSumDays(dkey(ws),dkey(we)))+'</b></span></div>'
+   +(dayL.length?dayL.map(function(e){return tlRow(e,true)}).join(""):'<p class="empty">У цей день записів немає.</p>')
+   +(f?tlForm(false):'<button class="btn" style="width:100%;margin-top:8px" data-act="tl-add">+ Додати час за цей день</button>')}
+function tlAct(a,d){
+  switch(a){
+   case"tl-start":var oid=d.o==="*"?val("tl-so"):d.o;tmrStart(oid);tlF=null;render();return true;
+   case"tl-stop":tmrStop();render();return true;
+   case"tl-add":tlF={id:"",d:d.o?dkey(new Date()):tlSel,o:d.o||"",h:"",mn:"",fix:!!d.fix};render();return true;
+   case"tl-edit":var e=findIn(tlArr(),d.id);if(e){tlF={id:e.id,d:e.d,o:e.o,h:Math.floor(e.m/60)||"",mn:e.m%60||"",fix:cur?true:false}}render();return true;
+   case"tl-cancel":tlF=null;render();return true;
+   case"tl-save":if(!tlF)return true;var h=parseInt(tlF.h,10)||0,mn=parseInt(tlF.mn,10)||0,m=h*60+mn;
+     if(m<=0||m>24*60){toast("Вкажи час: від 1 хвилини до 24 годин",false);return true}
+     if(!/^\d{4}-\d{2}-\d{2}$/.test(tlF.d||"")){toast("Вкажи дату",false);return true}
+     if(tlF.id){var e2=findIn(tlArr(),tlF.id);if(e2){e2.d=tlF.d;e2.m=m;if(!tlF.fix)e2.o=tlF.o||""}}else tlArr().push({id:uid(),d:tlF.d,o:tlF.o||"",m:m,s:"m"});
+     tlSel=tlF.d;tlMon=new Date(dparse(tlF.d).getFullYear(),dparse(tlF.d).getMonth(),1);tlF=null;save();render();toast("Записано: "+tlFmt(m),false);return true;
+   case"tl-del":S.tl=tlArr().filter(function(x){return x.id!==d.id});tlF=null;save();render();toast("Запис видалено",false);return true;
+   case"tl-day":tlSel=d.d;tlF=null;render();return true;
+   case"tl-mo":tlMon=new Date(tlMon.getFullYear(),tlMon.getMonth()+(+d.n),1);tlF=null;render();return true;
+   case"tl-tc":var o1=findIn(S.orders,d.id);if(o1){tcOf(o1).hrs=tlHrs(tlOrd(o1.id));save();render();toast("У техкарті: "+tcOf(o1).hrs+" год",false)}return true;
+   case"tl-calc":var o2=findIn(S.orders,d.id);if(o2){if(!S.calc||typeof S.calc!=="object"||Array.isArray(S.calc))S.calc={};var c=S.calc;c.order=c.order||{};c.order.hours=tlHrs(tlOrd(o2.id));save();toast("У калькуляторі (поточний розрахунок): "+c.order.hours+" год",false)}return true}
+  return false}
 function oTabsHtml(o){
   return '<div class="otabs" role="tablist" aria-label="Розділи замовлення">'+OTABS.map(function(x){
     return '<button class="otab'+(otab===x.k?" on":"")+'" role="tab" aria-selected="'+(otab===x.k?"true":"false")+'" data-act="otab" data-t="'+x.k+'"><b>'+x.t+'</b><i>'+oTabCount(o,x.k)+'</i></button>'}).join("")+'</div>'}
@@ -771,6 +870,7 @@ function detailHtml(){
   +pane("p",section(o,"mat","Що замовити",matHint(o))+section(o,"part","Деталі виробу","галочка: зроблено"))
   +pane("r",metalHtml(o)+logSection(o))
   +pane("t",tcHtml(o))
+  +pane("h",timeOrderHtml(o))
   +pane("f",photos||'<section class="sec"><p class="empty">Фото додати поки неможливо.</p></section>')
   +'<div class="savebar"><button class="btn" data-act="save-now">Зберегти</button><span class="mu sm">Зберігається і автоматично</span></div>'}
 
@@ -1535,13 +1635,13 @@ var ICON_P='<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="
 var ICON_I='<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 2.1h5c0-.9.4-1.6 1-2.1A6 6 0 0 0 12 3z"/></svg>';
 var ICON_C='<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="3" width="14" height="18" rx="1"/><path d="M8 7h8M8 12h.01M12 12h.01M16 12h.01M8 16h.01M12 16h.01M16 16h.01"/></svg>';
 function navHtml(){
-  var c=needCount(),dsN=dueSoon().length,cr=cur?ord():null,t=cr?(cr.plan?"x":"o"):(tab==="p"||tab==="i"||tab==="m"||tab==="k"||tab==="t"?"x":tab);
+  var c=needCount(),dsN=dueSoon().length,cr=cur?ord():null,t=cr?(cr.plan?"x":"o"):(tab==="p"||tab==="i"||tab==="m"||tab==="k"||tab==="t"||tab==="l"?"x":tab);
   function b(k,ico,label,extra){return '<button data-act="tab" data-tab="'+k+'" class="'+(t===k?"on":"")+'">'+ico+'<span>'+label+'</span>'+(extra||"")+'</button>'}
   return b("o",ICON_O,"Замовлення",dsN?'<em class="badge bad">'+dsN+'</em>':"")+b("s",ICON_S,"Склад",c?'<em class="badge">'+c+'</em>':"")+b("c",ICON_C,"Ціна")+b("a",ICON_A,"Аналітика")+b("x",ICON_X,"Ще")}
 
 function render(){
-  document.getElementById("app").innerHTML=cur?detailHtml():(tab==="c"?CALC.html():tab==="s"?stockHtml():tab==="a"?analyticsHtml():tab==="x"?moreHtml():(tab==="m"?(mOpen?masterDetailHtml():backMore()+mastersHtml()):(tab==="i"?(ideaOpen?ideaDetailHtml():backMore()+ideasHtml()):(tab==="k"?backMore()+catHtml():(tab==="t"?backMore()+archiveHtml():listHtml())))));
-  document.getElementById("nav").innerHTML=navHtml();hydrate();
+  document.getElementById("app").innerHTML=cur?detailHtml():(tab==="c"?CALC.html():tab==="s"?stockHtml():tab==="a"?analyticsHtml():tab==="x"?moreHtml():(tab==="m"?(mOpen?masterDetailHtml():backMore()+mastersHtml()):(tab==="i"?(ideaOpen?ideaDetailHtml():backMore()+ideasHtml()):(tab==="k"?backMore()+catHtml():(tab==="t"?backMore()+archiveHtml():(tab==="l"?backMore()+timeHtml():listHtml()))))));
+  document.getElementById("app").insertAdjacentHTML("afterbegin",tbarHtml());tmrKeep();document.getElementById("nav").innerHTML=navHtml();hydrate();
   var sk=(cur||"")+"|"+tab+"|"+mOpen+"|"+ideaOpen;if(window.__sk!==undefined&&window.__sk!==sk){var ap=document.getElementById("app");ap.classList.remove("swap");void ap.offsetWidth;ap.classList.add("swap")}window.__sk=sk;if(!cur&&tab==="c")CALC.mount()}
 
 /* дії */
@@ -1605,10 +1705,11 @@ function bkRestore(){
   S=o;if(!Array.isArray(S.stock))S.stock=[];if(!Array.isArray(S.res))S.res=defRes();if(!Array.isArray(S.ideas))S.ideas=[];if(!Array.isArray(S.rubrics))S.rubrics=[];normMasters();save();restoreArmed=false;bkOpen=false;render();toast("Дані відновлено",false)}
 
 function act(a,d){
+  if(a.slice(0,3)==="tl-"&&tlAct(a,d))return;
   if(a.slice(0,3)==="tc-"&&tcAct(a,d))return;
   switch(a){
-    case "tab":newPick=false;tab=d.tab;cur=null;edit=null;resEdit=null;closeMaster();closeIdea();rubEdit=false;adding=null;confirmDel=false;render();scrollTo(0,0);break;
-    case "open":cur=d.id;edit=null;adding=null;confirmDel=false;render();scrollTo(0,0);break;
+    case "tab":tlF=null;newPick=false;tab=d.tab;cur=null;edit=null;resEdit=null;closeMaster();closeIdea();rubEdit=false;adding=null;confirmDel=false;render();scrollTo(0,0);break;
+    case "open":tlF=null;cur=d.id;edit=null;adding=null;confirmDel=false;render();scrollTo(0,0);break;
     case "home":cur=null;edit=null;adding=null;confirmDel=false;render();break;
     case "new":if(tab==="p")newO();else{newPick=!newPick;render()}break;case "new-k":newO(d.k);break;case "new-cancel":newPick=false;render();break;
     case "kind-set":var ko=ord();if(ko){ko.kind=d.k==="restore"?"restore":"";if(ko.kind==="restore"&&!(ko.rest&&ko.rest.length))ko.rest=[{id:uid(),name:"",desc:"",price:"",done:false}];save();render()}break;
@@ -1683,7 +1784,7 @@ document.addEventListener("click",function(e){
 document.addEventListener("change",function(e){
   var el=e.target;if(el.id==="qa-ph"){qaFiles=Array.prototype.slice.call(el.files||[]);var ql=document.getElementById("qa-phl");if(ql)ql.textContent=qaPhText();return}if(el.type==="checkbox"&&el.dataset.act==="rest-tog")act("rest-tog",{id:el.dataset.id});else if(el.type==="checkbox"&&el.dataset.act==="tog")tog(el.dataset.id);else if(el.id==="c-name"){var co=ord();if(co)clientFill(co)}else if(el.id==="ph-in"||el.id==="ip-in")photoPick(el);else if(el.tagName==="SELECT"&&el.dataset.fi)setIdeaF(el);else if(el.dataset&&el.dataset.f==="mg")render();else if(el.id==="mv-metal")mvMetal=el.value;else if(el.id==="mv-type")mvType=el.value});
 document.addEventListener("input",function(e){
-  var el=e.target,o;if(el.dataset&&el.dataset.cn){S.catn=S.catn||{};S.catn[el.dataset.cn]=el.value;save();return}if(el.dataset&&el.dataset.ts&&(o=ord())){var pp=el.dataset.ts.split(":"),stl=tcOf(o).stl||[];if(stl[+pp[0]]){stl[+pp[0]][pp[1]]=el.value;save();if(el.tagName==="SELECT")render()}return}if(el.dataset&&el.dataset.tp&&(o=ord())){var pq=el.dataset.tp.split(":"),pl_=tcPr(tcOf(o));if(pl_[+pq[0]]){pl_[+pq[0]][pq[1]]=el.value;save()}return}if(el.dataset&&el.dataset.tw&&(o=ord())){var pw=el.dataset.tw.split(":"),wl_=tcWl(tcOf(o));if(wl_[+pw[0]]){wl_[+pw[0]][pw[1]]=el.value;save()}return}if(el.dataset&&el.dataset.tc&&(o=ord())){tcOf(o)[el.dataset.tc]=el.value;save();return}if(el.dataset&&el.dataset.fr&&(o=ord())){var pr_=el.dataset.fr.split("|");(o.rest||[]).forEach(function(r){if(r.id===pr_[0])r[pr_[1]]=el.value});if(pr_[1]==="price")restApply(o);if(pr_[1]==="pc"){var rl=document.getElementById("rp-"+pr_[0]);if(rl)rl.textContent=el.value+"%";var pb2=document.getElementById("of-pb");if(pb2)pb2.innerHTML=progBar(o);var rg=document.getElementById("o-prog");if(rg&&progOf(o).auto)rg.value=progOf(o).p}save();return}if(el.dataset&&el.dataset.fx){S.fx=S.fx||{};S.fx[el.dataset.fx]=el.value.replace(",",".");save();var eg=document.getElementById("eg");if(eg)eg.innerHTML=earnGrid(earnCalc());return}if(el.id&&el.id.slice(0,3)==="qa-")qaCalc();if(el.dataset&&el.dataset.f&&(o=ord())){o[el.dataset.f]=el.value;save();if(el.dataset.f==='mg'||el.dataset.f==='mf'){syncMetal(o);var mn=document.getElementById('metal-n');if(mn&&el.dataset.f==='mg')mn.innerHTML=metalHtml(o).split('<div id="metal-n">')[1].split('</div></section>')[0];if(el.dataset.f==='mf')render()}if(el.dataset.f==="prog"){var pb=document.getElementById("of-pb");if(pb)pb.innerHTML=progBar(o);var pa=el.parentNode.querySelector('[data-act=prog-auto]');if(!pa){pa=document.createElement('button');pa.className='lnk';pa.dataset.act='prog-auto';pa.textContent='Рахувати автоматично з позицій';el.parentNode.appendChild(pa)}}if(el.dataset.f==="due"){var di=document.getElementById("due-ind");if(di)di.innerHTML=dueInd(o)}if(/^(price|cost|fprice|fcost)$/.test(el.dataset.f)){var pfe=document.getElementById("pf");if(pfe)pfe.innerHTML=pfLine(o)}if(/^(price|adv|cur)$/.test(el.dataset.f)){var bl=document.getElementById("bal");if(bl)bl.innerHTML=moneyLine(o)}if(/^(cphone|cinsta)$/.test(el.dataset.f)){var lk=document.getElementById("clinks");if(lk)lk.innerHTML=linksHtml(o)}}else if(el.dataset&&el.dataset.fi&&ideaOpen)setIdeaF(el);else if(el.dataset&&el.dataset.fm&&mOpen){var mm=findIn(S.masters,mOpen);if(mm){mm[el.dataset.fm]=el.value;save()}}});
+  var el=e.target,o;if(el.dataset&&el.dataset.tl){if(tlF)tlF[el.dataset.tl]=el.value;return}if(el.dataset&&el.dataset.cn){S.catn=S.catn||{};S.catn[el.dataset.cn]=el.value;save();return}if(el.dataset&&el.dataset.ts&&(o=ord())){var pp=el.dataset.ts.split(":"),stl=tcOf(o).stl||[];if(stl[+pp[0]]){stl[+pp[0]][pp[1]]=el.value;save();if(el.tagName==="SELECT")render()}return}if(el.dataset&&el.dataset.tp&&(o=ord())){var pq=el.dataset.tp.split(":"),pl_=tcPr(tcOf(o));if(pl_[+pq[0]]){pl_[+pq[0]][pq[1]]=el.value;save()}return}if(el.dataset&&el.dataset.tw&&(o=ord())){var pw=el.dataset.tw.split(":"),wl_=tcWl(tcOf(o));if(wl_[+pw[0]]){wl_[+pw[0]][pw[1]]=el.value;save()}return}if(el.dataset&&el.dataset.tc&&(o=ord())){tcOf(o)[el.dataset.tc]=el.value;save();return}if(el.dataset&&el.dataset.fr&&(o=ord())){var pr_=el.dataset.fr.split("|");(o.rest||[]).forEach(function(r){if(r.id===pr_[0])r[pr_[1]]=el.value});if(pr_[1]==="price")restApply(o);if(pr_[1]==="pc"){var rl=document.getElementById("rp-"+pr_[0]);if(rl)rl.textContent=el.value+"%";var pb2=document.getElementById("of-pb");if(pb2)pb2.innerHTML=progBar(o);var rg=document.getElementById("o-prog");if(rg&&progOf(o).auto)rg.value=progOf(o).p}save();return}if(el.dataset&&el.dataset.fx){S.fx=S.fx||{};S.fx[el.dataset.fx]=el.value.replace(",",".");save();var eg=document.getElementById("eg");if(eg)eg.innerHTML=earnGrid(earnCalc());return}if(el.id&&el.id.slice(0,3)==="qa-")qaCalc();if(el.dataset&&el.dataset.f&&(o=ord())){o[el.dataset.f]=el.value;save();if(el.dataset.f==='mg'||el.dataset.f==='mf'){syncMetal(o);var mn=document.getElementById('metal-n');if(mn&&el.dataset.f==='mg')mn.innerHTML=metalHtml(o).split('<div id="metal-n">')[1].split('</div></section>')[0];if(el.dataset.f==='mf')render()}if(el.dataset.f==="prog"){var pb=document.getElementById("of-pb");if(pb)pb.innerHTML=progBar(o);var pa=el.parentNode.querySelector('[data-act=prog-auto]');if(!pa){pa=document.createElement('button');pa.className='lnk';pa.dataset.act='prog-auto';pa.textContent='Рахувати автоматично з позицій';el.parentNode.appendChild(pa)}}if(el.dataset.f==="due"){var di=document.getElementById("due-ind");if(di)di.innerHTML=dueInd(o)}if(/^(price|cost|fprice|fcost)$/.test(el.dataset.f)){var pfe=document.getElementById("pf");if(pfe)pfe.innerHTML=pfLine(o)}if(/^(price|adv|cur)$/.test(el.dataset.f)){var bl=document.getElementById("bal");if(bl)bl.innerHTML=moneyLine(o)}if(/^(cphone|cinsta)$/.test(el.dataset.f)){var lk=document.getElementById("clinks");if(lk)lk.innerHTML=linksHtml(o)}}else if(el.dataset&&el.dataset.fi&&ideaOpen)setIdeaF(el);else if(el.dataset&&el.dataset.fm&&mOpen){var mm=findIn(S.masters,mOpen);if(mm){mm[el.dataset.fm]=el.value;save()}}});
 document.addEventListener("keydown",function(e){
   if(e.key!=="Enter")return;var id=e.target.id||"";
   if(id.indexOf("e-")===0){e.preventDefault();saveEdit()}
