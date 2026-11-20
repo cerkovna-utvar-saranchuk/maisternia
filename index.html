@@ -402,6 +402,11 @@ details.det{margin:10px 0;padding:10px 12px;border:1px solid #3a3c2c;border-radi
 .tf{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0}.tf .full{grid-column:1/3}.tf label{display:grid;gap:4px}.tf label span{font:500 11px var(--mono);letter-spacing:.1em;text-transform:uppercase;color:#929785}
 .tf input,.tf select{width:100%;min-height:44px;box-sizing:border-box}
 
+.cmrow{display:grid;grid-template-columns:1fr auto;gap:8px 10px;align-items:center;padding:10px 0;border-top:1px solid #3a3c2c}.cmrow b{font-size:16px;overflow-wrap:anywhere}
+.cmrow .btn{min-height:40px;padding:8px 14px;text-decoration:none;display:flex;align-items:center}.cmp{grid-column:1/3;display:flex;align-items:center;gap:8px}.cmp input{flex:1;min-height:44px;font-size:18px}.cmp span{color:#929785;min-width:30px}
+.cmrow.low{background:#2a2518;box-shadow:inset 3px 0 0 #D18B27;padding-left:10px;border-radius:3px}
+.cmh{display:flex;justify-content:space-between;gap:10px;padding:6px 0;border-top:1px solid #2c2e22;font-size:15px}.cmh.low{color:#D18B27}.cmh.low b::before{content:"▼ "}
+
 </style>
 </head>
 <body>
@@ -851,7 +856,9 @@ function supForm(){
   return'<div class="tcard"><div class="tt">'+(f.id?"Редагувати постачальника":"Новий постачальник")+'</div><div class="tf">'
    +'<label class="full"><span>Назва магазину</span><input data-su="n" placeholder="Наприклад: Ювелірторг" value="'+esc(f.n)+'" autocomplete="off"></label>'
    +'<label class="full"><span>Посилання на сайт</span><input data-su="u" type="url" inputmode="url" autocapitalize="none" autocorrect="off" placeholder="example.com" value="'+esc(f.u)+'"></label>'
-   +'<label class="full"><span>Що там купую (необов’язково)</span><input data-su="c" placeholder="Наприклад: інструмент, формомаса, припій" value="'+esc(f.c)+'"></label></div>'
+   +'<label class="full"><span>Що там купую (необов’язково)</span><input data-su="c" placeholder="Наприклад: інструмент, формомаса, припій" value="'+esc(f.c)+'"></label>'
+   +'<label class="full"><span>Адреса пошуку (необов’язково)</span><input data-su="q" type="url" inputmode="url" autocapitalize="none" autocorrect="off" placeholder="https://сайт/search?q={q}" value="'+esc(f.q)+'"></label>'
+   +'<div class="mu sm full">Для порівняння цін: знайди щось на сайті, скопіюй адресу сторінки з результатами й заміни слово пошуку на {q}.</div></div>'
    +'<div class="row2"><button class="btn" data-act="su-save">Зберегти</button><button class="btn ghost" data-act="su-cancel">Скасувати</button></div>'
    +(f.id?'<button class="lnk bad" data-act="su-del" data-id="'+f.id+'" style="margin-top:8px">Видалити постачальника</button>':"")+'</div>'}
 function supHtml(){
@@ -862,19 +869,58 @@ function supHtml(){
      return'<div class="tcard"><div style="display:flex;align-items:flex-start;gap:8px"><div style="flex:1;min-width:0"><div class="tb" style="margin:0">'+esc(x.n)+'</div><div class="mu sm" style="overflow-wrap:anywhere">'+esc(supHost(x.u))+(x.c?" · "+esc(x.c):"")+'</div></div><button class="ico" data-act="su-edit" data-id="'+x.id+'" aria-label="Редагувати">✎</button></div>'
       +'<a class="btn" style="display:flex;align-items:center;justify-content:center;margin-top:10px;text-decoration:none" href="'+esc(supUrl(x.u))+'" target="_blank" rel="noopener noreferrer">Відкрити сайт</a></div>'}).join("")
    +(L.length?"":'<p class="empty">Додай сайти, де купуєш матеріали та інструменти: вони будуть тут під рукою.</p>')
-   +(suF&&!suF.id?supForm():'<button class="btn ghost" style="width:100%;margin-top:4px" data-act="su-add">+ Додати постачальника</button>')}
+   +(suF&&!suF.id?supForm():'<button class="btn ghost" style="width:100%;margin-top:4px" data-act="su-add">+ Додати постачальника</button>')
+   +(suF?"":cmpHtml()+cmHistHtml())}
 function supAct(a,d){
   switch(a){
-   case"su-add":suF={id:"",n:"",u:"",c:""};render();return true;
-   case"su-edit":var x=findIn(supArr(),d.id);if(x)suF={id:x.id,n:x.n||"",u:x.u||"",c:x.c||""};render();return true;
+   case"su-add":suF={id:"",n:"",u:"",c:"",q:""};render();return true;
+   case"su-edit":var x=findIn(supArr(),d.id);if(x)suF={id:x.id,n:x.n||"",u:x.u||"",c:x.c||"",q:x.q||""};render();return true;
    case"su-cancel":suF=null;render();return true;
    case"su-save":if(!suF)return true;var n=String(suF.n||"").trim(),u=supUrl(suF.u);
      if(!n){toast("Вкажи назву",false);return true}
      if(!u){toast("Вкажи посилання на сайт",false);return true}
-     if(suF.id){var y=findIn(supArr(),suF.id);if(y){y.n=n;y.u=u;y.c=String(suF.c||"").trim()}}else supArr().push({id:uid(),n:n,u:u,c:String(suF.c||"").trim()});
+     if(suF.id){var y=findIn(supArr(),suF.id);if(y){y.n=n;y.u=u;y.c=String(suF.c||"").trim();y.q=String(suF.q||"").trim()}}else supArr().push({id:uid(),n:n,u:u,c:String(suF.c||"").trim(),q:String(suF.q||"").trim()});
      suF=null;save();render();toast("Збережено",false);return true;
+   case"cm-save":var c=cmpG(),nm=String(c.n||"").trim(),ps=supArr().map(function(x){return{s:x.id,sn:x.n,v:pnum(c.p[x.id])}}).filter(function(z){return z.v>0});
+     if(!nm){toast("Впиши, що порівнюєш",false);return true}
+     if(!ps.length){toast("Впиши хоча б одну ціну",false);return true}
+     cmArr().push({id:uid(),d:dkey(new Date()),n:nm,cur:c.cur,p:ps});S.cmpd={n:"",cur:c.cur,p:{}};save();render();toast("Порівняння збережено",false);return true;
+   case"cm-clear":S.cmpd={n:"",cur:cmpG().cur,p:{}};save();render();return true;
+   case"cm-del":if(!confirm("Видалити це порівняння?"))return true;S.cmp=cmArr().filter(function(z){return z.id!==d.id});save();render();return true;
    case"su-del":if(!confirm("Видалити постачальника?"))return true;S.sup=supArr().filter(function(z){return z.id!==d.id});suF=null;save();render();return true}
   return false}
+
+/* ===== порівняння цін ===== */
+function cmpG(){if(!S.cmpd||typeof S.cmpd!=="object")S.cmpd={n:"",cur:"грн",p:{}};if(!S.cmpd.p)S.cmpd.p={};return S.cmpd}
+function cmArr(){if(!Array.isArray(S.cmp))S.cmp=[];return S.cmp}
+function supSearch(x,n){n=String(n||"").trim();if(x.q&&x.q.indexOf("{q}")>=0&&n)return supUrl(x.q.split("{q}").join(encodeURIComponent(n)));return supUrl(x.u)}
+function pnum(v){var n=parseFloat(String(v==null?"":v).replace(/\s/g,"").replace(",","."));return isFinite(n)&&n>0?n:0}
+function pfmt(v,cur){return (Math.round(v*100)/100).toString().replace(".",",")+" "+cur}
+function cmUpd(){
+  var c=cmpG(),as=document.querySelectorAll("a.cmgo"),i,vals=[];
+  for(i=0;i<as.length;i++){var x=findIn(supArr(),as[i].getAttribute("data-sid"));if(x)as[i].href=supSearch(x,c.n)}
+  var rows=document.querySelectorAll(".cmrow");
+  for(i=0;i<rows.length;i++){var id=rows[i].getAttribute("data-sid"),v=pnum(c.p[id]);if(v)vals.push([id,v]);var cu=rows[i].querySelector(".cmcur");if(cu)cu.textContent=c.cur}
+  var mn=vals.length?Math.min.apply(null,vals.map(function(z){return z[1]})):0,mx=vals.length?Math.max.apply(null,vals.map(function(z){return z[1]})):0;
+  for(i=0;i<rows.length;i++){var id2=rows[i].getAttribute("data-sid"),v2=pnum(c.p[id2]);rows[i].classList.toggle("low",vals.length>1&&v2>0&&v2===mn)}
+  var sm=document.getElementById("cm-sum");if(sm){
+    if(vals.length>1){var w=vals.filter(function(z){return z[1]===mn})[0],sn=findIn(supArr(),w[0]);sm.innerHTML='Найдешевше: <b>'+esc(sn?sn.n:"")+' — '+pfmt(mn,c.cur)+'</b>'+(mx>mn?' · дешевше за найдорожчий на <b>'+Math.round((mx-mn)/mx*100)+'%</b> ('+pfmt(mx-mn,c.cur)+')':"")}
+    else sm.textContent=vals.length?"Додай ціну ще з одного магазину, щоб порівняти.":"Впиши ціни, які знайшов на сайтах."}}
+function cmpHtml(){
+  var L=supArr();if(!L.length)return"";var c=cmpG();
+  return'<div class="sh" style="margin-top:18px"><h2>Порівняння цін</h2></div><div class="tcard"><div class="tf" style="grid-template-columns:1fr 96px">'
+   +'<label><span>Що шукаю</span><input data-cm="n" placeholder="Наприклад: бормашина" value="'+esc(c.n)+'" autocomplete="off"></label>'
+   +'<label><span>Валюта</span><select data-cm="cur">'+["грн","€","$"].map(function(z){return'<option'+(z===c.cur?" selected":"")+'>'+z+'</option>'}).join("")+'</select></label></div>'
+   +L.map(function(x){return'<div class="cmrow" data-sid="'+x.id+'"><b>'+esc(x.n)+'</b><a class="btn ghost cmgo" data-sid="'+x.id+'" href="'+esc(supSearch(x,c.n))+'" target="_blank" rel="noopener noreferrer">'+(x.q&&x.q.indexOf("{q}")>=0?"Шукати":"Відкрити")+'</a>'
+     +'<div class="cmp"><input data-cp="'+x.id+'" inputmode="decimal" placeholder="Ціна" value="'+esc(c.p[x.id]||"")+'"><span class="cmcur">'+esc(c.cur)+'</span></div></div>'}).join("")
+   +'<div class="tsum" id="cm-sum" style="margin-top:10px"></div>'
+   +'<div class="row2"><button class="btn" data-act="cm-save">Зберегти порівняння</button><button class="btn ghost" data-act="cm-clear">Очистити</button></div></div>'}
+function cmHistHtml(){
+  var H=cmArr().slice().sort(function(a,b){return a.d<b.d?1:a.d>b.d?-1:(a.id<b.id?1:-1)});if(!H.length)return"";
+  return'<div class="sh" style="margin-top:18px"><h2>Історія порівнянь</h2><span class="hint">'+H.length+'</span></div>'+H.map(function(e){
+    var mn=Math.min.apply(null,e.p.map(function(z){return z.v})),d=dparse(e.d);
+    return'<div class="tcard"><div style="display:flex;align-items:flex-start;gap:8px"><div style="flex:1"><div class="tb" style="margin:0">'+esc(e.n)+'</div><div class="mu sm">'+pad2(d.getDate())+"."+pad2(d.getMonth()+1)+"."+d.getFullYear()+'</div></div><button class="ico" data-act="cm-del" data-id="'+e.id+'" aria-label="Видалити">✕</button></div>'
+     +e.p.slice().sort(function(a,b){return a.v-b.v}).map(function(z){return'<div class="cmh'+(z.v===mn&&e.p.length>1?" low":"")+'"><span>'+esc(z.sn)+'</span><b>'+pfmt(z.v,e.cur)+'</b></div>'}).join("")+'</div>'}).join("")}
 function oTabsHtml(o){
   return '<div class="otabs" role="tablist" aria-label="Розділи замовлення">'+OTABS.map(function(x){
     return '<button class="otab'+(otab===x.k?" on":"")+'" role="tab" aria-selected="'+(otab===x.k?"true":"false")+'" data-act="otab" data-t="'+x.k+'"><b>'+x.t+'</b><i>'+oTabCount(o,x.k)+'</i></button>'}).join("")+'</div>'}
@@ -1676,7 +1722,7 @@ function navHtml(){
 
 function render(){
   document.getElementById("app").innerHTML=cur?detailHtml():(tab==="c"?CALC.html():tab==="s"?stockHtml():tab==="a"?analyticsHtml():tab==="x"?moreHtml():(tab==="m"?(mOpen?masterDetailHtml():backMore()+mastersHtml()):(tab==="i"?(ideaOpen?ideaDetailHtml():backMore()+ideasHtml()):(tab==="k"?backMore()+catHtml():(tab==="t"?backMore()+archiveHtml():(tab==="l"?backMore()+timeHtml():(tab==="u"?backMore()+supHtml():listHtml())))))));
-  document.getElementById("app").insertAdjacentHTML("afterbegin",tbarHtml());tmrKeep();document.getElementById("nav").innerHTML=navHtml();hydrate();
+  document.getElementById("app").insertAdjacentHTML("afterbegin",tbarHtml());if(tab==="u")cmUpd();tmrKeep();document.getElementById("nav").innerHTML=navHtml();hydrate();
   var sk=(cur||"")+"|"+tab+"|"+mOpen+"|"+ideaOpen;if(window.__sk!==undefined&&window.__sk!==sk){var ap=document.getElementById("app");ap.classList.remove("swap");void ap.offsetWidth;ap.classList.add("swap")}window.__sk=sk;if(!cur&&tab==="c")CALC.mount()}
 
 /* дії */
@@ -1741,7 +1787,7 @@ function bkRestore(){
 
 function act(a,d){
   if(a.slice(0,3)==="tl-"&&tlAct(a,d))return;
-  if(a.slice(0,3)==="su-"&&supAct(a,d))return;
+  if((a.slice(0,3)==="su-"||a.slice(0,3)==="cm-")&&supAct(a,d))return;
   if(a.slice(0,3)==="tc-"&&tcAct(a,d))return;
   switch(a){
     case "tab":tlF=null;suF=null;newPick=false;tab=d.tab;cur=null;edit=null;resEdit=null;closeMaster();closeIdea();rubEdit=false;adding=null;confirmDel=false;render();scrollTo(0,0);break;
@@ -1820,7 +1866,7 @@ document.addEventListener("click",function(e){
 document.addEventListener("change",function(e){
   var el=e.target;if(el.id==="qa-ph"){qaFiles=Array.prototype.slice.call(el.files||[]);var ql=document.getElementById("qa-phl");if(ql)ql.textContent=qaPhText();return}if(el.type==="checkbox"&&el.dataset.act==="rest-tog")act("rest-tog",{id:el.dataset.id});else if(el.type==="checkbox"&&el.dataset.act==="tog")tog(el.dataset.id);else if(el.id==="c-name"){var co=ord();if(co)clientFill(co)}else if(el.id==="ph-in"||el.id==="ip-in")photoPick(el);else if(el.tagName==="SELECT"&&el.dataset.fi)setIdeaF(el);else if(el.dataset&&el.dataset.f==="mg")render();else if(el.id==="mv-metal")mvMetal=el.value;else if(el.id==="mv-type")mvType=el.value});
 document.addEventListener("input",function(e){
-  var el=e.target,o;if(el.dataset&&el.dataset.su){if(suF)suF[el.dataset.su]=el.value;return}if(el.dataset&&el.dataset.tl){if(tlF)tlF[el.dataset.tl]=el.value;return}if(el.dataset&&el.dataset.cn){S.catn=S.catn||{};S.catn[el.dataset.cn]=el.value;save();return}if(el.dataset&&el.dataset.ts&&(o=ord())){var pp=el.dataset.ts.split(":"),stl=tcOf(o).stl||[];if(stl[+pp[0]]){stl[+pp[0]][pp[1]]=el.value;save();if(el.tagName==="SELECT")render()}return}if(el.dataset&&el.dataset.tp&&(o=ord())){var pq=el.dataset.tp.split(":"),pl_=tcPr(tcOf(o));if(pl_[+pq[0]]){pl_[+pq[0]][pq[1]]=el.value;save()}return}if(el.dataset&&el.dataset.tw&&(o=ord())){var pw=el.dataset.tw.split(":"),wl_=tcWl(tcOf(o));if(wl_[+pw[0]]){wl_[+pw[0]][pw[1]]=el.value;save()}return}if(el.dataset&&el.dataset.tc&&(o=ord())){tcOf(o)[el.dataset.tc]=el.value;save();return}if(el.dataset&&el.dataset.fr&&(o=ord())){var pr_=el.dataset.fr.split("|");(o.rest||[]).forEach(function(r){if(r.id===pr_[0])r[pr_[1]]=el.value});if(pr_[1]==="price")restApply(o);if(pr_[1]==="pc"){var rl=document.getElementById("rp-"+pr_[0]);if(rl)rl.textContent=el.value+"%";var pb2=document.getElementById("of-pb");if(pb2)pb2.innerHTML=progBar(o);var rg=document.getElementById("o-prog");if(rg&&progOf(o).auto)rg.value=progOf(o).p}save();return}if(el.dataset&&el.dataset.fx){S.fx=S.fx||{};S.fx[el.dataset.fx]=el.value.replace(",",".");save();var eg=document.getElementById("eg");if(eg)eg.innerHTML=earnGrid(earnCalc());return}if(el.id&&el.id.slice(0,3)==="qa-")qaCalc();if(el.dataset&&el.dataset.f&&(o=ord())){o[el.dataset.f]=el.value;save();if(el.dataset.f==='mg'||el.dataset.f==='mf'){syncMetal(o);var mn=document.getElementById('metal-n');if(mn&&el.dataset.f==='mg')mn.innerHTML=metalHtml(o).split('<div id="metal-n">')[1].split('</div></section>')[0];if(el.dataset.f==='mf')render()}if(el.dataset.f==="prog"){var pb=document.getElementById("of-pb");if(pb)pb.innerHTML=progBar(o);var pa=el.parentNode.querySelector('[data-act=prog-auto]');if(!pa){pa=document.createElement('button');pa.className='lnk';pa.dataset.act='prog-auto';pa.textContent='Рахувати автоматично з позицій';el.parentNode.appendChild(pa)}}if(el.dataset.f==="due"){var di=document.getElementById("due-ind");if(di)di.innerHTML=dueInd(o)}if(/^(price|cost|fprice|fcost)$/.test(el.dataset.f)){var pfe=document.getElementById("pf");if(pfe)pfe.innerHTML=pfLine(o)}if(/^(price|adv|cur)$/.test(el.dataset.f)){var bl=document.getElementById("bal");if(bl)bl.innerHTML=moneyLine(o)}if(/^(cphone|cinsta)$/.test(el.dataset.f)){var lk=document.getElementById("clinks");if(lk)lk.innerHTML=linksHtml(o)}}else if(el.dataset&&el.dataset.fi&&ideaOpen)setIdeaF(el);else if(el.dataset&&el.dataset.fm&&mOpen){var mm=findIn(S.masters,mOpen);if(mm){mm[el.dataset.fm]=el.value;save()}}});
+  var el=e.target,o;if(el.dataset&&el.dataset.cm){cmpG()[el.dataset.cm]=el.value;save();cmUpd();return}if(el.dataset&&el.dataset.cp){cmpG().p[el.dataset.cp]=el.value;save();cmUpd();return}if(el.dataset&&el.dataset.su){if(suF)suF[el.dataset.su]=el.value;return}if(el.dataset&&el.dataset.tl){if(tlF)tlF[el.dataset.tl]=el.value;return}if(el.dataset&&el.dataset.cn){S.catn=S.catn||{};S.catn[el.dataset.cn]=el.value;save();return}if(el.dataset&&el.dataset.ts&&(o=ord())){var pp=el.dataset.ts.split(":"),stl=tcOf(o).stl||[];if(stl[+pp[0]]){stl[+pp[0]][pp[1]]=el.value;save();if(el.tagName==="SELECT")render()}return}if(el.dataset&&el.dataset.tp&&(o=ord())){var pq=el.dataset.tp.split(":"),pl_=tcPr(tcOf(o));if(pl_[+pq[0]]){pl_[+pq[0]][pq[1]]=el.value;save()}return}if(el.dataset&&el.dataset.tw&&(o=ord())){var pw=el.dataset.tw.split(":"),wl_=tcWl(tcOf(o));if(wl_[+pw[0]]){wl_[+pw[0]][pw[1]]=el.value;save()}return}if(el.dataset&&el.dataset.tc&&(o=ord())){tcOf(o)[el.dataset.tc]=el.value;save();return}if(el.dataset&&el.dataset.fr&&(o=ord())){var pr_=el.dataset.fr.split("|");(o.rest||[]).forEach(function(r){if(r.id===pr_[0])r[pr_[1]]=el.value});if(pr_[1]==="price")restApply(o);if(pr_[1]==="pc"){var rl=document.getElementById("rp-"+pr_[0]);if(rl)rl.textContent=el.value+"%";var pb2=document.getElementById("of-pb");if(pb2)pb2.innerHTML=progBar(o);var rg=document.getElementById("o-prog");if(rg&&progOf(o).auto)rg.value=progOf(o).p}save();return}if(el.dataset&&el.dataset.fx){S.fx=S.fx||{};S.fx[el.dataset.fx]=el.value.replace(",",".");save();var eg=document.getElementById("eg");if(eg)eg.innerHTML=earnGrid(earnCalc());return}if(el.id&&el.id.slice(0,3)==="qa-")qaCalc();if(el.dataset&&el.dataset.f&&(o=ord())){o[el.dataset.f]=el.value;save();if(el.dataset.f==='mg'||el.dataset.f==='mf'){syncMetal(o);var mn=document.getElementById('metal-n');if(mn&&el.dataset.f==='mg')mn.innerHTML=metalHtml(o).split('<div id="metal-n">')[1].split('</div></section>')[0];if(el.dataset.f==='mf')render()}if(el.dataset.f==="prog"){var pb=document.getElementById("of-pb");if(pb)pb.innerHTML=progBar(o);var pa=el.parentNode.querySelector('[data-act=prog-auto]');if(!pa){pa=document.createElement('button');pa.className='lnk';pa.dataset.act='prog-auto';pa.textContent='Рахувати автоматично з позицій';el.parentNode.appendChild(pa)}}if(el.dataset.f==="due"){var di=document.getElementById("due-ind");if(di)di.innerHTML=dueInd(o)}if(/^(price|cost|fprice|fcost)$/.test(el.dataset.f)){var pfe=document.getElementById("pf");if(pfe)pfe.innerHTML=pfLine(o)}if(/^(price|adv|cur)$/.test(el.dataset.f)){var bl=document.getElementById("bal");if(bl)bl.innerHTML=moneyLine(o)}if(/^(cphone|cinsta)$/.test(el.dataset.f)){var lk=document.getElementById("clinks");if(lk)lk.innerHTML=linksHtml(o)}}else if(el.dataset&&el.dataset.fi&&ideaOpen)setIdeaF(el);else if(el.dataset&&el.dataset.fm&&mOpen){var mm=findIn(S.masters,mOpen);if(mm){mm[el.dataset.fm]=el.value;save()}}});
 document.addEventListener("keydown",function(e){
   if(e.key!=="Enter")return;var id=e.target.id||"";
   if(id.indexOf("e-")===0){e.preventDefault();saveEdit()}
