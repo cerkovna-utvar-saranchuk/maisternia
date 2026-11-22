@@ -414,7 +414,7 @@ details.det{margin:10px 0;padding:10px 12px;border:1px solid #3a3c2c;border-radi
 .sk i{position:absolute;left:0;right:0;bottom:0;padding:14px 6px 4px;font:500 10px var(--mono);font-style:normal;color:#D8D4BD;text-align:left;background:linear-gradient(transparent,rgba(0,0,0,.78));white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .skimg{display:block;width:100%;padding:0;border:1px solid #3a3c2c;border-radius:4px;background:#0c0d09;margin:8px 0 12px;cursor:zoom-in}.skimg img{display:block;width:100%;max-height:70vh;object-fit:contain}
 
-.eqtabs{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:6px 0 10px}.eqtabs button{min-height:46px;border:1px solid #3a3c2c;border-radius:3px;background:#161912;color:#929785;font:600 13px var(--display);letter-spacing:.08em;text-transform:uppercase;cursor:pointer}.eqtabs button.on{border-color:#D18B27;color:#D18B27;background:#2a2518}
+.eqtabs{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin:6px 0 10px}.eqtabs button{min-height:46px;padding:0 4px;border:1px solid #3a3c2c;border-radius:3px;background:#161912;color:#929785;font:600 12px var(--display);letter-spacing:.04em;text-transform:uppercase;cursor:pointer}.eqtabs button.on{border-color:#D18B27;color:#D18B27;background:#2a2518}
 .eqg{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:8px 0}.eqc{display:block;text-align:left;padding:0 0 10px;border:1px solid #3a3c2c;border-radius:4px;background:#1C2018;overflow:hidden;cursor:pointer;color:var(--ink);font:inherit}
 .eqi{position:relative;aspect-ratio:1;background:#161912;display:grid;place-items:center;font-size:40px;color:#929785;overflow:hidden}.eqi img{width:100%;height:100%;object-fit:cover;display:block}.eqi em{position:absolute;right:6px;top:6px;padding:2px 8px;background:rgba(0,0,0,.7);border:1px solid #D18B27;border-radius:3px;color:#D18B27;font:600 13px var(--mono);font-style:normal}
 .eqc b{display:block;padding:8px 10px 0;font:600 15px var(--display);letter-spacing:.03em;overflow-wrap:anywhere}.eqb{display:block;padding:0 10px;color:#929785;font-size:13px}.eqp{padding:4px 10px 0;font:600 16px var(--mono);color:#D18B27}.eqc small{display:block;padding:0 10px;color:#929785;font-size:12px}
@@ -689,7 +689,7 @@ function analyticsHtml(){return head("Аналітика","заробіток з
 function moreHtml(){
   var nm=S.masters.length,np=S.orders.filter(function(o){return !!o.plan}).length,ni=S.ideas.length;
   function r(k,t,d){return '<button class="morer" data-act="tab" data-tab="'+k+'"><b>'+t+'</b><span>'+d+'</span><i>›</i></button>'}
-  return head("Ще","розділи й дані","")+r("m","Майстри",nm?nm+" "+plural(nm,"майстер","майстри","майстрів"):"поки немає")+r("p","Проєкти",np?np+" "+plural(np,"проєкт","проєкти","проєктів"):"поки немає")+r("k","Довідник елементів",CAT.length+" артикулів")+r("t","Архів техкарт",tcArch().length?tcArch().length+" "+plural(tcArch().length,"техкарта","техкарти","техкарт"):"поки немає")+r("l","Облік часу",(function(){var td=dkey(new Date()),t=tlSumDays(td,td);return S.tmr?"таймер іде":(t?"сьогодні: "+tlFmt(t):(tlArr().length?"записів: "+tlArr().length:"поки немає"))})())+r("u","Постачальники",supArr().length?supArr().map(function(x){return x.n}).slice(0,3).join(" · "):"швидкі посилання на магазини")+r("e","Бібліотека ескізів",skArr().length?skArr().length+" ескізів · папок: "+skFs().length:"фото ескізів із зошитів")+r("q","Фонд майстерні",eqArr().length?eqList(false).length+" є · "+eqList(true).length+" у планах":"обладнання: що є й що хочу придбати")+r("b","Баланс майстерні",blArr().length?"≈ "+money(blSumUAH(blBal()).u,"UAH")+" відкладено":"гроші на апгрейд обладнання")+r("i","Ідеї",ni?ni+" "+plural(ni,"ідея","ідеї","ідей"):"поки немає")+backupHtml()+'<div id="sync" class="sync '+cloud.st+'" data-act="sync-retry">'+syncText()+'</div>'}
+  return head("Ще","розділи й дані","")+r("m","Майстри",nm?nm+" "+plural(nm,"майстер","майстри","майстрів"):"поки немає")+r("p","Проєкти",np?np+" "+plural(np,"проєкт","проєкти","проєктів"):"поки немає")+r("k","Довідник елементів",CAT.length+" артикулів")+r("t","Архів техкарт",tcArch().length?tcArch().length+" "+plural(tcArch().length,"техкарта","техкарти","техкарт"):"поки немає")+r("l","Облік часу",(function(){var td=dkey(new Date()),t=tlSumDays(td,td);return S.tmr?"таймер іде":(t?"сьогодні: "+tlFmt(t):(tlArr().length?"записів: "+tlArr().length:"поки немає"))})())+r("u","Постачальники",supArr().length?supArr().map(function(x){return x.n}).slice(0,3).join(" · "):"швидкі посилання на магазини")+r("e","Бібліотека ескізів",skArr().length?skArr().length+" ескізів · папок: "+skFs().length:"фото ескізів із зошитів")+r("q","Фонд майстерні",eqArr().length?eqList(false).length+" є · "+eqList(true).length+" у планах":"обладнання: що є й що хочу придбати")+r("i","Ідеї",ni?ni+" "+plural(ni,"ідея","ідеї","ідей"):"поки немає")+backupHtml()+'<div id="sync" class="sync '+cloud.st+'" data-act="sync-retry">'+syncText()+'</div>'}
 
 /* замовлення */
 function itemRow(i){
@@ -1046,7 +1046,7 @@ function fxAuto(force){
   function nbu(cc){return jf("https://bank.gov.ua/NBUStatService/v1/statdirectory/exchange?valcode="+cc+"&json").then(function(a){var r=a&&a[0]&&+a[0].rate;if(!(r>0))throw new Error("nbu");return r})}
   Promise.all([nbu("EUR"),nbu("RON")]).then(function(r){return{EUR:r[0],RON:r[1],src:"НБУ"}})
    .catch(function(){return jf("https://open.er-api.com/v6/latest/UAH").then(function(j){var e=j&&j.rates&&j.rates.EUR,r=j&&j.rates&&j.rates.RON;if(!(e>0&&r>0))throw new Error("er");return{EUR:1/e,RON:1/r,src:"open.er-api"}})})
-   .then(function(x){S.fx={t:Date.now(),EUR:x.EUR,RON:x.RON,src:x.src};eqFxMsg="";save();if((tab==="q"||tab==="b")&&!eqFxEd)render()},function(){eqFxMsg=S.fx?"Не вдалося оновити курс, лишився останній збережений":"Не вдалося отримати курс. Введи його вручну (✎)";if((tab==="q"||tab==="b")&&!eqFxEd)render()})}
+   .then(function(x){S.fx={t:Date.now(),EUR:x.EUR,RON:x.RON,src:x.src};eqFxMsg="";save();if(tab==="q"&&!eqFxEd)render()},function(){eqFxMsg=S.fx?"Не вдалося оновити курс, лишився останній збережений":"Не вдалося отримати курс. Введи його вручну (✎)";if(tab==="q"&&!eqFxEd)render()})}
 function fxBar(){
   var f=S.fx,h='<div class="tcard" style="padding:10px 12px"><div style="display:flex;align-items:center;gap:8px"><div style="flex:1;min-width:0;font-size:13px">';
   if(eqFxEd){return h+'</div></div><div class="tt">Курс до гривні</div><div class="tf"><label><span>1 € = ₴</span><input data-eqx="EUR" inputmode="decimal" value="'+esc(eqFxEd.EUR)+'"></label><label><span>1 RON = ₴</span><input data-eqx="RON" inputmode="decimal" value="'+esc(eqFxEd.RON)+'"></label></div><div class="row2"><button class="btn" data-act="eq-fxs">Зберегти</button><button class="btn ghost" data-act="eq-fxc">Скасувати</button></div></div>'}
@@ -1103,13 +1103,15 @@ function eqDetail(){
    +(it.u?'<a class="btn ghost" style="display:flex;align-items:center;justify-content:center;margin-top:10px;text-decoration:none" href="'+esc(supUrl(it.u))+'" target="_blank" rel="noopener noreferrer">Відкрити сайт</a>':"")
    +(it.w?'<button class="btn" style="width:100%;margin-top:10px" data-act="eq-got">Придбано — перенести в «Маємо»</button>':"")
    +'<button class="btn bad" style="width:100%;margin-top:10px" data-act="eq-del">'+(eqArm?"Так, видалити":"Видалити")+'</button>'}
+function eqTabsHtml(){return'<div class="eqtabs"><button class="'+(eqTab==="h"?"on":"")+'" data-act="eq-tab" data-t="h">Маємо · '+eqList(false).length+'</button><button class="'+(eqTab==="w"?"on":"")+'" data-act="eq-tab" data-t="w">Хочу · '+eqList(true).length+'</button><button class="'+(eqTab==="b"?"on":"")+'" data-act="eq-tab" data-t="b">Баланс</button></div>'}
 function eqListPage(){
+  if(eqTab==="b")return backMore()+head("Фонд майстерні",eqSub(),"")+eqTabsHtml()+blBody();
   var L=eqList(eqTab==="w");
   return backMore()+head("Фонд майстерні",eqSub(),"")
-   +'<div class="eqtabs"><button class="'+(eqTab==="h"?"on":"")+'" data-act="eq-tab" data-t="h">Маємо · '+eqList(false).length+'</button><button class="'+(eqTab==="w"?"on":"")+'" data-act="eq-tab" data-t="w">Хочу придбати · '+eqList(true).length+'</button></div>'
+   +eqTabsHtml()
    +fxBar()+'<input data-eqs="1" type="search" placeholder="Пошук: назва, бренд, модель…" value="'+esc(eqQ)+'" autocomplete="off" style="margin:2px 0 8px">'
    +eqTotalHtml(L)+'<div id="eq-res">'+eqResHtml()+'</div>'+eqAddCtl()}
-function eqHtml(){return eqNew?eqFormHtml():(eqOpen?eqDetail():eqListPage())}
+function eqHtml(){return blNew?blFormHtml():eqNew?eqFormHtml():(eqOpen?eqDetail():eqListPage())}
 function sqThumb(file,sz,q){return new Promise(function(res,rej){var u=URL.createObjectURL(file),im=new Image();
   im.onload=function(){var w=im.naturalWidth,h=im.naturalHeight,s=Math.min(w,h),c=document.createElement("canvas");c.width=c.height=sz;c.getContext("2d").drawImage(im,(w-s)/2,(h-s)/2,s,s,0,0,sz,sz);URL.revokeObjectURL(u);c.toBlob(function(b){b?res(b):rej(new Error("toBlob"))},"image/jpeg",q)};
   im.onerror=function(){URL.revokeObjectURL(u);rej(new Error("img"))};im.src=u})}
@@ -1170,12 +1172,10 @@ function blFormHtml(){
    +'<label class="full"><span>Дата</span><input data-bl="d" type="date" value="'+esc(n.d)+'"></label>'
    +'<label class="full"><span>Нотатка</span><input data-bl="n" placeholder="'+(inn?"Наприклад: із замовлення Андрія":"Наприклад: вальці")+'" value="'+esc(n.n)+'" autocomplete="off"></label></div>'
    +'<div class="row2" style="display:flex;gap:8px"><button class="btn" style="flex:1" data-act="bl-save">Зберегти</button><button class="btn ghost" style="flex:1" data-act="bl-cancel">Скасувати</button></div>'}
-function blHtml(){
-  if(blNew)return blFormHtml();
+function blBody(){
   var b=blBal(),s=blSumUAH(b),H=blArr().slice().sort(function(x,y){return x.d<y.d?1:x.d>y.d?-1:0});
   var chips=CURS.map(function(c){return'<span class="blc'+(b[c]<0?" neg":"")+'">'+money(b[c],c)+'</span>'}).join("");
-  return backMore()+head("Баланс майстерні","гроші на апгрейд обладнання","")
-   +'<div class="tcard"><div class="mu sm">Відкладено</div><div class="blbig">'+(fxOk(S.fx)||!s.miss?"≈ "+money(s.u,"UAH"):"—")+'</div><div class="mu">'+blEqv(s.u)+'</div><div class="blchips">'+chips+'</div>'+(s.miss?'<div class="mu sm" style="color:#D18B27">Нема курсу для частини сум</div>':"")+'</div>'
+  return'<div class="tcard"><div class="mu sm">Відкладено</div><div class="blbig">'+(fxOk(S.fx)||!s.miss?"≈ "+money(s.u,"UAH"):"—")+'</div><div class="mu">'+blEqv(s.u)+'</div><div class="blchips">'+chips+'</div>'+(s.miss?'<div class="mu sm" style="color:#D18B27">Нема курсу для частини сум</div>':"")+'</div>'
    +'<div class="row2" style="display:flex;gap:8px;margin:8px 0"><button class="btn" style="flex:1" data-act="bl-in">+ Відкласти</button><button class="btn ghost" style="flex:1" data-act="bl-out">− Витратити</button></div>'
    +fxBar()+blGoalHtml(s.u)
    +'<div class="tt" style="margin-top:12px">Історія</div>'
@@ -1986,13 +1986,13 @@ var ICON_P='<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="
 var ICON_I='<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 2.1h5c0-.9.4-1.6 1-2.1A6 6 0 0 0 12 3z"/></svg>';
 var ICON_C='<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="3" width="14" height="18" rx="1"/><path d="M8 7h8M8 12h.01M12 12h.01M16 12h.01M8 16h.01M12 16h.01M16 16h.01"/></svg>';
 function navHtml(){
-  var c=needCount(),dsN=dueSoon().length,cr=cur?ord():null,t=cr?(cr.plan?"x":"o"):(tab==="p"||tab==="i"||tab==="m"||tab==="k"||tab==="t"||tab==="l"||tab==="u"||tab==="e"||tab==="q"||tab==="b"?"x":tab);
+  var c=needCount(),dsN=dueSoon().length,cr=cur?ord():null,t=cr?(cr.plan?"x":"o"):(tab==="p"||tab==="i"||tab==="m"||tab==="k"||tab==="t"||tab==="l"||tab==="u"||tab==="e"||tab==="q"?"x":tab);
   function b(k,ico,label,extra){return '<button data-act="tab" data-tab="'+k+'" class="'+(t===k?"on":"")+'">'+ico+'<span>'+label+'</span>'+(extra||"")+'</button>'}
   return b("o",ICON_O,"Замовлення",dsN?'<em class="badge bad">'+dsN+'</em>':"")+b("s",ICON_S,"Склад",c?'<em class="badge">'+c+'</em>':"")+b("c",ICON_C,"Ціна")+b("a",ICON_A,"Аналітика")+b("x",ICON_X,"Ще")}
 
 function render(){
-  document.getElementById("app").innerHTML=cur?detailHtml():(tab==="c"?CALC.html():tab==="s"?stockHtml():tab==="a"?analyticsHtml():tab==="x"?moreHtml():(tab==="m"?(mOpen?masterDetailHtml():backMore()+mastersHtml()):(tab==="i"?(ideaOpen?ideaDetailHtml():backMore()+ideasHtml()):(tab==="k"?backMore()+catHtml():(tab==="t"?backMore()+archiveHtml():(tab==="l"?backMore()+timeHtml():(tab==="u"?backMore()+supHtml():(tab==="e"?skHtml():(tab==="q"?eqHtml():(tab==="b"?blHtml():listHtml()))))))))));
-  document.getElementById("app").insertAdjacentHTML("afterbegin",tbarHtml());if(tab==="u")cmUpd();tmrKeep();if((tab==="q"||tab==="b")&&!eqFxTried){eqFxTried=true;fxAuto(false)}document.getElementById("nav").innerHTML=navHtml();hydrate();
+  document.getElementById("app").innerHTML=cur?detailHtml():(tab==="c"?CALC.html():tab==="s"?stockHtml():tab==="a"?analyticsHtml():tab==="x"?moreHtml():(tab==="m"?(mOpen?masterDetailHtml():backMore()+mastersHtml()):(tab==="i"?(ideaOpen?ideaDetailHtml():backMore()+ideasHtml()):(tab==="k"?backMore()+catHtml():(tab==="t"?backMore()+archiveHtml():(tab==="l"?backMore()+timeHtml():(tab==="u"?backMore()+supHtml():(tab==="e"?skHtml():(tab==="q"?eqHtml():listHtml())))))))));
+  document.getElementById("app").insertAdjacentHTML("afterbegin",tbarHtml());if(tab==="u")cmUpd();tmrKeep();if(tab==="q"&&!eqFxTried){eqFxTried=true;fxAuto(false)}document.getElementById("nav").innerHTML=navHtml();hydrate();
   var sk=(cur||"")+"|"+tab+"|"+mOpen+"|"+ideaOpen;if(window.__sk!==undefined&&window.__sk!==sk){var ap=document.getElementById("app");ap.classList.remove("swap");void ap.offsetWidth;ap.classList.add("swap")}window.__sk=sk;if(!cur&&tab==="c")CALC.mount()}
 
 /* дії */
