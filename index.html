@@ -1022,7 +1022,7 @@ function skAct(a,d){
   return false}
 
 /* ===== фонд майстерні: обладнання ===== */
-var eqTab="h",eqQ="",eqOpen=null,eqNew=null,eqArm=false,eqFxEd=null,eqFxMsg="",eqFxTried=false,CURS=["UAH","RON","EUR"],CSYM={UAH:"₴",RON:"RON",EUR:"€"};
+var eqTab="h",eqQ="",eqOpen=null,eqNew=null,eqArm=false,eqFxEd=null,eqFxMsg="",eqFxTried=false,ECUR=["UAH","RON","EUR"],CSYM={UAH:"₴",RON:"RON",EUR:"€"};
 function eqArr(){if(!Array.isArray(S.eq))S.eq=[];return S.eq}
 function eqList(w){return eqArr().filter(function(x){return !!x.w===!!w})}
 /* курси: гривень за 1 одиницю валюти */
@@ -1034,11 +1034,11 @@ function fxSnap(){return fxOk(S.fx)?{EUR:S.fx.EUR,RON:S.fx.RON}:null}
 function eqRates(it){return(!it.w&&it.rs&&it.rs.EUR>0&&it.rs.RON>0)?it.rs:S.fx}
 function eqEqv(it){
   if(!(it.pr>0))return"";var fx=eqRates(it),o=[];
-  CURS.forEach(function(c){if(c===it.cu)return;var v=fxConv(it.pr,it.cu,c,fx);if(v!=null)o.push(money(v,c))});
+  ECUR.forEach(function(c){if(c===it.cu)return;var v=fxConv(it.pr,it.cu,c,fx);if(v!=null)o.push(money(v,c))});
   return o.length?"≈ "+o.join(" · "):(it.cu==="UAH"||fx?"":"курси не задані")}
 function eqTotalHtml(list){
   var u=0,n=0,miss=0;list.forEach(function(it){if(!(it.pr>0))return;var v=fxUAH(it.pr*(it.w?1:(it.q||1)),it.cu,eqRates(it));if(v==null)miss++;else{u+=v;n++}});
-  if(!n)return"";var o=[money(u,"UAH")];CURS.slice(1).forEach(function(c){var v=fxConv(u,"UAH",c,S.fx);if(v!=null)o.push(money(v,c))});
+  if(!n)return"";var o=[money(u,"UAH")];ECUR.slice(1).forEach(function(c){var v=fxConv(u,"UAH",c,S.fx);if(v!=null)o.push(money(v,c))});
   return'<div class="tsum"><span>Разом: <b>≈ '+o.join(" · ")+'</b></span>'+(miss?'<span>без ціни/курсу: '+miss+'</span>':"")+'</div>'}
 function fxAuto(force){
   if(!force&&S.fx&&Date.now()-S.fx.t<864e5)return;
@@ -1082,7 +1082,7 @@ function eqFormHtml(){
    +'<label class="full"><span>Виробник і модель</span><input data-eq="b" placeholder="Наприклад: Proxxon IBS/E" value="'+esc(n.b)+'" autocomplete="off"></label>'
    +(w?"":'<label><span>Кількість</span><input data-eq="q" inputmode="numeric" value="'+esc(n.q)+'"></label><span></span>')
    +'<label><span>'+(w?"Ціна":"Ціна покупки")+'</span><input data-eq="pr" inputmode="decimal" placeholder="0" value="'+esc(n.pr)+'"></label>'
-   +'<label><span>Валюта</span><select data-eq="cu">'+CURS.map(function(c){return'<option value="'+c+'"'+(c===n.cu?" selected":"")+'>'+c+'</option>'}).join("")+'</select></label>'
+   +'<label><span>Валюта</span><select data-eq="cu">'+ECUR.map(function(c){return'<option value="'+c+'"'+(c===n.cu?" selected":"")+'>'+c+'</option>'}).join("")+'</select></label>'
    +'<label class="full"><span>Посилання на магазин або виробника</span><input data-eq="u" type="url" inputmode="url" autocapitalize="none" autocorrect="off" placeholder="example.com/..." value="'+esc(n.u)+'"></label>'
    +'<label class="full"><span>'+(w?"Навіщо хочу придбати":"Нотатка")+'</span><textarea data-eq="nt" rows="2">'+esc(n.nt)+'</textarea></label></div>'
    +'<div class="row2" style="display:flex;gap:8px"><button class="btn" style="flex:1" data-act="eq-save">Зберегти</button><button class="btn ghost" style="flex:1" data-act="eq-cancel">Скасувати</button></div>'}
@@ -1096,7 +1096,7 @@ function eqDetail(){
    +'<label class="full"><span>Виробник і модель</span><input data-eqf="b" value="'+esc(it.b||"")+'" autocomplete="off"></label>'
    +(it.w?"":'<label><span>Кількість</span><input data-eqf="q" inputmode="numeric" value="'+esc(it.q||1)+'"></label><label><span>Дата покупки</span><input type="date" data-eqf="d" value="'+esc(it.d||"")+'"></label>')
    +'<label><span>'+(it.w?"Ціна":"Ціна покупки")+'</span><input data-eqf="pr" inputmode="decimal" placeholder="0" value="'+esc(it.pr>0?String(it.pr).replace(".",","):"")+'"></label>'
-   +'<label><span>Валюта</span><select data-eqf="cu">'+CURS.map(function(c){return'<option value="'+c+'"'+(c===it.cu?" selected":"")+'>'+c+'</option>'}).join("")+'</select></label>'
+   +'<label><span>Валюта</span><select data-eqf="cu">'+ECUR.map(function(c){return'<option value="'+c+'"'+(c===it.cu?" selected":"")+'>'+c+'</option>'}).join("")+'</select></label>'
    +'<div class="mu sm full" id="eq-eqv" style="margin-top:-2px">'+esc(eqv)+'</div>'
    +'<label class="full"><span>Посилання</span><input data-eqf="u" type="url" inputmode="url" autocapitalize="none" autocorrect="off" value="'+esc(it.u||"")+'"></label>'
    +'<label class="full"><span>'+(it.w?"Навіщо хочу придбати":"Нотатка")+'</span><textarea data-eqf="nt" rows="3">'+esc(it.nt||"")+'</textarea></label></div>'
@@ -1152,8 +1152,8 @@ function eqAct(a,d){
 var blNew=null;
 function blArr(){return S.bl||(S.bl=[])}
 function blBal(){var b={UAH:0,RON:0,EUR:0};blArr().forEach(function(e){if(b[e.cu]!=null)b[e.cu]+=(e.t==="in"?1:-1)*e.a});return b}
-function blSumUAH(b){var u=0,miss=0;CURS.forEach(function(c){if(!b[c])return;var v=fxUAH(b[c],c,S.fx);if(v==null)miss++;else u+=v});return{u:u,miss:miss}}
-function blEqv(u){var o=[];CURS.slice(1).forEach(function(c){var v=fxConv(u,"UAH",c,S.fx);if(v!=null)o.push(money(v,c))});return o.length?"≈ "+o.join(" · "):""}
+function blSumUAH(b){var u=0,miss=0;ECUR.forEach(function(c){if(!b[c])return;var v=fxUAH(b[c],c,S.fx);if(v==null)miss++;else u+=v});return{u:u,miss:miss}}
+function blEqv(u){var o=[];ECUR.slice(1).forEach(function(c){var v=fxConv(u,"UAH",c,S.fx);if(v!=null)o.push(money(v,c))});return o.length?"≈ "+o.join(" · "):""}
 function blFmt(k){var d=dparse(k);return pad2(d.getDate())+"."+pad2(d.getMonth()+1)+"."+d.getFullYear()}
 function blGoalHtml(tot){
   var W=eqList(true).filter(function(x){return x.pr>0}).map(function(x){return{it:x,v:fxUAH(x.pr,x.cu,S.fx)}}).filter(function(x){return x.v!=null});
@@ -1168,13 +1168,13 @@ function blFormHtml(){
   var n=blNew,inn=n.t==="in";
   return'<button class="back" data-act="bl-cancel">← Назад</button>'+head(inn?"Відкласти":"Витратити",inn?"поповнення балансу":"зняття з балансу","")
    +'<div class="tf"><label><span>Сума *</span><input data-bl="a" inputmode="decimal" placeholder="0" value="'+esc(n.a)+'" autocomplete="off"></label>'
-   +'<label><span>Валюта</span><select data-bl="cu">'+CURS.map(function(c){return'<option value="'+c+'"'+(c===n.cu?" selected":"")+'>'+c+'</option>'}).join("")+'</select></label>'
+   +'<label><span>Валюта</span><select data-bl="cu">'+ECUR.map(function(c){return'<option value="'+c+'"'+(c===n.cu?" selected":"")+'>'+c+'</option>'}).join("")+'</select></label>'
    +'<label class="full"><span>Дата</span><input data-bl="d" type="date" value="'+esc(n.d)+'"></label>'
    +'<label class="full"><span>Нотатка</span><input data-bl="n" placeholder="'+(inn?"Наприклад: із замовлення Андрія":"Наприклад: вальці")+'" value="'+esc(n.n)+'" autocomplete="off"></label></div>'
    +'<div class="row2" style="display:flex;gap:8px"><button class="btn" style="flex:1" data-act="bl-save">Зберегти</button><button class="btn ghost" style="flex:1" data-act="bl-cancel">Скасувати</button></div>'}
 function blBody(){
   var b=blBal(),s=blSumUAH(b),H=blArr().slice().sort(function(x,y){return x.d<y.d?1:x.d>y.d?-1:0});
-  var chips=CURS.map(function(c){return'<span class="blc'+(b[c]<0?" neg":"")+'">'+money(b[c],c)+'</span>'}).join("");
+  var chips=ECUR.map(function(c){return'<span class="blc'+(b[c]<0?" neg":"")+'">'+money(b[c],c)+'</span>'}).join("");
   return'<div class="tcard"><div class="mu sm">Відкладено</div><div class="blbig">'+(fxOk(S.fx)||!s.miss?"≈ "+money(s.u,"UAH"):"—")+'</div><div class="mu">'+blEqv(s.u)+'</div><div class="blchips">'+chips+'</div>'+(s.miss?'<div class="mu sm" style="color:#D18B27">Нема курсу для частини сум</div>':"")+'</div>'
    +'<div class="row2" style="display:flex;gap:8px;margin:8px 0"><button class="btn" style="flex:1" data-act="bl-in">+ Відкласти</button><button class="btn ghost" style="flex:1" data-act="bl-out">− Витратити</button></div>'
    +fxBar()+blGoalHtml(s.u)
