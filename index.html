@@ -2539,7 +2539,7 @@ function summaryText(){
   L.push("Вага: "+fmtG(r.weight)+" (філігрань "+fmtG(num(order.handW))+", литво "+fmtG(num(order.castW))+")");
   L.push("");L.push("Калькуляція:");
   buildBreakdown(r).forEach(function(x){if(x[1]===0&&!x[3])return;L.push((x[2]?"":"- ")+x[0]+": "+(typeof x[1]==="number"?fmt(x[1]):x[1])+(x[3]&&!x[2]?" ("+x[3]+")":""))});
-  L.push("");L.push("Рекомендована ціна: "+fmt(r.rec));L.push("Ціна для клієнта: "+fmt(r.price)+" "+fmtEur(r.price));
+  L.push("");L.push("Рекомендована ціна: "+fmt(r.rec));if(r.gramPrice>0)L.push("Ціна за вагою: "+fmtG(r.weight)+" × "+fmt(num(settings.perGram))+" = "+fmt(r.gramPrice));L.push("Ціна для клієнта: "+fmt(r.price)+" "+fmtEur(r.price));
   L.push((order.who==="master"?"Запас понад собівартість: ":"Понад ціль: ")+fmt(r.margin)+" ("+pct(r.marginPct)+")");L.push("Загальний заробіток компанії: "+fmt(r.earnTotal));return L.join("\n");
 }
 
@@ -2554,7 +2554,7 @@ function makeCard(){
   function draw(img){
     var W=1080,P=60,IW=W-2*P,dw=0,dh=0;
     if(img){var sc=Math.min(IW/img.width,1000/img.height);dw=img.width*sc;dh=img.height*sc}
-    var H=P+40+90+(img?dh+40:0)+60+rows.length*60+20+(6+(num(order.hours)>0?1:0))*64+110;
+    var H=P+40+90+(img?dh+40:0)+60+rows.length*60+20+(6+(num(order.hours)>0?1:0)+(r.gramPrice>0?1:0))*64+110;
     var c=document.createElement("canvas");c.width=W;c.height=H;var x=c.getContext("2d");
     x.fillStyle="#12130e";x.fillRect(0,0,W,H);
     var y=P;
@@ -2578,6 +2578,7 @@ function makeCard(){
     else{line("Витрати",fmt(r.matCosts),"#e0932d",true);line("Заробіток компанії мінімальний",fmt(r.labor),"#dcd8c4",false)}
     if(num(order.hours)>0)line("Витрачено годин",num(order.hours)+" год","#dcd8c4",false);
     line("Рекомендована ціна",fmt(r.rec),"#dcd8c4",false);
+    if(r.gramPrice>0)line("Ціна за вагою · "+fmtG(r.weight)+" × "+fmt(num(settings.perGram)),fmt(r.gramPrice),"#dcd8c4",false);
     line("Ціна для клієнта",fmt(r.price)+" "+fmtEur(r.price),"#dcd8c4",true);
     line("Загальний заробіток компанії",fmt(r.earnTotal),r.earnTotal<0?"#d4553b":"#93b34a",true);
     line(order.who==="master"?"Запас понад собівартість":"Понад ціль",fmt(r.margin)+" · "+pct(r.marginPct),r.status==="bad"?"#d4553b":"#93b34a",false);
