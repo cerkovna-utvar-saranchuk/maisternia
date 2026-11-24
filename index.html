@@ -1345,7 +1345,7 @@ function homeShow(){
   var h=document.getElementById("home");
   if(!h){h=document.createElement("div");h.id="home";h.className="home";
     h.innerHTML='<div class="hmi" style="background-image:url(start.jpg)"><button class="hme" data-act="home-egg" aria-label="Відкрити меню"></button></div><div class="hmg"></div>'
-     +'<div class="hml"><b>S.A.R.A.N.C.H.U.K.</b><span>ЮВЕЛІРНА МАЙСТЕРНЯ</span></div><div class="hmh">торкнись яйця</div><div class="hmt" id="home-t"></div>';
+     +'<div class="hml"><b>S.A.R.A.N.C.H.U.K.</b><span>ЮВЕЛІРНА МАЙСТЕРНЯ</span></div><div class="hmh">торкнись артефакту</div><div class="hmt" id="home-t"></div>';
     document.body.appendChild(h)}
   h.classList.remove("m");h.hidden=false;homeOn=true;document.body.classList.add("homeon");homeTiles()}
 function homeHide(){var h=document.getElementById("home");if(h)h.hidden=true;homeOn=false;document.body.classList.remove("homeon");scrollTo(0,0)}
