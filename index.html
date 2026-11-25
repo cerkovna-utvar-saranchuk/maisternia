@@ -433,19 +433,20 @@ details.det{margin:10px 0;padding:10px 12px;border:1px solid #3a3c2c;border-radi
 
 .pm3{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:12px}.pm3 .btn{padding:0 2px;font-size:12px;letter-spacing:.02em;min-height:46px}
 .home{position:fixed;inset:0;z-index:50;background:#070706;overflow:hidden}.home[hidden]{display:none}body.homeon{overflow:hidden}
+.hm1,.hm2{position:absolute;inset:0;transition:opacity .3s}.hm2{opacity:0;pointer-events:none;background:#070706}.home.m .hm1{opacity:0;pointer-events:none}.home.m .hm2{opacity:1;pointer-events:auto}
 .hmi{position:absolute;top:0;left:50%;height:92%;aspect-ratio:941/1671;transform:translateX(-50%);background-size:100% 100%;background-repeat:no-repeat}
 .hme{position:absolute;left:26%;width:48%;top:38%;height:46%;border:0;background:transparent;border-radius:50%;-webkit-tap-highlight-color:transparent;cursor:pointer}
 .hmg{position:absolute;inset:0;pointer-events:none;background:linear-gradient(180deg,rgba(7,7,6,.75) 0%,rgba(7,7,6,0) 22%,rgba(7,7,6,0) 58%,rgba(7,7,6,.96) 80%,rgba(7,7,6,1) 100%)}
 .hml{position:absolute;left:22px;right:22px;top:calc(env(safe-area-inset-top,0px) + 42px);text-align:center;pointer-events:none}.hml b{display:block;font:500 27px/1.05 var(--display);letter-spacing:.16em;color:#E3E0CF;text-shadow:0 2px 12px #000}.hml span{display:block;margin-top:5px;font:500 11.5px var(--display);letter-spacing:.34em;color:#D18B27;text-shadow:0 2px 8px #000}
-.hmh{position:absolute;left:0;right:0;bottom:calc(env(safe-area-inset-bottom,0px) + 40px);text-align:center;font:500 12px var(--mono);letter-spacing:.3em;text-transform:uppercase;color:#D18B27;pointer-events:none;animation:hmp 2.6s ease-in-out infinite;transition:opacity .2s}.home.m .hmh{opacity:0;animation:none}
+.hms{position:absolute;left:22px;right:22px;top:calc(env(safe-area-inset-top,0px) + 10px);display:flex;justify-content:space-between;font:500 10px var(--mono);letter-spacing:.14em;color:#929785;border-bottom:1px solid #3a3c2c;padding-bottom:6px;pointer-events:none}.hms b{color:#D18B27;font-weight:500}.hms i{color:#8fbf6a;font-style:normal}
+.hmh{position:absolute;left:0;right:0;bottom:calc(env(safe-area-inset-bottom,0px) + 40px);text-align:center;font:500 12px var(--mono);letter-spacing:.3em;text-transform:uppercase;color:#D18B27;pointer-events:none;animation:hmp 2.6s ease-in-out infinite}
 @keyframes hmp{0%,100%{opacity:.35}50%{opacity:1}}@media (prefers-reduced-motion:reduce){.hmh{animation:none;opacity:.8}}
-.hmt{position:absolute;left:0;right:0;bottom:calc(env(safe-area-inset-bottom,0px) + 30px);display:flex;flex-direction:column;padding-left:max(30px,env(safe-area-inset-left,0px));opacity:0;transform:translateY(8px);pointer-events:none;transition:opacity .22s,transform .22s}.home.m .hmt{opacity:1;transform:none;pointer-events:auto}
+.hmi2{position:absolute;top:0;left:0;right:0;aspect-ratio:1086/1448;background-size:100% 100%;background-repeat:no-repeat}.hmi2::after{content:"";position:absolute;left:0;right:0;bottom:0;height:24%;background:linear-gradient(180deg,rgba(7,7,6,0),#070706)}
+.hmt{position:absolute;left:0;right:0;bottom:calc(env(safe-area-inset-bottom,0px) + 86px);display:flex;flex-direction:column;padding-left:max(30px,env(safe-area-inset-left,0px))}
 .hmb{display:flex;align-items:center;gap:12px;align-self:flex-start;min-height:46px;padding:0 14px 0 0;border:0;background:transparent;color:#E3DFC9;cursor:pointer;text-align:left;-webkit-tap-highlight-color:transparent}.hmb span{font:500 27px var(--display);letter-spacing:.03em;text-transform:uppercase;text-shadow:0 2px 10px #000,0 0 3px #000;transition:color .12s}.hmb:active span{color:#D18B27}
 .hmb em{font:600 14px var(--mono);font-style:normal;border:1px solid #D18B27;color:#E3DFC9;border-radius:3px;padding:1px 8px;background:rgba(0,0,0,.4)}.hmb em.bad{border-color:#c9544a}
-.hms{position:absolute;left:22px;right:22px;top:calc(env(safe-area-inset-top,0px) + 10px);display:flex;justify-content:space-between;font:500 10px var(--mono);letter-spacing:.14em;color:#929785;border-bottom:1px solid #3a3c2c;padding-bottom:6px;pointer-events:none}.hms b{color:#D18B27;font-weight:500}.hms i{color:#8fbf6a;font-style:normal}
-
+.hmf{position:absolute;left:22px;right:22px;bottom:calc(env(safe-area-inset-bottom,0px) + 22px);border-top:1px solid #3a3c2c;padding-top:10px;font:500 11px/1.7 var(--mono);letter-spacing:.1em;color:#929785}.hmf b{color:#E3DFC9;font-weight:600}.hmf b.or{color:#D18B27}
 .hml b,.hml span,.hmb span{-webkit-mask-image:url(worn.png);mask-image:url(worn.png);-webkit-mask-size:300px 300px;mask-size:300px 300px}.hmb:nth-child(2) span{-webkit-mask-position:90px 40px;mask-position:90px 40px}.hmb:nth-child(3) span{-webkit-mask-position:180px 120px;mask-position:180px 120px}.hmb:nth-child(4) span{-webkit-mask-position:40px 200px;mask-position:40px 200px}.hmb:nth-child(5) span{-webkit-mask-position:230px 260px;mask-position:230px 260px}
-
 </style>
 </head>
 <body>
@@ -1337,23 +1338,31 @@ function pmAct(a,d){
    case"pm-cdel":var cd=findIn(pmCats(),d.id);if(cd&&confirm("Видалити категорію «"+cd.n+"»? Промпти залишаться без категорії.")){pmArr().forEach(function(p){if(p.c===cd.id)p.c=""});S.pmc=pmCats().filter(function(y){return y.id!==cd.id});if(pmCat===cd.id)pmCat="";save();render()}return true;
    case"pm-exp":pmExport();return true}
   return false}
-/* Стартовий екран: картинка + меню, що з'являється після дотику до яйця */
-var homeOn=false;
+/* Стартовий екран: 1) картинка з артефактом, 2) після дотику сцена з меню */
+var homeOn=false,HM_M=["січень","лютий","березень","квітень","травень","червень","липень","серпень","вересень","жовтень","листопад","грудень"];
 function homeTiles(){
   var el=document.getElementById("home-t");if(!el)return;
   var c=needCount(),d=dueSoon().length;
-  function t(k,n,b,bad,full){return'<button class="hmb'+(full?" full":"")+'" data-act="home-go" data-k="'+k+'"><span>'+n+'</span>'+(b?'<em class="'+(bad?"bad":"")+'">'+b+'</em>':"")+'</button>'}
-  el.innerHTML=t("o","Замовлення",d,true)+t("s","Склад",c,false)+t("c","Ціна")+t("a","Аналітика")+t("x","Ще","",false,true)}
+  function t(k,n,b,bad){return'<button class="hmb" data-act="home-go" data-k="'+k+'"><span>'+n+'</span>'+(b?'<em class="'+(bad?"bad":"")+'">'+b+'</em>':"")+'</button>'}
+  el.innerHTML=t("o","Замовлення",d,true)+t("s","Склад",c,false)+t("c","Ціна")+t("a","Аналітика")+t("x","Ще")}
+function homeStats(){
+  var el=document.getElementById("home-f");if(!el)return;
+  var eur=null,best=null;try{eur=toEur(earnCalc().r.m).eur}catch(e){}
+  S.orders.forEach(function(o){if(o.plan||!stActive(o))return;var n=daysLeft(o.due);if(n!==null&&(best===null||n<best))best=n});
+  var ds=best===null?"—":best<0?"прострочено "+(-best)+" дн.":best===0?"сьогодні":best+" дн.";
+  el.innerHTML='<div>ЧИСТИЙ ЗАРОБІТОК ('+HM_M[new Date().getMonth()].toUpperCase()+'): <b>'+(eur===null?"—":eur.toLocaleString("uk-UA")+" €")+'</b></div><div>НАЙБЛИЖЧИЙ ТЕРМІН: <b class="or">'+ds.toUpperCase()+'</b></div>'}
 function homeShow(){
   var h=document.getElementById("home");
   if(!h){h=document.createElement("div");h.id="home";h.className="home";
-    h.innerHTML='<div class="hmi" style="background-image:url(start.jpg)"><button class="hme" data-act="home-egg" aria-label="Відкрити меню"></button></div><div class="hmg"></div>'
-     +'<div class="hms"><span>SARANCHUK OS / TERMINAL 01</span><span><i>●</i> STATUS: <b>ONLINE</b></span></div><div class="hml"><b>S.A.R.A.N.C.H.U.K.</b><span>ЮВЕЛІРНА МАЙСТЕРНЯ</span></div><div class="hmh">торкнись артефакту</div><div class="hmt" id="home-t"></div>';
-    document.body.appendChild(h)}
-  h.classList.remove("m");h.hidden=false;homeOn=true;document.body.classList.add("homeon");homeTiles()}
+    var st='<div class="hms"><span>SARANCHUK OS / TERMINAL 01</span><span><i>●</i> STATUS: <b>ONLINE</b></span></div>';
+    h.innerHTML='<div class="hm1"><div class="hmi" style="background-image:url(start.jpg)"><button class="hme" data-act="home-egg" aria-label="Відкрити меню"></button></div><div class="hmg"></div>'+st
+     +'<div class="hml"><b>S.A.R.A.N.C.H.U.K.</b><span>ЮВЕЛІРНА МАЙСТЕРНЯ</span></div><div class="hmh">торкнись артефакту</div></div>'
+     +'<div class="hm2"><div class="hmi2" style="background-image:url(menu.jpg)"></div>'+st+'<div class="hmt" id="home-t"></div><div class="hmf" id="home-f"></div></div>';
+    document.body.appendChild(h);try{(new Image()).src="menu.jpg"}catch(e){}}
+  h.classList.remove("m");h.hidden=false;homeOn=true;document.body.classList.add("homeon");homeTiles();homeStats()}
 function homeHide(){var h=document.getElementById("home");if(h)h.hidden=true;homeOn=false;document.body.classList.remove("homeon");scrollTo(0,0)}
 function homeAct(a,d){
-  if(a==="home-egg"){var h=document.getElementById("home");if(h){h.classList.toggle("m");homeTiles()}return true}
+  if(a==="home-egg"){var h=document.getElementById("home");if(h){homeTiles();homeStats();h.classList.add("m")}return true}
   if(a==="home-go"){homeHide();var b=document.querySelector('#nav [data-tab="'+d.k+'"]');if(b)b.click();return true}
   if(a==="home-open"){homeShow();return true}
   return false}
@@ -2160,7 +2169,7 @@ function navHtml(){
 function render(){
   document.getElementById("app").innerHTML=cur?detailHtml():(tab==="c"?CALC.html():tab==="s"?stockHtml():tab==="a"?analyticsHtml():tab==="x"?moreHtml():(tab==="m"?(mOpen?masterDetailHtml():backMore()+mastersHtml()):(tab==="i"?(ideaOpen?ideaDetailHtml():backMore()+ideasHtml()):(tab==="k"?backMore()+catHtml():(tab==="t"?backMore()+archiveHtml():(tab==="l"?backMore()+timeHtml():(tab==="u"?backMore()+supHtml():(tab==="e"?skHtml():(tab==="q"?eqHtml():(tab==="w"?pmHtml():listHtml()))))))))));
   document.getElementById("app").insertAdjacentHTML("afterbegin",tbarHtml());if(tab==="u")cmUpd();tmrKeep();if(tab==="q"&&!eqFxTried){eqFxTried=true;fxAuto(false)}document.getElementById("nav").innerHTML=navHtml();hydrate();
-  if(homeOn)homeTiles();
+  if(homeOn){homeTiles();homeStats()}
   var sk=(cur||"")+"|"+tab+"|"+mOpen+"|"+ideaOpen;if(window.__sk!==undefined&&window.__sk!==sk){var ap=document.getElementById("app");ap.classList.remove("swap");void ap.offsetWidth;ap.classList.add("swap")}window.__sk=sk;if(!cur&&tab==="c")CALC.mount()}
 
 /* дії */
