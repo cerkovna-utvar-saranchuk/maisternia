@@ -449,6 +449,14 @@ details.det{margin:10px 0;padding:10px 12px;border:1px solid #3a3c2c;border-radi
 .hmb span{-webkit-mask-image:url(worn.png);mask-image:url(worn.png);-webkit-mask-size:300px 300px;mask-size:300px 300px}.hmb:nth-child(2) span{-webkit-mask-position:90px 40px;mask-position:90px 40px}.hmb:nth-child(3) span{-webkit-mask-position:180px 120px;mask-position:180px 120px}.hmb:nth-child(4) span{-webkit-mask-position:40px 200px;mask-position:40px 200px}.hmb:nth-child(5) span{-webkit-mask-position:230px 260px;mask-position:230px 260px}
 .nav .hnav{flex:.8;color:#D18B27;font-size:9px}.nav .hnav svg{width:22px;height:22px}
 .nav{display:none}.mback{display:flex;align-items:center;gap:8px;border:0;background:none;color:#D18B27;font:600 13px var(--mono);letter-spacing:.16em;text-transform:uppercase;min-height:44px;padding:0;margin:0 0 4px;cursor:pointer;-webkit-tap-highlight-color:transparent}.mback:active{opacity:.6}
+.jcrow{display:grid;justify-items:start;gap:6px;width:100%;text-align:left;padding:12px;border:1px solid #3a3c2c;border-radius:4px;background:#1C2018;color:inherit;font:inherit;cursor:pointer}.jcrow b{font:600 16px var(--display);letter-spacing:.03em;overflow-wrap:anywhere}
+.jcstep{display:flex;align-items:center;gap:8px;margin:14px 0 8px}.jcstep b{flex:none;width:24px;height:24px;display:grid;place-items:center;border:1px solid #D18B27;border-radius:3px;color:#D18B27;font:600 13px var(--mono)}.jclink{display:block;text-align:center;text-decoration:none}.jcerr{margin-top:8px;color:var(--bad);font-size:14px}
+.jct{margin:14px 0 6px;font:500 11px var(--mono);letter-spacing:.1em;text-transform:uppercase;color:#929785}
+.jcverdict{--c:var(--warn);margin:12px 0 0;padding:14px;border:1px solid var(--c);border-left-width:6px;border-radius:4px;background:#1C2018;overflow-wrap:anywhere}.jcverdict.ok{--c:var(--ok)}.jcverdict.bad{--c:var(--bad)}.jcverdict small{font:500 11px var(--mono);letter-spacing:.1em;text-transform:uppercase;color:#929785}.jcverdict strong{display:block;font:600 30px/1.15 var(--display);letter-spacing:.06em;text-transform:uppercase;color:var(--c)}.jcverdict p{margin:8px 0 0}
+.jcdo{display:flex;gap:10px;align-items:flex-start;padding:10px;border:1px solid #3a3c2c;border-radius:4px;background:#1C2018;cursor:pointer}.jcdo input{flex:none;width:22px;height:22px;margin:0;accent-color:#D18B27}.jcdo span{flex:1;min-width:0;overflow-wrap:anywhere}.jcdo.done span{color:#929785;text-decoration:line-through}
+.jcside{--c:var(--bad);margin-top:12px;padding:12px 14px;border:1px solid #3a3c2c;border-top:3px solid var(--c);border-radius:4px;background:#161912;overflow-wrap:anywhere}.jcside.ok{--c:var(--ok)}.jcside h2{color:var(--c)}.jcside ul{margin:8px 0 0;padding-left:18px}.jcside li{margin-bottom:6px}
+.jcscore{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:14px 0 8px}.jcscore div{--c:var(--bad);text-align:center;padding:8px;border:1px solid var(--c);border-radius:4px;color:var(--c)}.jcscore div.ok{--c:var(--ok)}.jcscore small{display:block;font:500 11px var(--mono);letter-spacing:.1em;text-transform:uppercase}.jcscore b{font:600 34px/1.1 var(--mono)}
+.jcjury{display:grid;grid-template-columns:1fr 1fr;gap:8px}.jcj{display:grid;align-content:start;justify-items:start;gap:6px;min-width:0;padding:10px;border:1px solid #3a3c2c;border-radius:4px;background:#1C2018;overflow-wrap:anywhere}.jcj b{font:600 14px var(--display);letter-spacing:.04em;text-transform:uppercase}.jcj p{margin:0;font-size:13px;line-height:1.35;color:#B9B6A0}
 </style>
 </head>
 <body>
@@ -507,7 +515,7 @@ var ICON_S='<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="
 
 var ICON_A='<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 20V11M12 20V4M19 20v-6"/></svg>';
 var ICON_X='<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="4" width="6.5" height="6.5" rx="1"/><rect x="13.5" y="4" width="6.5" height="6.5" rx="1"/><rect x="4" y="13.5" width="6.5" height="6.5" rx="1"/><rect x="13.5" y="13.5" width="6.5" height="6.5" rx="1"/></svg>';
-var SECT={"Майстри":"MASTERS","Цікаві ідеї":"IDEAS"};
+var SECT={"Суд ідей":"COURT","Майстри":"MASTERS","Цікаві ідеї":"IDEAS"};
 function head(title,sub,right){return '<header class="top">'+(SECT[title]?'<div class="of-sys"><span class="of-id"><i class="sb-dot on"></i>SARANCHUK OS / '+SECT[title]+'</span></div>':'')+'<div class="tt"><h1>'+title+'</h1>'+(right||"")+'</div>'+orn()+'<p class="sub">'+sub+'</p></header>'}
 
 /* форми */
@@ -714,7 +722,7 @@ function analyticsHtml(){return head("Аналітика","заробіток з
 function moreHtml(){
   var nm=S.masters.length,np=S.orders.filter(function(o){return !!o.plan}).length,ni=S.ideas.length;
   function r(k,t,d){return '<button class="morer" data-act="tab" data-tab="'+k+'"><b>'+t+'</b><span>'+d+'</span><i>›</i></button>'}
-  return head("Ще","розділи й дані","")+''+r("m","Майстри",nm?nm+" "+plural(nm,"майстер","майстри","майстрів"):"поки немає")+r("p","Проєкти",np?np+" "+plural(np,"проєкт","проєкти","проєктів"):"поки немає")+r("k","Довідник елементів",CAT.length+" артикулів")+r("t","Архів техкарт",tcArch().length?tcArch().length+" "+plural(tcArch().length,"техкарта","техкарти","техкарт"):"поки немає")+r("l","Облік часу",(function(){var td=dkey(new Date()),t=tlSumDays(td,td);return S.tmr?"таймер іде":(t?"сьогодні: "+tlFmt(t):(tlArr().length?"записів: "+tlArr().length:"поки немає"))})())+r("u","Постачальники",supArr().length?supArr().map(function(x){return x.n}).slice(0,3).join(" · "):"швидкі посилання на магазини")+r("e","Бібліотека ескізів",skArr().length?skArr().length+" ескізів · папок: "+skFs().length:"фото ескізів із зошитів")+r("q","Фонд майстерні",eqArr().length?eqList(false).length+" є · "+eqList(true).length+" у планах":"обладнання: що є й що хочу придбати")+r("w","Промпти","Бібліотека промптів для ШІ")+r("i","Ідеї",ni?ni+" "+plural(ni,"ідея","ідеї","ідей"):"поки немає")+backupHtml()+'<div id="sync" class="sync '+cloud.st+'" data-act="sync-retry">'+syncText()+'</div>'}
+  return head("Ще","розділи й дані","")+''+r("m","Майстри",nm?nm+" "+plural(nm,"майстер","майстри","майстрів"):"поки немає")+r("p","Проєкти",np?np+" "+plural(np,"проєкт","проєкти","проєктів"):"поки немає")+r("k","Довідник елементів",CAT.length+" артикулів")+r("t","Архів техкарт",tcArch().length?tcArch().length+" "+plural(tcArch().length,"техкарта","техкарти","техкарт"):"поки немає")+r("l","Облік часу",(function(){var td=dkey(new Date()),t=tlSumDays(td,td);return S.tmr?"таймер іде":(t?"сьогодні: "+tlFmt(t):(tlArr().length?"записів: "+tlArr().length:"поки немає"))})())+r("u","Постачальники",supArr().length?supArr().map(function(x){return x.n}).slice(0,3).join(" · "):"швидкі посилання на магазини")+r("e","Бібліотека ескізів",skArr().length?skArr().length+" ескізів · папок: "+skFs().length:"фото ескізів із зошитів")+r("q","Фонд майстерні",eqArr().length?eqList(false).length+" є · "+eqList(true).length+" у планах":"обладнання: що є й що хочу придбати")+r("w","Промпти","Бібліотека промптів для ШІ")+r("i","Ідеї",ni?ni+" "+plural(ni,"ідея","ідеї","ідей"):"поки немає")+r("j","Суд ідей",jcArr().length?jcArr().length+" "+plural(jcArr().length,"справа","справи","справ"):"перевірити ідею на міцність")+backupHtml()+'<div id="sync" class="sync '+cloud.st+'" data-act="sync-retry">'+syncText()+'</div>'}
 
 /* замовлення */
 function itemRow(i){
@@ -1339,6 +1347,123 @@ function pmAct(a,d){
    case"pm-cadd":var inp=document.querySelector("[data-pmcnew]"),nm=inp?inp.value.trim():"";if(!nm){toast("Вкажи назву категорії",false);return true}pmCats().push({id:uid(),n:nm});save();render();return true;
    case"pm-cdel":var cd=findIn(pmCats(),d.id);if(cd&&confirm("Видалити категорію «"+cd.n+"»? Промпти залишаться без категорії.")){pmArr().forEach(function(p){if(p.c===cd.id)p.c=""});S.pmc=pmCats().filter(function(y){return y.id!==cd.id});if(pmCat===cd.id)pmCat="";save();render()}return true;
    case"pm-exp":pmExport();return true}
+  return false}
+/* Суд ідей: прокурор, адвокат, 12 присяжних і вердикт. Думає Claude: застосунок копіює текст справи, а відповідь вставляється назад */
+var JC_CTX="Ювелірна майстерня: ручна робота зі сріблом і золотом, переважно філігрань, вироби на замовлення за власним дизайном, преміум-сегмент. Працюю здебільшого сам.";
+var JC_ROLES=["Замовник","Бухгалтер","Конкурент","Інвестор","Маркетолог","Юрист","Скептик","Досвідчений майстер","Технолог","Художник","SMM-менеджер","Планувальник часу"];
+var JC_V={go:["Запускай","ok"],fix:["Доопрацюй","warn"],no:["Відхилено","bad"]};
+var jcOpen=null,jcNew=null,jcAp=null,jcPaste="",jcErr="";
+function jcArr(){return S.jc||(S.jc=[])}
+function jcCtx(){return typeof S.jcx==="string"?S.jcx:JC_CTX}
+function jcReset(){jcOpen=null;jcNew=null;jcAp=null;jcPaste="";jcErr=""}
+function jcLast(c){return c.rounds.length?c.rounds[c.rounds.length-1]:null}
+function jcWait(c){return typeof c.pend==="string"}
+function jcName(c){var t=String(c.t||"").trim();if(t)return t;t=String(c.i||"").replace(/\s+/g," ").trim();return t.length>48?t.slice(0,48)+"…":t}
+function jcScore(r){var y=r.jury.filter(function(j){return j.v}).length;return{y:y,n:r.jury.length-y}}
+function jcPrompt(c){
+  var L=["Ти проводиш «Суд ідей»: чесно й жорстко перевіряєш мою ідею. Не підтакуй і не хвали з ввічливості.",
+   "","Учасники:","- Прокурор шукає, чому ідея провалиться.","- Адвокат захищає її найсильнішими аргументами.",
+   "- 12 присяжних голосують незалежно один від одного: "+JC_ROLES.join(", ")+".",
+   "- Суддя зважає на все, виносить вердикт і дає 3 конкретні кроки, першим із яких є найдешевша перевірка попиту чи здійсненності.",
+   "","Не вигадуй цифр і фактів. Якщо чогось бракує, назви це припущенням."];
+  if(jcCtx().trim())L.push("","ПРО МЕНЕ:",jcCtx().trim());
+  L.push("","ІДЕЯ:",c.i.trim());
+  if(String(c.x||"").trim())L.push("","ЩО ЩЕ ЗНАТИ СУДУ:",c.x.trim());
+  if(c.rounds.length){L.push("","ПОПЕРЕДНІ ЗАСІДАННЯ:");
+    c.rounds.forEach(function(r,i){var sc=jcScore(r);if(r.a)L.push("Апеляція перед засіданням "+(i+1)+": "+r.a);
+      L.push("Засідання "+(i+1)+": "+JC_V[r.verdict][0]+" (за "+sc.y+", проти "+sc.n+"). "+r.title+" "+r.reason,"Звинувачення: "+r.pro.join("; "),"Призначені кроки: "+r.steps.join("; "))})}
+  if(c.pend)L.push("","НОВА АПЕЛЯЦІЯ (що змінилося або чим я заперечую):",c.pend,"Переглянь справу з урахуванням апеляції. Змінюй голоси лише там, де нові доводи справді переконують.");
+  L.push("","Відповідай українською. Дай ЛИШЕ один блок коду json без тексту до чи після нього. Усередині рядків замість подвійних лапок пиши «». Формат:",
+   "```json",'{"prosecutor":["звинувачення"],"advocate":["аргумент захисту"],"jury":[{"role":"Замовник","vote":"yes","why":"одне речення"}],"verdict":"fix","title":"вердикт одним реченням","reason":"2-3 речення пояснення","steps":["крок 1","крок 2","крок 3"]}',"```",
+   "prosecutor і advocate: по 3-4 пункти. jury: рівно 12, vote це yes (спрацює) або no (провал). verdict: go (запускай), fix (доопрацюй) або no (відхилено).");
+  return L.join("\n")}
+function jcStr(x){return typeof x==="string"?x.trim():""}
+function jcList(a){return Array.isArray(a)?a.map(jcStr).filter(Boolean):[]}
+function jcParse(t){
+  t=String(t||"");var a=t.indexOf("{"),b=t.lastIndexOf("}");if(a<0||b<=a)return null;
+  var body=t.slice(a,b+1),o=null;
+  try{o=JSON.parse(body)}catch(e){try{o=JSON.parse(body.replace(/[“”]/g,'"').replace(/,\s*([}\]])/g,"$1"))}catch(e2){return null}}
+  var jury=(Array.isArray(o.jury)?o.jury:[]).map(function(j){var v=jcStr(j&&j.vote).toLowerCase();return v==="yes"||v==="no"?{role:jcStr(j.role),v:v==="yes"?1:0,why:jcStr(j.why)}:null}).filter(Boolean);
+  var r={pro:jcList(o.prosecutor),adv:jcList(o.advocate),jury:jury,verdict:jcStr(o.verdict).toLowerCase(),title:jcStr(o.title),reason:jcStr(o.reason),steps:jcList(o.steps),ok:[]};
+  if(!r.pro.length||!r.adv.length||!r.jury.length||!r.steps.length||!Object.prototype.hasOwnProperty.call(JC_V,r.verdict))return null;
+  return r}
+function jcAccept(c,t){
+  var own=t.indexOf("Ти проводиш «Суд ідей»")>=0,r=own?null:jcParse(t);
+  if(!r){jcPaste=own?"":t;jcErr=own?"Це текст справи, а не відповідь. Надішліть його в Claude, скопіюйте відповідь і вставте сюди.":"Не вдалося прочитати вердикт. Скопіюйте весь блок із відповіді Claude (від { до }).";render();return}
+  r.ts=Date.now();r.a=c.pend||"";c.rounds.push(r);delete c.pend;jcPaste="";jcErr="";jcAp=null;save();render();scrollTo(0,0);toast("Вердикт оголошено",false)}
+function jcCopy(t){
+  function done(){toast("Справу скопійовано. Вставте її в Claude",false)}
+  function fb(){var a=document.createElement("textarea");a.value=t;a.setAttribute("readonly","");a.style.cssText="position:fixed;top:0;left:0;opacity:0";document.body.appendChild(a);a.select();a.setSelectionRange(0,t.length);var ok=false;try{ok=document.execCommand("copy")}catch(e){}document.body.removeChild(a);if(ok)done();else toast("Не вдалося скопіювати",false)}
+  try{if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t).then(done,fb);return}}catch(e){}fb()}
+function jcBadge(c){var r=jcLast(c);if(jcWait(c))return'<span class="pill mu">'+(r?"апеляція":"чекає суду")+'</span>';if(!r)return"";var v=JC_V[r.verdict],sc=jcScore(r);return'<span class="pill '+v[1]+'">'+v[0]+' · '+sc.y+':'+sc.n+'</span>'}
+function jcListPage(){
+  var L=jcArr();
+  return backMore()+head("Суд ідей","прокурор · адвокат · 12 присяжних","")
+   +'<button class="btn" style="width:100%;margin-bottom:12px" data-act="jc-add">+ Нова справа</button>'
+   +(L.length?'<div class="bll">'+L.slice().reverse().map(function(c){return'<button class="jcrow" data-act="jc-open" data-id="'+c.id+'"><b>'+esc(jcName(c))+'</b>'+jcBadge(c)+'</button>'}).join("")+'</div>':'<p class="empty">Справ ще немає. Опишіть ідею, і суд перевірить її на міцність.</p>')
+   +'<details class="det" style="margin-top:14px"><summary>Що суд знає про мене</summary><textarea data-jcx="1" rows="5" placeholder="Коротко про майстерню">'+esc(jcCtx())+'</textarea><div class="mu sm">Цей текст додається до кожної справи.</div></details>'}
+function jcForm(){
+  var n=jcNew;
+  return'<button class="back" data-act="jc-cancel">← Назад</button>'+head(n.id?"Змінити справу":"Нова справа","опишіть ідею своїми словами","")
+   +'<div class="tf"><label class="full"><span>Назва</span><input data-jc="t" value="'+esc(n.t)+'" placeholder="Необов’язково" autocomplete="off"></label>'
+   +'<label class="full"><span>Ваша ідея *</span><textarea data-jc="i" rows="5" placeholder="Що хочу зробити, для кого, за скільки">'+esc(n.i)+'</textarea></label>'
+   +'<label class="full"><span>Що ще знати суду</span><textarea data-jc="x" rows="3" placeholder="Бюджет, час, що вже є, сумніви">'+esc(n.x)+'</textarea></label></div>'
+   +'<div style="display:flex;gap:8px"><button class="btn" style="flex:1" data-act="jc-save">Зберегти</button><button class="btn ghost" style="flex:1" data-act="jc-cancel">Скасувати</button></div>'}
+function jcSession(c){
+  return'<div class="tcard"><div class="tt">'+(c.rounds.length?"Апеляційне засідання":"Засідання")+'</div>'
+   +'<div class="jcstep"><b>1</b>Скопіюйте справу</div><button class="btn" style="width:100%" data-act="jc-copy">Скопіювати справу</button>'
+   +'<div class="jcstep"><b>2</b>Вставте в новий чат Claude й надішліть</div><a class="btn ghost jclink" href="https://claude.ai/new" target="_blank" rel="noopener">Відкрити Claude</a>'
+   +'<div class="jcstep"><b>3</b>Скопіюйте відповідь і поверніться сюди</div><button class="btn" style="width:100%" data-act="jc-clip">Вставити вердикт</button>'
+   +(jcErr?'<div class="jcerr" role="alert">'+esc(jcErr)+'</div>':"")
+   +'<details class="det"'+(jcPaste||jcErr?" open":"")+'><summary>Вставити вручну</summary><textarea data-jcp="1" rows="6" placeholder="Відповідь Claude" spellcheck="false">'+esc(jcPaste)+'</textarea><button class="btn ghost" style="width:100%;margin-top:8px" data-act="jc-read">Оголосити вердикт</button></details>'
+   +(c.rounds.length?'<button class="lnk" data-act="jc-apoff">Скасувати апеляцію</button>':"")+'</div>'}
+function jcPoints(t,cls,a){return'<div class="jcside '+cls+'"><h2>'+t+'</h2><ul>'+a.map(function(x){return'<li>'+esc(x)+'</li>'}).join("")+'</ul></div>'}
+function jcRound(r,idx,last){
+  var sc=jcScore(r),v=JC_V[r.verdict];
+  return(r.a?'<div class="tt jct">Апеляція</div><div class="pmtx">'+esc(r.a)+'</div>':"")
+   +'<div class="jcverdict '+v[1]+'"><small>Вердикт</small><strong>'+v[0]+'</strong><p><b>'+esc(r.title)+'</b></p><p>'+esc(r.reason)+'</p></div>'
+   +'<div class="tt jct">3 кроки</div><div class="bll">'+r.steps.map(function(x,i){return'<label class="jcdo'+(r.ok[i]?" done":"")+'"><input type="checkbox" data-act="jc-step" data-r="'+idx+'" data-i="'+i+'"'+(r.ok[i]?" checked":"")+'><span>'+esc(x)+'</span></label>'}).join("")+'</div>'
+   +jcPoints("Прокурор","bad",r.pro)+jcPoints("Адвокат","ok",r.adv)
+   +'<div class="jcscore"><div class="bad"><small>Провал</small><b>'+sc.n+'</b></div><div class="ok"><small>Спрацює</small><b>'+sc.y+'</b></div></div>'
+   +'<div class="jcjury">'+r.jury.map(function(j){return'<div class="jcj"><b>'+esc(j.role)+'</b><span class="pill '+(j.v?"ok":"bad")+'">'+(j.v?"спрацює":"провал")+'</span><p>'+esc(j.why)+'</p></div>'}).join("")+'</div>'
+   +(last?'<button class="lnk" data-act="jc-undo">Прибрати цей вердикт (вставлено не те)</button>':"")}
+function jcDetail(){
+  var c=findIn(jcArr(),jcOpen);if(!c){jcOpen=null;return jcListPage()}
+  var h='<button class="back" data-act="jc-close">← Усі справи</button>'+head(esc(jcName(c)),c.rounds.length?"засідань: "+c.rounds.length:"справа чекає на суд","")
+   +'<div class="pmtx">'+esc(c.i)+(c.x?"\n\n"+esc(c.x):"")+'</div>';
+  if(jcWait(c)){if(c.pend)h+='<div class="tt jct">Нова апеляція</div><div class="pmtx">'+esc(c.pend)+'</div>';h+=jcSession(c)}
+  var n=c.rounds.length;
+  if(n){h+=jcRound(c.rounds[n-1],n-1,!jcWait(c));
+    if(!jcWait(c))h+=jcAp===null?'<button class="btn" style="width:100%;margin-top:12px" data-act="jc-appeal">Подати апеляцію</button>'
+      :'<div class="tcard" style="margin-top:12px"><div class="tt">Апеляція</div><textarea data-jca="1" rows="4" placeholder="Що змінили, що перевірили, з чим не згодні">'+esc(jcAp)+'</textarea><div class="row2"><button class="btn" data-act="jc-apsave">Далі</button><button class="btn ghost" data-act="jc-apcancel">Скасувати</button></div></div>';
+    if(n>1)h+=c.rounds.slice(0,n-1).map(function(r,i){var s=jcScore(r);return'<details class="det"><summary>Засідання '+(i+1)+': '+JC_V[r.verdict][0]+' · '+s.y+':'+s.n+'</summary>'+jcRound(r,i,false)+'</details>'}).reverse().join("")}
+  return h+'<div style="display:flex;gap:8px;margin-top:14px">'+(n?"":'<button class="btn ghost" style="flex:1" data-act="jc-edit">Редагувати</button>')+'<button class="btn bad" style="flex:1" data-act="jc-del">Видалити справу</button></div>'}
+function jcHtml(){return jcNew?jcForm():(jcOpen?jcDetail():jcListPage())}
+function jcAct(a,d){
+  var c=jcOpen?findIn(jcArr(),jcOpen):null;
+  switch(a){
+   case"jc-add":jcNew={id:"",t:"",i:"",x:""};render();scrollTo(0,0);return true;
+   case"jc-open":jcReset();jcOpen=d.id;render();scrollTo(0,0);return true;
+   case"jc-close":jcReset();render();scrollTo(0,0);return true;
+   case"jc-cancel":jcNew=null;render();return true;
+   case"jc-edit":if(c){jcNew={id:c.id,t:c.t,i:c.i,x:c.x};render();scrollTo(0,0)}return true;
+   case"jc-save":if(!jcNew)return true;if(!jcNew.i.trim()){toast("Немає тексту ідеї",false);return true}
+     var o=jcNew.id?findIn(jcArr(),jcNew.id):null;
+     if(!o){o={id:uid(),rounds:[],pend:"",ts:Date.now()};jcArr().push(o)}
+     o.t=jcNew.t.trim();o.i=jcNew.i.trim();o.x=jcNew.x.trim();jcReset();jcOpen=o.id;save();render();scrollTo(0,0);return true;
+   case"jc-copy":if(c)jcCopy(jcPrompt(c));return true;
+   case"jc-clip":if(!c)return true;
+     var manual=function(){jcErr="Не вдалося взяти текст із буфера. Вставте відповідь у поле нижче.";render()};
+     if(!(navigator.clipboard&&navigator.clipboard.readText)){manual();return true}
+     navigator.clipboard.readText().then(function(t){if(jcOpen!==c.id)return;var x=findIn(jcArr(),c.id);if(!x||!jcWait(x))return;if(!String(t||"").trim()){manual();return}jcAccept(x,t)},manual);return true;
+   case"jc-read":if(c&&jcWait(c))jcAccept(c,jcPaste);return true;
+   case"jc-step":if(c){var r=c.rounds[+d.r];if(r){if(!r.ok)r.ok=[];r.ok[+d.i]=!r.ok[+d.i];save();render()}}return true;
+   case"jc-appeal":jcAp="";render();return true;
+   case"jc-apcancel":jcAp=null;render();return true;
+   case"jc-apsave":if(!c)return true;if(!String(jcAp||"").trim()){toast("Немає тексту апеляції",false);return true}c.pend=jcAp.trim();jcAp=null;save();render();scrollTo(0,0);return true;
+   case"jc-apoff":if(c&&c.rounds.length){delete c.pend;jcPaste="";jcErr="";save();render()}return true;
+   case"jc-undo":if(c&&c.rounds.length&&confirm("Прибрати останній вердикт?")){var last=c.rounds.pop();c.pend=last.a||"";save();render();scrollTo(0,0)}return true;
+   case"jc-del":if(c&&confirm("Видалити справу «"+jcName(c)+"»?")){S.jc=jcArr().filter(function(y){return y.id!==c.id});jcReset();save();render();toast("Видалено",false)}return true}
   return false}
 /* Стартовий екран: 1) картинка з артефактом, 2) після дотику сцена з меню */
 var homeOn=false,HM_M=["січень","лютий","березень","квітень","травень","червень","липень","серпень","вересень","жовтень","листопад","грудень"];
@@ -2165,12 +2290,12 @@ var ICON_P='<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="
 var ICON_I='<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 2.1h5c0-.9.4-1.6 1-2.1A6 6 0 0 0 12 3z"/></svg>';
 var ICON_C='<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="3" width="14" height="18" rx="1"/><path d="M8 7h8M8 12h.01M12 12h.01M16 12h.01M8 16h.01M12 16h.01M16 16h.01"/></svg>';
 function navHtml(){
-  var c=needCount(),dsN=dueSoon().length,cr=cur?ord():null,t=cr?(cr.plan?"x":"o"):(tab==="p"||tab==="i"||tab==="m"||tab==="k"||tab==="t"||tab==="l"||tab==="u"||tab==="e"||tab==="q"||tab==="w"?"x":tab);
+  var c=needCount(),dsN=dueSoon().length,cr=cur?ord():null,t=cr?(cr.plan?"x":"o"):(tab==="p"||tab==="i"||tab==="m"||tab==="k"||tab==="t"||tab==="l"||tab==="u"||tab==="e"||tab==="q"||tab==="w"||tab==="j"?"x":tab);
   function b(k,ico,label,extra){return '<button data-act="tab" data-tab="'+k+'" class="'+(t===k?"on":"")+'">'+ico+'<span>'+label+'</span>'+(extra||"")+'</button>'}
   return '<button class="hnav" data-act="home-back" aria-label="На головний екран"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><path d="M7 4h10l4 5-9 11L3 9z"/><path d="M3 9h18M12 20 9 9l3-5 3 5z"/></svg><span>Меню</span></button>'+b("o",ICON_O,"Замовлення",dsN?'<em class="badge bad">'+dsN+'</em>':"")+b("s",ICON_S,"Склад",c?'<em class="badge">'+c+'</em>':"")+b("c",ICON_C,"Ціна")+b("a",ICON_A,"Аналітика")+b("x",ICON_X,"Ще")}
 
 function render(){
-  document.getElementById("app").innerHTML=cur?detailHtml():(tab==="c"?CALC.html():tab==="s"?stockHtml():tab==="a"?analyticsHtml():tab==="x"?moreHtml():(tab==="m"?(mOpen?masterDetailHtml():backMore()+mastersHtml()):(tab==="i"?(ideaOpen?ideaDetailHtml():backMore()+ideasHtml()):(tab==="k"?backMore()+catHtml():(tab==="t"?backMore()+archiveHtml():(tab==="l"?backMore()+timeHtml():(tab==="u"?backMore()+supHtml():(tab==="e"?skHtml():(tab==="q"?eqHtml():(tab==="w"?pmHtml():listHtml()))))))))));
+  document.getElementById("app").innerHTML=cur?detailHtml():(tab==="c"?CALC.html():tab==="s"?stockHtml():tab==="a"?analyticsHtml():tab==="x"?moreHtml():(tab==="m"?(mOpen?masterDetailHtml():backMore()+mastersHtml()):(tab==="i"?(ideaOpen?ideaDetailHtml():backMore()+ideasHtml()):(tab==="k"?backMore()+catHtml():(tab==="t"?backMore()+archiveHtml():(tab==="l"?backMore()+timeHtml():(tab==="u"?backMore()+supHtml():(tab==="e"?skHtml():(tab==="q"?eqHtml():(tab==="w"?pmHtml():(tab==="j"?jcHtml():listHtml())))))))))));
   document.getElementById("app").insertAdjacentHTML("afterbegin",tbarHtml());if(!cur&&"osacx".indexOf(tab)>=0&&tab.length===1)document.getElementById("app").insertAdjacentHTML("afterbegin",'<button class="mback" data-act="home-back">← Меню</button>');if(tab==="u")cmUpd();tmrKeep();if(tab==="q"&&!eqFxTried){eqFxTried=true;fxAuto(false)}document.getElementById("nav").innerHTML=navHtml();hydrate();
   if(homeOn){homeTiles();homeStats()}
   var sk=(cur||"")+"|"+tab+"|"+mOpen+"|"+ideaOpen;if(window.__sk!==undefined&&window.__sk!==sk){var ap=document.getElementById("app");ap.classList.remove("swap");void ap.offsetWidth;ap.classList.add("swap")}window.__sk=sk;if(!cur&&tab==="c")CALC.mount()}
@@ -2242,10 +2367,11 @@ function act(a,d){
   if(a.slice(0,3)==="eq-"&&eqAct(a,d))return;
   if(a.slice(0,3)==="bl-"&&blAct(a,d))return;
   if(a.slice(0,3)==="pm-"&&pmAct(a,d))return;
+  if(a.slice(0,3)==="jc-"&&jcAct(a,d))return;
   if(a.slice(0,5)==="home-"&&homeAct(a,d))return;
   if(a.slice(0,3)==="tc-"&&tcAct(a,d))return;
   switch(a){
-    case "tab":pmOpen=null;pmNew=null;pmFill=null;pmCatMgr=false;pmQ="";blNew=null;eqOpen=null;eqNew=null;eqQ="";eqArm=false;eqFxEd=null;tlF=null;suF=null;skOpen=null;skFolder=null;skNew=null;skQ="";skArm=false;newPick=false;tab=d.tab;cur=null;edit=null;resEdit=null;closeMaster();closeIdea();rubEdit=false;adding=null;confirmDel=false;render();scrollTo(0,0);break;
+    case "tab":jcReset();pmOpen=null;pmNew=null;pmFill=null;pmCatMgr=false;pmQ="";blNew=null;eqOpen=null;eqNew=null;eqQ="";eqArm=false;eqFxEd=null;tlF=null;suF=null;skOpen=null;skFolder=null;skNew=null;skQ="";skArm=false;newPick=false;tab=d.tab;cur=null;edit=null;resEdit=null;closeMaster();closeIdea();rubEdit=false;adding=null;confirmDel=false;render();scrollTo(0,0);break;
     case "open":tlF=null;cur=d.id;edit=null;adding=null;confirmDel=false;render();scrollTo(0,0);break;
     case "home":cur=null;edit=null;adding=null;confirmDel=false;render();break;
     case "new":if(tab==="p")newO();else{newPick=!newPick;render()}break;case "new-k":newO(d.k);break;case "new-cancel":newPick=false;render();break;
@@ -2319,9 +2445,9 @@ document.addEventListener("click",function(e){
   var el=e.target.closest("[data-act]");if(!el||el.type==="checkbox")return;
   act(el.dataset.act,el.dataset)});
 document.addEventListener("change",function(e){
-  var el=e.target;if(el.id==="qa-ph"){qaFiles=Array.prototype.slice.call(el.files||[]);var ql=document.getElementById("qa-phl");if(ql)ql.textContent=qaPhText();return}if(el.type==="checkbox"&&el.dataset.act==="rest-tog")act("rest-tog",{id:el.dataset.id});else if(el.type==="checkbox"&&el.dataset.act==="tog")tog(el.dataset.id);else if(el.id==="c-name"){var co=ord();if(co)clientFill(co)}else if(el.id==="sk-in")skPick(el);else if(el.id==="eq-in")eqPick(el,true);else if(el.id==="eq-in2")eqPick(el,false);else if(el.id==="pm-in")pmPick(el);else if(el.id==="pm-imp")pmImport(el);else if(el.dataset&&el.dataset.skt){skTarget=el.value}else if(el.id==="ph-in"||el.id==="ip-in")photoPick(el);else if(el.tagName==="SELECT"&&el.dataset.fi)setIdeaF(el);else if(el.dataset&&el.dataset.f==="mg")render();else if(el.id==="mv-metal")mvMetal=el.value;else if(el.id==="mv-type")mvType=el.value});
+  var el=e.target;if(el.id==="qa-ph"){qaFiles=Array.prototype.slice.call(el.files||[]);var ql=document.getElementById("qa-phl");if(ql)ql.textContent=qaPhText();return}if(el.type==="checkbox"&&el.dataset.act==="rest-tog")act("rest-tog",{id:el.dataset.id});else if(el.type==="checkbox"&&el.dataset.act==="tog")tog(el.dataset.id);else if(el.type==="checkbox"&&el.dataset.act==="jc-step")act("jc-step",{id:"",r:el.dataset.r,i:el.dataset.i});else if(el.id==="c-name"){var co=ord();if(co)clientFill(co)}else if(el.id==="sk-in")skPick(el);else if(el.id==="eq-in")eqPick(el,true);else if(el.id==="eq-in2")eqPick(el,false);else if(el.id==="pm-in")pmPick(el);else if(el.id==="pm-imp")pmImport(el);else if(el.dataset&&el.dataset.skt){skTarget=el.value}else if(el.id==="ph-in"||el.id==="ip-in")photoPick(el);else if(el.tagName==="SELECT"&&el.dataset.fi)setIdeaF(el);else if(el.dataset&&el.dataset.f==="mg")render();else if(el.id==="mv-metal")mvMetal=el.value;else if(el.id==="mv-type")mvType=el.value});
 document.addEventListener("input",function(e){
-  var el=e.target,o;if(el.dataset&&el.dataset.pm){if(pmNew){pmNew[el.dataset.pm]=el.value;if(el.dataset.pm==="t"){var vh=document.getElementById("pm-vh");if(vh)vh.innerHTML=pmVarHint(el.value)}}return}if(el.dataset&&el.dataset.pmq){pmQ=el.value;pmRes();return}if(el.dataset&&el.dataset.pmf){if(el.dataset.pmf==="cat")pmCat=el.value;else pmSort=el.value;pmRes();return}if(el.dataset&&el.dataset.pmv){pmVals[el.dataset.pmv]=el.value;var pv=document.getElementById("pm-prev"),pi=findIn(pmArr(),pmOpen);if(pv&&pi)pv.textContent=pmFilled(pi.t,pmVals);return}if(el.dataset&&el.dataset.pmcn){var pc=findIn(pmCats(),el.dataset.pmcn);if(pc){pc.n=el.value;save()}return}if(el.dataset&&el.dataset.bl){if(blNew)blNew[el.dataset.bl]=el.value;return}if(el.dataset&&el.dataset.eq){if(eqNew)eqNew[el.dataset.eq]=el.value;return}if(el.dataset&&el.dataset.eqx){if(eqFxEd)eqFxEd[el.dataset.eqx]=el.value;return}if(el.dataset&&el.dataset.eqs){eqQ=el.value;var er=document.getElementById("eq-res");if(er){er.innerHTML=eqResHtml();hydrate()}return}if(el.dataset&&el.dataset.eqf&&eqOpen){var ei=findIn(eqArr(),eqOpen),ek=el.dataset.eqf;if(ei){ei[ek]=ek==="pr"?pnum(el.value):ek==="q"?Math.max(1,parseInt(el.value,10)||1):el.value;if((ek==="pr"||ek==="cu")&&!ei.w)ei.rs=fxSnap();save();var ev=document.getElementById("eq-eqv");if(ev)ev.textContent=eqEqv(ei)}return}if(el.dataset&&el.dataset.skq){skQ=el.value;var rs=document.getElementById("sk-res");if(rs){rs.innerHTML=skResHtml();hydrate()}return}if(el.dataset&&el.dataset.skn){if(skNew)skNew.n=el.value;return}if(el.dataset&&el.dataset.skt){skTarget=el.value;return}if(el.dataset&&el.dataset.skf&&skOpen){var sx=findIn(skArr(),skOpen);if(sx){sx[el.dataset.skf]=el.value;save()}return}if(el.dataset&&el.dataset.cm){cmpG()[el.dataset.cm]=el.value;save();cmUpd();return}if(el.dataset&&el.dataset.cp){cmpG().p[el.dataset.cp]=el.value;save();cmUpd();return}if(el.dataset&&el.dataset.su){if(suF)suF[el.dataset.su]=el.value;return}if(el.dataset&&el.dataset.tl){if(tlF)tlF[el.dataset.tl]=el.value;return}if(el.dataset&&el.dataset.cn){S.catn=S.catn||{};S.catn[el.dataset.cn]=el.value;save();return}if(el.dataset&&el.dataset.ts&&(o=ord())){var pp=el.dataset.ts.split(":"),stl=tcOf(o).stl||[];if(stl[+pp[0]]){stl[+pp[0]][pp[1]]=el.value;save();if(el.tagName==="SELECT")render()}return}if(el.dataset&&el.dataset.tp&&(o=ord())){var pq=el.dataset.tp.split(":"),pl_=tcPr(tcOf(o));if(pl_[+pq[0]]){pl_[+pq[0]][pq[1]]=el.value;save()}return}if(el.dataset&&el.dataset.tw&&(o=ord())){var pw=el.dataset.tw.split(":"),wl_=tcWl(tcOf(o));if(wl_[+pw[0]]){wl_[+pw[0]][pw[1]]=el.value;save()}return}if(el.dataset&&el.dataset.tc&&(o=ord())){tcOf(o)[el.dataset.tc]=el.value;save();return}if(el.dataset&&el.dataset.fr&&(o=ord())){var pr_=el.dataset.fr.split("|");(o.rest||[]).forEach(function(r){if(r.id===pr_[0])r[pr_[1]]=el.value});if(pr_[1]==="price")restApply(o);if(pr_[1]==="pc"){var rl=document.getElementById("rp-"+pr_[0]);if(rl)rl.textContent=el.value+"%";var pb2=document.getElementById("of-pb");if(pb2)pb2.innerHTML=progBar(o);var rg=document.getElementById("o-prog");if(rg&&progOf(o).auto)rg.value=progOf(o).p}save();return}if(el.dataset&&el.dataset.fx){S.fx=S.fx||{};S.fx[el.dataset.fx]=el.value.replace(",",".");save();var eg=document.getElementById("eg");if(eg)eg.innerHTML=earnGrid(earnCalc());return}if(el.id&&el.id.slice(0,3)==="qa-")qaCalc();if(el.dataset&&el.dataset.f&&(o=ord())){o[el.dataset.f]=el.value;save();if(el.dataset.f==='mg'||el.dataset.f==='mf'){syncMetal(o);var mn=document.getElementById('metal-n');if(mn&&el.dataset.f==='mg')mn.innerHTML=metalHtml(o).split('<div id="metal-n">')[1].split('</div></section>')[0];if(el.dataset.f==='mf')render()}if(el.dataset.f==="prog"){var pb=document.getElementById("of-pb");if(pb)pb.innerHTML=progBar(o);var pa=el.parentNode.querySelector('[data-act=prog-auto]');if(!pa){pa=document.createElement('button');pa.className='lnk';pa.dataset.act='prog-auto';pa.textContent='Рахувати автоматично з позицій';el.parentNode.appendChild(pa)}}if(el.dataset.f==="due"){var di=document.getElementById("due-ind");if(di)di.innerHTML=dueInd(o)}if(/^(price|cost|fprice|fcost)$/.test(el.dataset.f)){var pfe=document.getElementById("pf");if(pfe)pfe.innerHTML=pfLine(o)}if(/^(price|adv|cur)$/.test(el.dataset.f)){var bl=document.getElementById("bal");if(bl)bl.innerHTML=moneyLine(o)}if(/^(cphone|cinsta)$/.test(el.dataset.f)){var lk=document.getElementById("clinks");if(lk)lk.innerHTML=linksHtml(o)}}else if(el.dataset&&el.dataset.fi&&ideaOpen)setIdeaF(el);else if(el.dataset&&el.dataset.fm&&mOpen){var mm=findIn(S.masters,mOpen);if(mm){mm[el.dataset.fm]=el.value;save()}}});
+  var el=e.target,o;if(el.dataset&&el.dataset.jc){if(jcNew)jcNew[el.dataset.jc]=el.value;return}if(el.dataset&&el.dataset.jcp){jcPaste=el.value;return}if(el.dataset&&el.dataset.jca){jcAp=el.value;return}if(el.dataset&&el.dataset.jcx){S.jcx=el.value;save();return}if(el.dataset&&el.dataset.pm){if(pmNew){pmNew[el.dataset.pm]=el.value;if(el.dataset.pm==="t"){var vh=document.getElementById("pm-vh");if(vh)vh.innerHTML=pmVarHint(el.value)}}return}if(el.dataset&&el.dataset.pmq){pmQ=el.value;pmRes();return}if(el.dataset&&el.dataset.pmf){if(el.dataset.pmf==="cat")pmCat=el.value;else pmSort=el.value;pmRes();return}if(el.dataset&&el.dataset.pmv){pmVals[el.dataset.pmv]=el.value;var pv=document.getElementById("pm-prev"),pi=findIn(pmArr(),pmOpen);if(pv&&pi)pv.textContent=pmFilled(pi.t,pmVals);return}if(el.dataset&&el.dataset.pmcn){var pc=findIn(pmCats(),el.dataset.pmcn);if(pc){pc.n=el.value;save()}return}if(el.dataset&&el.dataset.bl){if(blNew)blNew[el.dataset.bl]=el.value;return}if(el.dataset&&el.dataset.eq){if(eqNew)eqNew[el.dataset.eq]=el.value;return}if(el.dataset&&el.dataset.eqx){if(eqFxEd)eqFxEd[el.dataset.eqx]=el.value;return}if(el.dataset&&el.dataset.eqs){eqQ=el.value;var er=document.getElementById("eq-res");if(er){er.innerHTML=eqResHtml();hydrate()}return}if(el.dataset&&el.dataset.eqf&&eqOpen){var ei=findIn(eqArr(),eqOpen),ek=el.dataset.eqf;if(ei){ei[ek]=ek==="pr"?pnum(el.value):ek==="q"?Math.max(1,parseInt(el.value,10)||1):el.value;if((ek==="pr"||ek==="cu")&&!ei.w)ei.rs=fxSnap();save();var ev=document.getElementById("eq-eqv");if(ev)ev.textContent=eqEqv(ei)}return}if(el.dataset&&el.dataset.skq){skQ=el.value;var rs=document.getElementById("sk-res");if(rs){rs.innerHTML=skResHtml();hydrate()}return}if(el.dataset&&el.dataset.skn){if(skNew)skNew.n=el.value;return}if(el.dataset&&el.dataset.skt){skTarget=el.value;return}if(el.dataset&&el.dataset.skf&&skOpen){var sx=findIn(skArr(),skOpen);if(sx){sx[el.dataset.skf]=el.value;save()}return}if(el.dataset&&el.dataset.cm){cmpG()[el.dataset.cm]=el.value;save();cmUpd();return}if(el.dataset&&el.dataset.cp){cmpG().p[el.dataset.cp]=el.value;save();cmUpd();return}if(el.dataset&&el.dataset.su){if(suF)suF[el.dataset.su]=el.value;return}if(el.dataset&&el.dataset.tl){if(tlF)tlF[el.dataset.tl]=el.value;return}if(el.dataset&&el.dataset.cn){S.catn=S.catn||{};S.catn[el.dataset.cn]=el.value;save();return}if(el.dataset&&el.dataset.ts&&(o=ord())){var pp=el.dataset.ts.split(":"),stl=tcOf(o).stl||[];if(stl[+pp[0]]){stl[+pp[0]][pp[1]]=el.value;save();if(el.tagName==="SELECT")render()}return}if(el.dataset&&el.dataset.tp&&(o=ord())){var pq=el.dataset.tp.split(":"),pl_=tcPr(tcOf(o));if(pl_[+pq[0]]){pl_[+pq[0]][pq[1]]=el.value;save()}return}if(el.dataset&&el.dataset.tw&&(o=ord())){var pw=el.dataset.tw.split(":"),wl_=tcWl(tcOf(o));if(wl_[+pw[0]]){wl_[+pw[0]][pw[1]]=el.value;save()}return}if(el.dataset&&el.dataset.tc&&(o=ord())){tcOf(o)[el.dataset.tc]=el.value;save();return}if(el.dataset&&el.dataset.fr&&(o=ord())){var pr_=el.dataset.fr.split("|");(o.rest||[]).forEach(function(r){if(r.id===pr_[0])r[pr_[1]]=el.value});if(pr_[1]==="price")restApply(o);if(pr_[1]==="pc"){var rl=document.getElementById("rp-"+pr_[0]);if(rl)rl.textContent=el.value+"%";var pb2=document.getElementById("of-pb");if(pb2)pb2.innerHTML=progBar(o);var rg=document.getElementById("o-prog");if(rg&&progOf(o).auto)rg.value=progOf(o).p}save();return}if(el.dataset&&el.dataset.fx){S.fx=S.fx||{};S.fx[el.dataset.fx]=el.value.replace(",",".");save();var eg=document.getElementById("eg");if(eg)eg.innerHTML=earnGrid(earnCalc());return}if(el.id&&el.id.slice(0,3)==="qa-")qaCalc();if(el.dataset&&el.dataset.f&&(o=ord())){o[el.dataset.f]=el.value;save();if(el.dataset.f==='mg'||el.dataset.f==='mf'){syncMetal(o);var mn=document.getElementById('metal-n');if(mn&&el.dataset.f==='mg')mn.innerHTML=metalHtml(o).split('<div id="metal-n">')[1].split('</div></section>')[0];if(el.dataset.f==='mf')render()}if(el.dataset.f==="prog"){var pb=document.getElementById("of-pb");if(pb)pb.innerHTML=progBar(o);var pa=el.parentNode.querySelector('[data-act=prog-auto]');if(!pa){pa=document.createElement('button');pa.className='lnk';pa.dataset.act='prog-auto';pa.textContent='Рахувати автоматично з позицій';el.parentNode.appendChild(pa)}}if(el.dataset.f==="due"){var di=document.getElementById("due-ind");if(di)di.innerHTML=dueInd(o)}if(/^(price|cost|fprice|fcost)$/.test(el.dataset.f)){var pfe=document.getElementById("pf");if(pfe)pfe.innerHTML=pfLine(o)}if(/^(price|adv|cur)$/.test(el.dataset.f)){var bl=document.getElementById("bal");if(bl)bl.innerHTML=moneyLine(o)}if(/^(cphone|cinsta)$/.test(el.dataset.f)){var lk=document.getElementById("clinks");if(lk)lk.innerHTML=linksHtml(o)}}else if(el.dataset&&el.dataset.fi&&ideaOpen)setIdeaF(el);else if(el.dataset&&el.dataset.fm&&mOpen){var mm=findIn(S.masters,mOpen);if(mm){mm[el.dataset.fm]=el.value;save()}}});
 document.addEventListener("keydown",function(e){
   if(e.key!=="Enter")return;var id=e.target.id||"";
   if(id.indexOf("e-")===0){e.preventDefault();saveEdit()}
